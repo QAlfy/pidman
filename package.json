@@ -1,29 +1,42 @@
 {
-  "name": "pidman",
-  "version": "1.0.0",
-  "description": "A solid Linux process management library for Node",
-  "main": "dist/index.js",
-  "repository": "https://github.com/QAlfy/pidman",
-  "author": "Nicolas Iglesias",
-  "license": "MIT",
-  "devDependencies": {
-    "parcel": "^1.12.4",
-    "rimraf": "^3.0.2",
-    "typescript": "^3.8.3"
-  },
-  "homepage": "https://github.com/QAlfy/pidman#readme",
-  "bugs": {
-    "url": "https://github.com/QAlfy/pidman/issues"
-  },
-  "engines": {
-    "npm": ">=5.5.0",
-    "node": ">=9.3.0"
-  },
-  "scripts": {
-    "build": "yarn run clean && parcel build --no-source-maps -t node src/index.ts",
-    "clean": "rimraf dist/"
-  },
-  "dependencies": {
-    "rxjs": "^6.5.5"
-  }
+	"name": "pidman",
+	"version": "1.0.0",
+	"description": "A solid Linux process management library for Node",
+	"main": "dist/index.js",
+	"repository": "https://github.com/QAlfy/pidman",
+	"author": "Nicolas Iglesias",
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^13.13.4",
+		"@typescript-eslint/eslint-plugin": "^2.30.0",
+		"@typescript-eslint/parser": "^2.30.0",
+		"eslint": "^6.8.0",
+		"eslint-config-prettier": "^6.11.0",
+		"prettier": "^2.0.5",
+		"rimraf": "^3.0.2",
+		"tslint": "^6.1.2",
+		"tslint-eslint-rules": "^5.4.0",
+		"typescript": "^3.8.3"
+	},
+	"homepage": "https://github.com/QAlfy/pidman#readme",
+	"bugs": {
+		"url": "https://github.com/QAlfy/pidman/issues"
+	},
+	"engines": {
+		"npm": ">=5.5.0",
+		"node": ">=9.3.0"
+	},
+	"scripts": {
+		"build": "yarn run clean && tsc --build tsconfig.json",
+		"clean": "rimraf dist/",
+		"lint": "yarn run lint.eslint && yarn run lint.prettier && yarn run lint.types",
+		"lint.eslint": "eslint . --ext ts",
+		"lint.prettier": "prettier -c src/**/*.ts",
+		"lint.types": "tsc --noEmit"
+	},
+	"dependencies": {
+		"find-process": "^1.4.3",
+		"lokijs": "^1.5.8",
+		"rxjs": "^6.5.5"
+	}
 }

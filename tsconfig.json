@@ -1,0 +1,25 @@
+{
+	"exclude": ["node_modules"],
+	"compilerOptions": {
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"allowSyntheticDefaultImports": true,
+		"declaration": true,
+		"noResolve": false,
+		"moduleResolution": "node",
+		"module": "commonjs",
+		"target": "es5",
+		"experimentalDecorators": true,
+		"sourceMap": true,
+		"noImplicitAny": false,
+		"noImplicitReturns": true,
+		"outDir": "./dist/",
+		"lib": ["es6", "dom"],
+    "types": ["node"],
+    "strict": true
+	},
+	"include": ["./src/**/*"],
+	"typingOptions": {
+		"enableAutoDiscovery": true
+	}
+}

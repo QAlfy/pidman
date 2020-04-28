@@ -1,7 +1,7 @@
 {
 	"name": "pidman",
 	"version": "1.0.0",
-	"description": "A solid Linux process management library for Node",
+	"description": "A rock solid Linux process management library for Node",
 	"main": "dist/index.js",
 	"repository": "https://github.com/QAlfy/pidman",
 	"author": "Nicolas Iglesias",
@@ -27,7 +27,7 @@
 		"node": ">=9.3.0"
 	},
 	"scripts": {
-		"build": "yarn run clean && tsc --build tsconfig.json",
+		"build": "yarn run clean && yarn run lint && tsc --build tsconfig.json",
 		"clean": "rimraf dist/",
 		"lint": "yarn run lint.eslint && yarn run lint.prettier && yarn run lint.types",
 		"lint.eslint": "eslint . --ext ts",

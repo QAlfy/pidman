@@ -6,23 +6,37 @@ interface PidmanOptions {
 
 interface ProcessGroup {
 	id: string;
-	user: string;
+	user?: string;
+	group?: string;
 	processes: PidmanProcess[];
+	async?: boolean;
 }
 
 export class Pidman {
 	private groups: ProcessGroup[] = [];
 
+	/**
+	 * @param  {PidmanOptions} privateoptions
+	 */
 	constructor(private options: PidmanOptions) {}
 
+	/**
+	 * @returns PidmanOptions
+	 */
 	getOptions(): PidmanOptions {
 		return this.options;
 	}
 
+	/**
+	 * @param  {ProcessGroup} group
+	 */
 	addProcessGroup(group: ProcessGroup): void {
 		this.groups.push(group);
 	}
 
+	/**
+	 * @returns ProcessGroup
+	 */
 	getProcessGroups(): ProcessGroup[] {
 		return this.groups;
 	}

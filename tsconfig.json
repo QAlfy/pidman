@@ -15,11 +15,15 @@
 		"noImplicitReturns": true,
 		"outDir": "./dist/",
 		"lib": ["es6", "dom"],
-    "types": ["node"],
-    "strict": true
+		"types": ["node"],
+		"strict": true
 	},
 	"include": ["./src/**/*"],
 	"typingOptions": {
 		"enableAutoDiscovery": true
+	},
+	"typedocOptions": {
+		"mode": "modules",
+		"out": "docs"
 	}
 }

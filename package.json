@@ -16,6 +16,7 @@
 		"rimraf": "^3.0.2",
 		"tslint": "^6.1.2",
 		"tslint-eslint-rules": "^5.4.0",
+		"typedoc": "^0.17.6",
 		"typescript": "^3.8.3"
 	},
 	"homepage": "https://github.com/QAlfy/pidman#readme",
@@ -27,7 +28,8 @@
 		"node": ">=9.3.0"
 	},
 	"scripts": {
-		"build": "yarn run clean && yarn run lint && tsc --build tsconfig.json",
+		"build": "yarn run clean && yarn run lint && tsc --build tsconfig.json && yarn run docs",
+		"docs": "typedoc",
 		"clean": "rimraf dist/",
 		"lint": "yarn run lint.eslint && yarn run lint.prettier && yarn run lint.types",
 		"lint.eslint": "eslint . --ext ts",

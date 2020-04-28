@@ -1,17 +1,20 @@
-import { PidmanProcess, ProcessOptions } from './';
+import { BehaviorSubject } from 'rxjs';
 import { PidmanMonitor } from './pidman';
+import { PidmanProcess, ProcessOptions } from './';
 export interface GroupOptions {
     id?: string;
     user?: string;
     group?: string;
     envVars?: {};
-    processes: PidmanProcess[];
+    processes?: Array<ProcessOptions> | undefined;
     async?: boolean;
     monitor?: PidmanMonitor;
 }
 export declare class PidmanGroup {
     private options;
-    protected monitor?: PidmanMonitor | undefined;
+    monitor?: PidmanMonitor | undefined;
+    protected subjects: Array<BehaviorSubject<{}>>;
+    protected processes: Array<PidmanProcess>;
     /**
      * @param  {GroupOptions} privateoptions
      * @param  {PidmanMonitor} publicmonitor

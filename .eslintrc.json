@@ -14,7 +14,8 @@
 		"node": true
 	},
 	"rules": {
-    "max-len": ["error", { "code": 80, "ignoreUrls": true }],
-    "no-multiple-empty-lines": "error"
+		"max-len": ["error", { "code": 80, "ignoreUrls": true }],
+		"no-multiple-empty-lines": 2,
+		"newline-per-chained-call": 2
 	}
 }

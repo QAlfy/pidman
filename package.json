@@ -1,0 +1,25 @@
+{
+  "name": "pidman",
+  "version": "1.0.0",
+  "description": "A solid Linux process management library for Node",
+  "main": "dist/index.js",
+  "repository": "https://github.com/QAlfy/pidman",
+  "author": "Nicolas Iglesias",
+  "license": "MIT",
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "typescript": "^3.8.3"
+  },
+  "homepage": "https://github.com/QAlfy/pidman#readme",
+  "bugs": {
+    "url": "https://github.com/QAlfy/pidman/issues"
+  },
+  "engines": {
+    "npm": ">=5.5.0",
+    "node": ">=9.3.0"
+  },
+  "scripts": {
+    "build": "yarn run clean && parcel build --no-source-maps -t node src/index.ts",
+    "clean": "rimraf dist/"
+  }
+}

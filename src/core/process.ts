@@ -95,13 +95,13 @@ export class PidmanProcess {
 			this.dataSubject.next({ data, group: this })
 		);
 		this.ps.on('error', (error) =>
-			this.dataSubject.next({ error, group: this })
+			this.errorSubject.next({ error, group: this })
 		);
 		this.ps.on('close', (code: number, signal: string) =>
-			this.dataSubject.next({ code, signal, group: this })
+			this.closeSubject.next({ code, signal, group: this })
 		);
 		this.ps.on('exit', (code: number, signal: string) =>
-			this.dataSubject.next({ code, signal, group: this })
+			this.exitSubject.next({ code, signal, group: this })
 		);
 
 		return this.ps;

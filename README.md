@@ -13,7 +13,7 @@
 
 > A solid Linux process management library for Node
 
-### 🏠 [Homepage](https://github.com/QAlfy/pidman#readme)
+### 🏠 [Homepage](https://qalfy.com)
 
 ## Prerequisites
 

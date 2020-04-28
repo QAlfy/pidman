@@ -1,17 +1,19 @@
-import { PidmanProcess } from './process';
-interface PidmanOptions {
-    id: string;
+import { GroupOptions, PidmanGroup } from './';
+import { PidmanConnector } from '../connector';
+export interface PidmanMonitor {
+    onData(data: {}[]): void;
+    onError(error: {}[]): void;
+    onExit(code: number, signal: string): void;
+    onClose(code: number, signal: string): void;
 }
-interface ProcessGroup {
-    id: string;
-    user?: string;
-    group?: string;
-    processes: PidmanProcess[];
-    async?: boolean;
+export interface PidmanOptions {
+    id?: string;
+    connector?: PidmanConnector;
+    monitor?: PidmanMonitor;
 }
 export declare class Pidman {
     private options;
-    private groups;
+    protected groups: PidmanGroup[];
     /**
      * @param  {PidmanOptions} privateoptions
      */
@@ -21,12 +23,12 @@ export declare class Pidman {
      */
     getOptions(): PidmanOptions;
     /**
-     * @param  {ProcessGroup} group
+     * @param  {GroupOptions} options
+     * @returns void
      */
-    addProcessGroup(group: ProcessGroup): void;
+    addProcessGroup(options: GroupOptions): void;
     /**
-     * @returns ProcessGroup
+     * @returns PidmanGroup
      */
-    getProcessGroups(): ProcessGroup[];
+    getProcessGroups(): PidmanGroup[];
 }
-export {};

@@ -1,0 +1,11 @@
+{
+  "eslint.enable": true,
+  "eslint.validate": [
+    { "language": "javascript", "autoFix": true },
+    { "language": "typescript", "autoFix": true },
+  ],
+  "eslint.run": "onType",
+  "eslint.packageManager": "yarn",
+  "eslint.alwaysShowStatus": true,
+  "eslint.autoFixOnSave": true,
+}

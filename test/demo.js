@@ -1,7 +1,44 @@
-const Pidman = new require('../dist').Pidman;
+const Pidman = require('../dist').Pidman;
 
 const pm = new Pidman({
-	id: 'test',
+	monitor: {
+		onData: (data) => {
+			console.log(data);
+		},
+		onError: (data) => {
+			console.log(data);
+		},
+		onExit: (data) => {
+			console.log(data);
+		},
+		onClose: (data) => {
+			console.log(data);
+		},
+	},
 });
 
-console.log(pm.getOptions());
+pm.addProcessGroup({
+	user: 'nico',
+	processes: [
+		{
+			command: 'll',
+			arguments: ['/usr/share'],
+		},
+	],
+	monitor: {
+		onData: (data) => {
+			console.log(data);
+		},
+		onError: (data) => {
+			console.log(data);
+		},
+		onExit: (data) => {
+			console.log(data);
+		},
+		onClose: (data) => {
+			console.log(data);
+		},
+	},
+});
+
+console.log(pm);

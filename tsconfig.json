@@ -10,6 +10,7 @@
 		"module": "commonjs",
 		"target": "es5",
 		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
 		"sourceMap": true,
 		"noImplicitAny": false,
 		"noImplicitReturns": true,

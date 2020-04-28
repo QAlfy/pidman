@@ -5,4 +5,5 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./pidman"));
 __export(require("./process"));
+__export(require("./group"));
 //# sourceMappingURL=index.js.map

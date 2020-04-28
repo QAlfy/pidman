@@ -7,6 +7,7 @@
 	"author": "Nicolas Iglesias",
 	"license": "MIT",
 	"devDependencies": {
+		"@types/lokijs": "^1.5.3",
 		"@types/node": "^13.13.4",
 		"@typescript-eslint/eslint-plugin": "^2.30.0",
 		"@typescript-eslint/parser": "^2.30.0",
@@ -32,13 +33,15 @@
 		"docs": "typedoc",
 		"clean": "rimraf dist/",
 		"lint": "yarn run lint.eslint && yarn run lint.prettier && yarn run lint.types",
-		"lint.eslint": "eslint . --ext ts",
+		"lint.eslint": "eslint src/**/* --ext ts",
 		"lint.prettier": "prettier -c src/**/*.ts",
 		"lint.types": "tsc --noEmit"
 	},
 	"dependencies": {
+		"crypto": "^1.0.1",
 		"find-process": "^1.4.3",
 		"lokijs": "^1.5.8",
-		"rxjs": "^6.5.5"
+		"rxjs": "^6.5.5",
+		"typescript-json-serializer": "^2.0.0"
 	}
 }

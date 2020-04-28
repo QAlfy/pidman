@@ -11,7 +11,7 @@
   </a>
 </p>
 
-> A rock solid Linux process management library for Node
+> A rock solid process management library for Node
 
 ### 🏠 [Homepage](https://qalfy.com)
 

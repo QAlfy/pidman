@@ -1,7 +1,7 @@
 {
 	"name": "pidman",
 	"version": "1.0.0",
-	"description": "A rock solid Linux process management library for Node",
+	"description": "A rock solid process management library for Node",
 	"main": "dist/index.js",
 	"repository": "https://github.com/QAlfy/pidman",
 	"author": "Nicolas Iglesias",

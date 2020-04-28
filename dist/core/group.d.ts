@@ -6,14 +6,17 @@ export interface GroupOptions {
     user?: string;
     group?: string;
     envVars?: {};
-    processes?: Array<ProcessOptions> | undefined;
+    processes: Array<ProcessOptions>;
     async?: boolean;
     monitor?: PidmanMonitor;
 }
 export declare class PidmanGroup {
     private options;
     monitor?: PidmanMonitor | undefined;
-    protected subjects: Array<BehaviorSubject<{}>>;
+    dataSubjects: Array<BehaviorSubject<{}>>;
+    errorSubjects: Array<BehaviorSubject<{}>>;
+    exitSubjects: Array<BehaviorSubject<{}>>;
+    closeSubjects: Array<BehaviorSubject<{}>>;
     protected processes: Array<PidmanProcess>;
     /**
      * @param  {GroupOptions} privateoptions
@@ -28,5 +31,11 @@ export declare class PidmanGroup {
      * @returns GroupOptions
      */
     getOptions(): GroupOptions;
+    /**
+     * @returns Array<PidmanProcess>
+     */
+    getProcesses(): Array<PidmanProcess>;
+    startMonitoring(): void;
+    run(): void;
     stop(): boolean;
 }

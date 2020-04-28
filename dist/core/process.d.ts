@@ -1,4 +1,5 @@
 /// <reference types="node" />
+import { BehaviorSubject } from 'rxjs';
 import { ChildProcess } from 'child_process';
 import { PidmanGroup } from './';
 export interface ProcessOptions {
@@ -6,7 +7,7 @@ export interface ProcessOptions {
     user?: string;
     group?: string;
     command: string;
-    arguments?: string[];
+    arguments?: Array<string>;
     envVars?: {};
     path?: string;
     shell?: boolean | string;
@@ -16,10 +17,10 @@ export declare class PidmanProcess {
     private options;
     protected ps: ChildProcess;
     protected group: PidmanGroup;
-    private dataSubject;
-    private errorSubject;
-    private exitSubject;
-    private closeSubject;
+    protected dataSubject: BehaviorSubject<{}>;
+    protected errorSubject: BehaviorSubject<{}>;
+    protected exitSubject: BehaviorSubject<{}>;
+    protected closeSubject: BehaviorSubject<{}>;
     /**
      * @param  {ProcessOptions} privateoptions
      */
@@ -37,9 +38,7 @@ export declare class PidmanProcess {
      * @returns ChildProcess
      */
     getChildProcess(): ChildProcess;
-    /**
-     * @returns ChildProcess
-     */
-    protected run(): ChildProcess;
+    run(): void;
+    subscribe(group: PidmanGroup): void;
     protected stop(): boolean;
 }

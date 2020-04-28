@@ -5,7 +5,9 @@ var PidmanStringUtils = /** @class */ (function () {
     function PidmanStringUtils() {
     }
     PidmanStringUtils.getId = function () {
-        return crypto_1.createHash('sha1').update(crypto_1.randomBytes(32)).digest('hex');
+        return crypto_1.createHash('sha1')
+            .update(crypto_1.randomBytes(32))
+            .digest('hex');
     };
     return PidmanStringUtils;
 }());

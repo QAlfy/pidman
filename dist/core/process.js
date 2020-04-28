@@ -12,10 +12,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var rxjs_1 = require("rxjs");
 var child_process_1 = require("child_process");
 var typescript_json_serializer_1 = require("typescript-json-serializer");
 var utils_1 = require("../utils");
-var rxjs_1 = require("rxjs");
 var PidmanProcess = /** @class */ (function () {
     /**
      * @param  {ProcessOptions} privateoptions
@@ -61,9 +61,6 @@ var PidmanProcess = /** @class */ (function () {
     PidmanProcess.prototype.getChildProcess = function () {
         return this.ps;
     };
-    /**
-     * @returns ChildProcess
-     */
     PidmanProcess.prototype.run = function () {
         var _this = this;
         var _a;
@@ -79,15 +76,20 @@ var PidmanProcess = /** @class */ (function () {
             return _this.dataSubject.next({ data: data, group: _this });
         });
         this.ps.on('error', function (error) {
-            return _this.dataSubject.next({ error: error, group: _this });
+            return _this.errorSubject.next({ error: error, group: _this });
         });
         this.ps.on('close', function (code, signal) {
-            return _this.dataSubject.next({ code: code, signal: signal, group: _this });
+            return _this.closeSubject.next({ code: code, signal: signal, group: _this });
         });
         this.ps.on('exit', function (code, signal) {
-            return _this.dataSubject.next({ code: code, signal: signal, group: _this });
+            return _this.exitSubject.next({ code: code, signal: signal, group: _this });
         });
-        return this.ps;
+    };
+    PidmanProcess.prototype.subscribe = function (group) {
+        group.dataSubjects.push(this.dataSubject);
+        group.errorSubjects.push(this.errorSubject);
+        group.exitSubjects.push(this.exitSubject);
+        group.closeSubjects.push(this.closeSubject);
     };
     PidmanProcess.prototype.stop = function () {
         return this.ps.kill(this.options.killSignal);

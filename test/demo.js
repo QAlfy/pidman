@@ -41,4 +41,4 @@ pm.addProcessGroup({
 	},
 });
 
-console.log(pm);
+pm.run();

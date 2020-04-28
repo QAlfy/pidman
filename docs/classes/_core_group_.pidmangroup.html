@@ -87,11 +87,16 @@
 								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_core_group_.pidmangroup.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-private-protected">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="_core_group_.pidmangroup.html#monitor" class="tsd-kind-icon">monitor</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_group_.pidmangroup.html#closesubjects" class="tsd-kind-icon">close<wbr>Subjects</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_group_.pidmangroup.html#datasubjects" class="tsd-kind-icon">data<wbr>Subjects</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_group_.pidmangroup.html#errorsubjects" class="tsd-kind-icon">error<wbr>Subjects</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_group_.pidmangroup.html#exitsubjects" class="tsd-kind-icon">exit<wbr>Subjects</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_group_.pidmangroup.html#monitor" class="tsd-kind-icon">monitor</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_group_.pidmangroup.html#options" class="tsd-kind-icon">options</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="_core_group_.pidmangroup.html#processes" class="tsd-kind-icon">processes</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -99,6 +104,9 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_group_.pidmangroup.html#addprocess" class="tsd-kind-icon">add<wbr>Process</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_group_.pidmangroup.html#getoptions" class="tsd-kind-icon">get<wbr>Options</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_group_.pidmangroup.html#getprocesses" class="tsd-kind-icon">get<wbr>Processes</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_group_.pidmangroup.html#run" class="tsd-kind-icon">run</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_group_.pidmangroup.html#startmonitoring" class="tsd-kind-icon">start<wbr>Monitoring</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_group_.pidmangroup.html#stop" class="tsd-kind-icon">stop</a></li>
 							</ul>
 						</section>
@@ -117,7 +125,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in core/group.ts:17</li>
+									<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L23">core/group.ts:23</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -136,15 +144,55 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-private-protected">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="closesubjects" class="tsd-anchor"></a>
+					<h3>close<wbr>Subjects</h3>
+					<div class="tsd-signature tsd-kind-icon">close<wbr>Subjects<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">BehaviorSubject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = []</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L22">core/group.ts:22</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="datasubjects" class="tsd-anchor"></a>
+					<h3>data<wbr>Subjects</h3>
+					<div class="tsd-signature tsd-kind-icon">data<wbr>Subjects<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">BehaviorSubject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = []</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L19">core/group.ts:19</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="errorsubjects" class="tsd-anchor"></a>
+					<h3>error<wbr>Subjects</h3>
+					<div class="tsd-signature tsd-kind-icon">error<wbr>Subjects<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">BehaviorSubject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = []</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L20">core/group.ts:20</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="exitsubjects" class="tsd-anchor"></a>
+					<h3>exit<wbr>Subjects</h3>
+					<div class="tsd-signature tsd-kind-icon">exit<wbr>Subjects<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">BehaviorSubject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = []</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L21">core/group.ts:21</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="monitor" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> <span class="tsd-flag ts-flagOptional">Optional</span> monitor</h3>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> monitor</h3>
 					<div class="tsd-signature tsd-kind-icon">monitor<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_core_pidman_.pidmanmonitor.html" class="tsd-signature-type">PidmanMonitor</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in core/group.ts:24</li>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L31">core/group.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -154,7 +202,17 @@
 					<div class="tsd-signature tsd-kind-icon">options<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_core_group_.groupoptions.html" class="tsd-signature-type">GroupOptions</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in core/group.ts:23</li>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L30">core/group.ts:30</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+					<a name="processes" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> processes</h3>
+					<div class="tsd-signature tsd-kind-icon">processes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_process_.pidmanprocess.html" class="tsd-signature-type">PidmanProcess</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = []</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L23">core/group.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -171,7 +229,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in core/group.ts:38</li>
+									<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L45">core/group.ts:45</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -196,13 +254,67 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in core/group.ts:48</li>
+									<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L56">core/group.ts:56</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 							</div>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_core_group_.groupoptions.html" class="tsd-signature-type">GroupOptions</a></h4>
 							<p>GroupOptions</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getprocesses" class="tsd-anchor"></a>
+					<h3>get<wbr>Processes</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Processes<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_process_.pidmanprocess.html" class="tsd-signature-type">PidmanProcess</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L63">core/group.ts:63</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_process_.pidmanprocess.html" class="tsd-signature-type">PidmanProcess</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Array<PidmanProcess></p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="run" class="tsd-anchor"></a>
+					<h3>run</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">run<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L85">core/group.ts:85</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="startmonitoring" class="tsd-anchor"></a>
+					<h3>start<wbr>Monitoring</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">start<wbr>Monitoring<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L67">core/group.ts:67</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -216,7 +328,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in core/group.ts:52</li>
+									<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/12d6820/src/core/group.ts#L89">core/group.ts:89</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -273,17 +385,41 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="_core_group_.pidmangroup.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_core_group_.pidmangroup.html#closesubjects" class="tsd-kind-icon">close<wbr>Subjects</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_core_group_.pidmangroup.html#datasubjects" class="tsd-kind-icon">data<wbr>Subjects</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_core_group_.pidmangroup.html#errorsubjects" class="tsd-kind-icon">error<wbr>Subjects</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_core_group_.pidmangroup.html#exitsubjects" class="tsd-kind-icon">exit<wbr>Subjects</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_core_group_.pidmangroup.html#monitor" class="tsd-kind-icon">monitor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_core_group_.pidmangroup.html#options" class="tsd-kind-icon">options</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+								<a href="_core_group_.pidmangroup.html#processes" class="tsd-kind-icon">processes</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_core_group_.pidmangroup.html#addprocess" class="tsd-kind-icon">add<wbr>Process</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_core_group_.pidmangroup.html#getoptions" class="tsd-kind-icon">get<wbr>Options</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_group_.pidmangroup.html#getprocesses" class="tsd-kind-icon">get<wbr>Processes</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_group_.pidmangroup.html#run" class="tsd-kind-icon">run</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_group_.pidmangroup.html#startmonitoring" class="tsd-kind-icon">start<wbr>Monitoring</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_core_group_.pidmangroup.html#stop" class="tsd-kind-icon">stop</a>
@@ -307,6 +443,7 @@
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
 				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 			</ul>
 			<ul class="tsd-legend">

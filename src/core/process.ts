@@ -1,15 +1,15 @@
+import { BehaviorSubject } from 'rxjs';
 import { ChildProcess, spawn } from 'child_process';
 import { JsonProperty, Serializable } from 'typescript-json-serializer';
 import { PidmanGroup } from './';
 import { PidmanStringUtils, PidmanSysUtils } from '../utils';
-import { BehaviorSubject } from 'rxjs';
 
 export interface ProcessOptions {
 	id?: string;
 	user?: string;
 	group?: string;
 	command: string;
-	arguments?: string[];
+	arguments?: Array<string>;
 	envVars?: {};
 	path?: string;
 	shell?: boolean | string;
@@ -20,10 +20,10 @@ export interface ProcessOptions {
 export class PidmanProcess {
 	protected ps!: ChildProcess;
 	protected group!: PidmanGroup;
-	private dataSubject: BehaviorSubject<{}>;
-	private errorSubject: BehaviorSubject<{}>;
-	private exitSubject: BehaviorSubject<{}>;
-	private closeSubject: BehaviorSubject<{}>;
+	protected dataSubject: BehaviorSubject<{}>;
+	protected errorSubject: BehaviorSubject<{}>;
+	protected exitSubject: BehaviorSubject<{}>;
+	protected closeSubject: BehaviorSubject<{}>;
 
 	/**
 	 * @param  {ProcessOptions} privateoptions
@@ -77,10 +77,7 @@ export class PidmanProcess {
 		return this.ps;
 	}
 
-	/**
-	 * @returns ChildProcess
-	 */
-	protected run(): ChildProcess {
+	run(): void {
 		this.ps = spawn(this.options.command, this.options.arguments || [], {
 			uid:
 				(!this.options.user && undefined) ||
@@ -103,8 +100,13 @@ export class PidmanProcess {
 		this.ps.on('exit', (code: number, signal: string) =>
 			this.exitSubject.next({ code, signal, group: this })
 		);
+	}
 
-		return this.ps;
+	subscribe(group: PidmanGroup): void {
+		group.dataSubjects.push(this.dataSubject);
+		group.errorSubjects.push(this.errorSubject);
+		group.exitSubjects.push(this.exitSubject);
+		group.closeSubjects.push(this.closeSubject);
 	}
 
 	protected stop(): boolean {

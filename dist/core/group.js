@@ -12,6 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var rxjs_1 = require("rxjs");
 var typescript_json_serializer_1 = require("typescript-json-serializer");
 var _1 = require("./");
 var utils_1 = require("../utils");
@@ -23,6 +24,11 @@ var PidmanGroup = /** @class */ (function () {
     function PidmanGroup(options, monitor) {
         this.options = options;
         this.monitor = monitor;
+        this.dataSubjects = [];
+        this.errorSubjects = [];
+        this.exitSubjects = [];
+        this.closeSubjects = [];
+        this.processes = [];
         if (!this.options.id) {
             this.options.id = utils_1.PidmanStringUtils.getId();
         }
@@ -36,13 +42,30 @@ var PidmanGroup = /** @class */ (function () {
     PidmanGroup.prototype.addProcess = function (options) {
         var process = new _1.PidmanProcess(options);
         process.setGroup(this);
-        this.options.processes.push(process);
+        process.subscribe(this);
+        this.processes.push(process);
     };
     /**
      * @returns GroupOptions
      */
     PidmanGroup.prototype.getOptions = function () {
         return this.options;
+    };
+    /**
+     * @returns Array<PidmanProcess>
+     */
+    PidmanGroup.prototype.getProcesses = function () {
+        return this.processes;
+    };
+    PidmanGroup.prototype.startMonitoring = function () {
+        var _a, _b, _c, _d;
+        rxjs_1.combineLatest.apply(void 0, this.dataSubjects).subscribe((_a = this.options.monitor) === null || _a === void 0 ? void 0 : _a.onData);
+        rxjs_1.combineLatest.apply(void 0, this.errorSubjects).subscribe((_b = this.options.monitor) === null || _b === void 0 ? void 0 : _b.onError);
+        rxjs_1.combineLatest.apply(void 0, this.exitSubjects).subscribe((_c = this.options.monitor) === null || _c === void 0 ? void 0 : _c.onExit);
+        rxjs_1.combineLatest.apply(void 0, this.closeSubjects).subscribe((_d = this.options.monitor) === null || _d === void 0 ? void 0 : _d.onClose);
+    };
+    PidmanGroup.prototype.run = function () {
+        this.processes.forEach(function (process) { return process.run(); });
     };
     PidmanGroup.prototype.stop = function () {
         return true;

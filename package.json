@@ -12,8 +12,6 @@
 		"@typescript-eslint/eslint-plugin": "^2.30.0",
 		"@typescript-eslint/parser": "^2.30.0",
 		"eslint": "^6.8.0",
-		"eslint-config-prettier": "^6.11.0",
-		"prettier": "^2.0.5",
 		"rimraf": "^3.0.2",
 		"tslint": "^6.1.2",
 		"tslint-eslint-rules": "^5.4.0",
@@ -32,9 +30,8 @@
 		"build": "yarn run clean && yarn run lint && tsc --build tsconfig.json && yarn run docs",
 		"docs": "typedoc",
 		"clean": "rimraf dist/",
-		"lint": "yarn run lint.eslint && yarn run lint.prettier && yarn run lint.types",
+		"lint": "yarn run lint.eslint && yarn run lint.types",
 		"lint.eslint": "eslint src/**/* --ext ts",
-		"lint.prettier": "prettier -c src/**/*.ts",
 		"lint.types": "tsc --noEmit"
 	},
 	"dependencies": {

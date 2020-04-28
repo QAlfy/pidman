@@ -1,10 +1,10 @@
 import { GroupOptions, PidmanGroup } from './';
 import { PidmanConnector } from '../connector';
 export interface PidmanMonitor {
-    onData(data: {}[]): void;
-    onError(error: {}[]): void;
-    onExit(code: number, signal: string): void;
-    onClose(code: number, signal: string): void;
+    onData(data: {}): void;
+    onError(error: {}): void;
+    onExit(exit: {}): void;
+    onClose(close: {}): void;
 }
 export interface PidmanOptions {
     id?: string;
@@ -12,8 +12,8 @@ export interface PidmanOptions {
     monitor?: PidmanMonitor;
 }
 export declare class Pidman {
-    private options;
-    protected groups: PidmanGroup[];
+    options: PidmanOptions;
+    protected groups: Array<PidmanGroup>;
     /**
      * @param  {PidmanOptions} privateoptions
      */
@@ -30,5 +30,6 @@ export declare class Pidman {
     /**
      * @returns PidmanGroup
      */
-    getProcessGroups(): PidmanGroup[];
+    getProcessGroups(): Array<PidmanGroup>;
+    run(): void;
 }

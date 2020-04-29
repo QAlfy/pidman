@@ -21,7 +21,7 @@ export interface ProcessOptions {
 }
 export declare class PidmanProcess {
     private options;
-    protected ps: ChildProcess | undefined;
+    protected child: ChildProcess | undefined;
     protected group: PidmanGroup | undefined;
     /**
      * @param  {ProcessOptions} privateoptions

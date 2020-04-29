@@ -25,7 +25,7 @@ export interface ProcessOptions {
 
 @Serializable()
 export class PidmanProcess {
-	protected ps: ChildProcess | undefined;
+	protected child: ChildProcess | undefined;
 	protected group: PidmanGroup | undefined;
 
 	/**
@@ -79,14 +79,14 @@ export class PidmanProcess {
 	 * @returns ChildProcess
 	 */
 	getChildProcess(): ChildProcess | undefined {
-		return this.ps;
+		return this.child;
 	}
 
 	/**
 	 * @returns void
 	 */
 	run(): void {
-		this.ps = spawn(this.options.command, this.options.arguments || [], {
+		this.child = spawn(this.options.command, this.options.arguments || [], {
 			uid:
 				(!this.options.user && undefined) ||
 				PidmanSysUtils.getUid(this.options.user || ''),
@@ -96,25 +96,25 @@ export class PidmanProcess {
 			shell: this.options.shell || false,
 		});
 
-		this.ps.stdout?.on('data', (data) =>
+		this.child.stdout?.on('data', (data) =>
 			this.group?.dataSubject.next({
 				data, process: this, time: Date.now(),
 				event: EventType.onData
 			}) || null
 		);
-		this.ps.on('error', (error) =>
+		this.child.on('error', (error) =>
 			this.group?.errorSubject.next({
 				error, process: this, time: Date.now(),
 				event: EventType.onError
 			})
 		);
-		this.ps.on('close', (code: number, signal: string) =>
+		this.child.on('close', (code: number, signal: string) =>
 			this.group?.closeSubject.next({
 				code, signal, process: this, time: Date.now(),
 				event: EventType.onClose
 			})
 		);
-		this.ps.on('exit', (code: number, signal: string) =>
+		this.child.on('exit', (code: number, signal: string) =>
 			this.group?.exitSubject.next({
 				code, signal, process: this, time: Date.now(),
 				event: EventType.onExit
@@ -126,6 +126,6 @@ export class PidmanProcess {
 	 * @returns boolean
 	 */
 	stop(): boolean {
-		return this.ps && this.ps.kill(this.options.killSignal) || false;
+		return this.child && this.child.kill(this.options.killSignal) || false;
 	}
 }

@@ -68,7 +68,7 @@ var PidmanProcess = /** @class */ (function () {
      * @returns ChildProcess
      */
     PidmanProcess.prototype.getChildProcess = function () {
-        return this.ps;
+        return this.child;
     };
     /**
      * @returns void
@@ -76,7 +76,7 @@ var PidmanProcess = /** @class */ (function () {
     PidmanProcess.prototype.run = function () {
         var _this = this;
         var _a;
-        this.ps = child_process_1.spawn(this.options.command, this.options.arguments || [], {
+        this.child = child_process_1.spawn(this.options.command, this.options.arguments || [], {
             uid: (!this.options.user && undefined) ||
                 utils_1.PidmanSysUtils.getUid(this.options.user || ''),
             cwd: this.options.path,
@@ -84,22 +84,22 @@ var PidmanProcess = /** @class */ (function () {
             gid: utils_1.PidmanSysUtils.getGid(this.options.group || ''),
             shell: this.options.shell || false,
         });
-        (_a = this.ps.stdout) === null || _a === void 0 ? void 0 : _a.on('data', function (data) {
+        (_a = this.child.stdout) === null || _a === void 0 ? void 0 : _a.on('data', function (data) {
             var _a;
             return ((_a = _this.group) === null || _a === void 0 ? void 0 : _a.dataSubject.next({
                 data: data, process: _this, time: Date.now(),
                 event: EventType.onData
             })) || null;
         });
-        this.ps.on('error', function (error) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.errorSubject.next({
+        this.child.on('error', function (error) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.errorSubject.next({
             error: error, process: _this, time: Date.now(),
             event: EventType.onError
         }); });
-        this.ps.on('close', function (code, signal) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.closeSubject.next({
+        this.child.on('close', function (code, signal) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.closeSubject.next({
             code: code, signal: signal, process: _this, time: Date.now(),
             event: EventType.onClose
         }); });
-        this.ps.on('exit', function (code, signal) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.exitSubject.next({
+        this.child.on('exit', function (code, signal) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.exitSubject.next({
             code: code, signal: signal, process: _this, time: Date.now(),
             event: EventType.onExit
         }); });
@@ -108,7 +108,7 @@ var PidmanProcess = /** @class */ (function () {
      * @returns boolean
      */
     PidmanProcess.prototype.stop = function () {
-        return this.ps && this.ps.kill(this.options.killSignal) || false;
+        return this.child && this.child.kill(this.options.killSignal) || false;
     };
     PidmanProcess = __decorate([
         typescript_json_serializer_1.Serializable(),

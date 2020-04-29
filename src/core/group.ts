@@ -27,10 +27,7 @@ export class PidmanGroup {
 	 * @param  {GroupOptions} privateoptions
 	 * @param  {PidmanMonitor} publicmonitor
 	 */
-	constructor(
-		@JsonProperty() private options: GroupOptions,
-		public monitor: PidmanMonitor
-	) {
+	constructor(@JsonProperty() private options: GroupOptions) {
 		if (!this.options.id) {
 			this.options.id = PidmanStringUtils.getId();
 		}
@@ -39,18 +36,6 @@ export class PidmanGroup {
 		this.errorSubject = new BehaviorSubject({});
 		this.exitSubject = new BehaviorSubject({});
 		this.closeSubject = new BehaviorSubject({});
-
-		this.setMonitor(monitor);
-	}
-
-	/**
-	 * @param  {PidmanMonitor} monitor
-	 * @returns void
-	 */
-	setMonitor(monitor: PidmanMonitor): void {
-		if (!this.monitor) {
-			this.options.monitor = monitor;
-		}
 	}
 
 	/**

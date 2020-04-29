@@ -15,7 +15,6 @@ export interface PidmanMonitor {
 export interface PidmanOptions {
 	id?: string;
 	connector?: PidmanConnector;
-	monitor: PidmanMonitor;
 }
 
 @Serializable()
@@ -51,9 +50,8 @@ export class Pidman {
 
 		if (group instanceof PidmanGroup) {
 			newGroup = group;
-			newGroup.setMonitor(this.options.monitor);
 		} else {
-			newGroup = new PidmanGroup(group, this.options.monitor);
+			newGroup = new PidmanGroup(group);
 			group.processes.forEach((process) => newGroup.addProcess(process));
 		}
 

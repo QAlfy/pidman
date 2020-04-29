@@ -10,7 +10,6 @@ export interface PidmanMonitor {
 export interface PidmanOptions {
     id?: string;
     connector?: PidmanConnector;
-    monitor: PidmanMonitor;
 }
 export declare class Pidman {
     options: PidmanOptions;
@@ -18,7 +17,7 @@ export declare class Pidman {
     /**
      * @param  {PidmanOptions} privateoptions
      */
-    constructor(options: PidmanOptions);
+    constructor(options?: PidmanOptions);
     /**
      * @returns PidmanOptions
      */

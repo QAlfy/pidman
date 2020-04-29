@@ -21,9 +21,8 @@ var PidmanGroup = /** @class */ (function () {
      * @param  {GroupOptions} privateoptions
      * @param  {PidmanMonitor} publicmonitor
      */
-    function PidmanGroup(options, monitor) {
+    function PidmanGroup(options) {
         this.options = options;
-        this.monitor = monitor;
         this.processes = [];
         if (!this.options.id) {
             this.options.id = utils_1.PidmanStringUtils.getId();
@@ -32,17 +31,7 @@ var PidmanGroup = /** @class */ (function () {
         this.errorSubject = new rxjs_1.BehaviorSubject({});
         this.exitSubject = new rxjs_1.BehaviorSubject({});
         this.closeSubject = new rxjs_1.BehaviorSubject({});
-        this.setMonitor(monitor);
     }
-    /**
-     * @param  {PidmanMonitor} monitor
-     * @returns void
-     */
-    PidmanGroup.prototype.setMonitor = function (monitor) {
-        if (!this.monitor) {
-            this.options.monitor = monitor;
-        }
-    };
     /**
      * @param  {ProcessOptions} process
      */
@@ -68,12 +57,10 @@ var PidmanGroup = /** @class */ (function () {
      */
     PidmanGroup.prototype.startMonitoring = function () {
         var _a, _b, _c, _d, _e, _f, _g, _h;
-        if (!this.options.waitForCompletion) {
-            (_a = this.dataSubject) === null || _a === void 0 ? void 0 : _a.subscribe((_b = this.options.monitor) === null || _b === void 0 ? void 0 : _b.onData);
-            (_c = this.errorSubject) === null || _c === void 0 ? void 0 : _c.subscribe((_d = this.options.monitor) === null || _d === void 0 ? void 0 : _d.onError);
-            (_e = this.closeSubject) === null || _e === void 0 ? void 0 : _e.subscribe((_f = this.options.monitor) === null || _f === void 0 ? void 0 : _f.onClose);
-            (_g = this.exitSubject) === null || _g === void 0 ? void 0 : _g.subscribe((_h = this.options.monitor) === null || _h === void 0 ? void 0 : _h.onExit);
-        }
+        (_a = this.dataSubject) === null || _a === void 0 ? void 0 : _a.subscribe((_b = this.options.monitor) === null || _b === void 0 ? void 0 : _b.onData);
+        (_c = this.errorSubject) === null || _c === void 0 ? void 0 : _c.subscribe((_d = this.options.monitor) === null || _d === void 0 ? void 0 : _d.onError);
+        (_e = this.closeSubject) === null || _e === void 0 ? void 0 : _e.subscribe((_f = this.options.monitor) === null || _f === void 0 ? void 0 : _f.onClose);
+        (_g = this.exitSubject) === null || _g === void 0 ? void 0 : _g.subscribe((_h = this.options.monitor) === null || _h === void 0 ? void 0 : _h.onExit);
     };
     PidmanGroup.prototype.run = function () {
         this.processes.forEach(function (process) { return process.run(); });
@@ -91,7 +78,7 @@ var PidmanGroup = /** @class */ (function () {
     PidmanGroup = __decorate([
         typescript_json_serializer_1.Serializable(),
         __param(0, typescript_json_serializer_1.JsonProperty()),
-        __metadata("design:paramtypes", [Object, Object])
+        __metadata("design:paramtypes", [Object])
     ], PidmanGroup);
     return PidmanGroup;
 }());

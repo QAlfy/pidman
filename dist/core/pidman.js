@@ -24,12 +24,14 @@ var Pidman = /** @class */ (function () {
      * @param  {PidmanOptions} privateoptions
      */
     function Pidman(options) {
+        if (options === void 0) { options = {}; }
+        var _a, _b;
         this.options = options;
         this.groups = [];
-        if (!this.options.id) {
+        if (!((_a = this.options) === null || _a === void 0 ? void 0 : _a.id)) {
             this.options.id = utils_1.PidmanStringUtils.getId();
         }
-        if (!this.options.connector) {
+        if (!((_b = this.options) === null || _b === void 0 ? void 0 : _b.connector)) {
             this.options.connector = new memory_1.default();
         }
     }
@@ -47,10 +49,9 @@ var Pidman = /** @class */ (function () {
         var newGroup;
         if (group instanceof _1.PidmanGroup) {
             newGroup = group;
-            newGroup.setMonitor(this.options.monitor);
         }
         else {
-            newGroup = new _1.PidmanGroup(group, this.options.monitor);
+            newGroup = new _1.PidmanGroup(group);
             group.processes.forEach(function (process) { return newGroup.addProcess(process); });
         }
         newGroup.startMonitoring();

@@ -7,12 +7,10 @@ export interface GroupOptions {
     group?: string;
     envVars?: {};
     processes: Array<ProcessOptions>;
-    waitForCompletion?: boolean;
     monitor: PidmanMonitor;
 }
 export declare class PidmanGroup {
     private options;
-    monitor: PidmanMonitor;
     dataSubject: BehaviorSubject<{}>;
     errorSubject: BehaviorSubject<{}>;
     exitSubject: BehaviorSubject<{}>;
@@ -22,12 +20,7 @@ export declare class PidmanGroup {
      * @param  {GroupOptions} privateoptions
      * @param  {PidmanMonitor} publicmonitor
      */
-    constructor(options: GroupOptions, monitor: PidmanMonitor);
-    /**
-     * @param  {PidmanMonitor} monitor
-     * @returns void
-     */
-    setMonitor(monitor: PidmanMonitor): void;
+    constructor(options: GroupOptions);
     /**
      * @param  {ProcessOptions} process
      */

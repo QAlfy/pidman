@@ -27,7 +27,7 @@
 		"node": ">=9.3.0"
 	},
 	"scripts": {
-		"build": "yarn run clean && yarn run lint && tsc --build tsconfig.json && yarn run docs",
+		"build": "yarn run clean && yarn run lint && tsc --build tsconfig.json",
 		"docs": "typedoc",
 		"clean": "rimraf dist/",
 		"lint": "yarn run lint.eslint && yarn run lint.types",

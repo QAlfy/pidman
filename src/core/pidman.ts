@@ -15,7 +15,7 @@ export interface PidmanMonitor {
 export interface PidmanOptions {
 	id?: string;
 	connector?: PidmanConnector;
-	monitor?: PidmanMonitor;
+	monitor: PidmanMonitor;
 }
 
 @Serializable()

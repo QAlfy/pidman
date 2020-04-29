@@ -8,26 +8,26 @@ export interface GroupOptions {
     envVars?: {};
     processes: Array<ProcessOptions>;
     waitForCompletion?: boolean;
-    monitor?: PidmanMonitor;
+    monitor: PidmanMonitor;
 }
 export declare class PidmanGroup {
     private options;
-    monitor?: PidmanMonitor | undefined;
-    dataSubjects: Array<BehaviorSubject<{}>>;
-    errorSubjects: Array<BehaviorSubject<{}>>;
-    exitSubjects: Array<BehaviorSubject<{}>>;
-    closeSubjects: Array<BehaviorSubject<{}>>;
+    monitor: PidmanMonitor;
+    dataSubject: BehaviorSubject<{}>;
+    errorSubject: BehaviorSubject<{}>;
+    exitSubject: BehaviorSubject<{}>;
+    closeSubject: BehaviorSubject<{}>;
     protected processes: Array<PidmanProcess>;
     /**
      * @param  {GroupOptions} privateoptions
      * @param  {PidmanMonitor} publicmonitor
      */
-    constructor(options: GroupOptions, monitor?: PidmanMonitor | undefined);
+    constructor(options: GroupOptions, monitor: PidmanMonitor);
     /**
-     * @param  {PidmanMonitor|undefined} monitor
+     * @param  {PidmanMonitor} monitor
      * @returns void
      */
-    setMonitor(monitor: PidmanMonitor | undefined): void;
+    setMonitor(monitor: PidmanMonitor): void;
     /**
      * @param  {ProcessOptions} process
      */

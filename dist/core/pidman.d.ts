@@ -10,7 +10,7 @@ export interface PidmanMonitor {
 export interface PidmanOptions {
     id?: string;
     connector?: PidmanConnector;
-    monitor?: PidmanMonitor;
+    monitor: PidmanMonitor;
 }
 export declare class Pidman {
     options: PidmanOptions;

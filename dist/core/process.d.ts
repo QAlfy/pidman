@@ -1,5 +1,4 @@
 /// <reference types="node" />
-import { BehaviorSubject } from 'rxjs';
 import { ChildProcess } from 'child_process';
 import { PidmanGroup } from './';
 export declare enum EventType {
@@ -22,12 +21,8 @@ export interface ProcessOptions {
 }
 export declare class PidmanProcess {
     private options;
-    protected ps: ChildProcess;
-    protected group: PidmanGroup;
-    protected dataSubject: BehaviorSubject<{}>;
-    protected errorSubject: BehaviorSubject<{}>;
-    protected exitSubject: BehaviorSubject<{}>;
-    protected closeSubject: BehaviorSubject<{}>;
+    protected ps: ChildProcess | undefined;
+    protected group: PidmanGroup | undefined;
     /**
      * @param  {ProcessOptions} privateoptions
      */
@@ -40,7 +35,7 @@ export declare class PidmanProcess {
     /**
      * @returns PidmanGroup
      */
-    getGroup(): PidmanGroup;
+    getGroup(): PidmanGroup | undefined;
     /**
      * @returns ProcessOptions
      */
@@ -48,15 +43,11 @@ export declare class PidmanProcess {
     /**
      * @returns ChildProcess
      */
-    getChildProcess(): ChildProcess;
+    getChildProcess(): ChildProcess | undefined;
     /**
      * @returns void
      */
     run(): void;
-    /**
-     * @param  {PidmanGroup} group
-     */
-    subscribe(group: PidmanGroup): void;
     /**
      * @returns boolean
      */

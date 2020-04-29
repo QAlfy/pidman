@@ -1,4 +1,3 @@
-import { BehaviorSubject } from 'rxjs';
 import { ChildProcess, spawn } from 'child_process';
 import { JsonProperty, Serializable } from 'typescript-json-serializer';
 import { PidmanGroup } from './';
@@ -26,12 +25,8 @@ export interface ProcessOptions {
 
 @Serializable()
 export class PidmanProcess {
-	protected ps!: ChildProcess;
-	protected group!: PidmanGroup;
-	protected dataSubject: BehaviorSubject<{}>;
-	protected errorSubject: BehaviorSubject<{}>;
-	protected exitSubject: BehaviorSubject<{}>;
-	protected closeSubject: BehaviorSubject<{}>;
+	protected ps: ChildProcess | undefined;
+	protected group: PidmanGroup | undefined;
 
 	/**
 	 * @param  {ProcessOptions} privateoptions
@@ -44,11 +39,6 @@ export class PidmanProcess {
 		if (!this.options.killSignal) {
 			this.options.killSignal = 'SIGKILL';
 		}
-
-		this.dataSubject = new BehaviorSubject({});
-		this.errorSubject = new BehaviorSubject({});
-		this.exitSubject = new BehaviorSubject({});
-		this.closeSubject = new BehaviorSubject({});
 	}
 
 	/**
@@ -74,7 +64,7 @@ export class PidmanProcess {
 	/**
 	 * @returns PidmanGroup
 	 */
-	getGroup(): PidmanGroup {
+	getGroup(): PidmanGroup | undefined {
 		return this.group;
 	}
 
@@ -88,7 +78,7 @@ export class PidmanProcess {
 	/**
 	 * @returns ChildProcess
 	 */
-	getChildProcess(): ChildProcess {
+	getChildProcess(): ChildProcess | undefined {
 		return this.ps;
 	}
 
@@ -107,25 +97,25 @@ export class PidmanProcess {
 		});
 
 		this.ps.stdout?.on('data', (data) =>
-			this.dataSubject.next({
+			this.group?.dataSubject.next({
 				data, process: this, time: Date.now(),
 				event: EventType.onData
-			})
+			}) || null
 		);
 		this.ps.on('error', (error) =>
-			this.errorSubject.next({
+			this.group?.errorSubject.next({
 				error, process: this, time: Date.now(),
 				event: EventType.onError
 			})
 		);
 		this.ps.on('close', (code: number, signal: string) =>
-			this.closeSubject.next({
+			this.group?.closeSubject.next({
 				code, signal, process: this, time: Date.now(),
 				event: EventType.onClose
 			})
 		);
 		this.ps.on('exit', (code: number, signal: string) =>
-			this.exitSubject.next({
+			this.group?.exitSubject.next({
 				code, signal, process: this, time: Date.now(),
 				event: EventType.onExit
 			})
@@ -133,19 +123,9 @@ export class PidmanProcess {
 	}
 
 	/**
-	 * @param  {PidmanGroup} group
-	 */
-	subscribe(group: PidmanGroup): void {
-		group.dataSubjects.push(this.dataSubject);
-		group.errorSubjects.push(this.errorSubject);
-		group.exitSubjects.push(this.exitSubject);
-		group.closeSubjects.push(this.closeSubject);
-	}
-
-	/**
 	 * @returns boolean
 	 */
 	stop(): boolean {
-		return this.ps.kill(this.options.killSignal);
+		return this.ps && this.ps.kill(this.options.killSignal) || false;
 	}
 }

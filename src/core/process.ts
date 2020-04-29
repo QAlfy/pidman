@@ -100,7 +100,7 @@ export class PidmanProcess {
 			this.group?.dataSubject.next({
 				data, process: this, time: Date.now(),
 				event: EventType.onData
-			}) || null
+			})
 		);
 		this.child.on('error', (error) =>
 			this.group?.errorSubject.next({
@@ -118,6 +118,12 @@ export class PidmanProcess {
 			this.group?.exitSubject.next({
 				code, signal, process: this, time: Date.now(),
 				event: EventType.onExit
+			})
+		);
+		this.child.stderr?.on('data', (error) =>
+			this.group?.errorSubject.next({
+				error, process: this, time: Date.now(),
+				event: EventType.onError
 			})
 		);
 	}

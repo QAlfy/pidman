@@ -75,7 +75,7 @@ var PidmanProcess = /** @class */ (function () {
      */
     PidmanProcess.prototype.run = function () {
         var _this = this;
-        var _a;
+        var _a, _b;
         this.child = child_process_1.spawn(this.options.command, this.options.arguments || [], {
             uid: (!this.options.user && undefined) ||
                 utils_1.PidmanSysUtils.getUid(this.options.user || ''),
@@ -84,13 +84,10 @@ var PidmanProcess = /** @class */ (function () {
             gid: utils_1.PidmanSysUtils.getGid(this.options.group || ''),
             shell: this.options.shell || false,
         });
-        (_a = this.child.stdout) === null || _a === void 0 ? void 0 : _a.on('data', function (data) {
-            var _a;
-            return ((_a = _this.group) === null || _a === void 0 ? void 0 : _a.dataSubject.next({
-                data: data, process: _this, time: Date.now(),
-                event: EventType.onData
-            })) || null;
-        });
+        (_a = this.child.stdout) === null || _a === void 0 ? void 0 : _a.on('data', function (data) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.dataSubject.next({
+            data: data, process: _this, time: Date.now(),
+            event: EventType.onData
+        }); });
         this.child.on('error', function (error) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.errorSubject.next({
             error: error, process: _this, time: Date.now(),
             event: EventType.onError
@@ -102,6 +99,10 @@ var PidmanProcess = /** @class */ (function () {
         this.child.on('exit', function (code, signal) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.exitSubject.next({
             code: code, signal: signal, process: _this, time: Date.now(),
             event: EventType.onExit
+        }); });
+        (_b = this.child.stderr) === null || _b === void 0 ? void 0 : _b.on('data', function (error) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.errorSubject.next({
+            error: error, process: _this, time: Date.now(),
+            event: EventType.onError
         }); });
     };
     /**

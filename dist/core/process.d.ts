@@ -42,10 +42,23 @@ export declare class PidmanProcess {
      */
     getGroup(): PidmanGroup;
     /**
+     * @returns ProcessOptions
+     */
+    getOptions(): ProcessOptions;
+    /**
      * @returns ChildProcess
      */
     getChildProcess(): ChildProcess;
+    /**
+     * @returns void
+     */
     run(): void;
+    /**
+     * @param  {PidmanGroup} group
+     */
     subscribe(group: PidmanGroup): void;
-    protected stop(): boolean;
+    /**
+     * @returns boolean
+     */
+    stop(): boolean;
 }

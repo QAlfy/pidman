@@ -62,6 +62,9 @@ var Pidman = /** @class */ (function () {
     Pidman.prototype.getProcessGroups = function () {
         return this.groups;
     };
+    /**
+     * @returns void
+     */
     Pidman.prototype.run = function () {
         this.groups.forEach(function (group) { return group.run(); });
     };

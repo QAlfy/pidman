@@ -23,6 +23,10 @@ export declare class PidmanGroup {
      * @param  {PidmanMonitor} publicmonitor
      */
     constructor(options: GroupOptions, monitor?: PidmanMonitor | undefined);
+    /**
+     * @param  {PidmanMonitor|undefined} monitor
+     * @returns void
+     */
     setMonitor(monitor: PidmanMonitor | undefined): void;
     /**
      * @param  {ProcessOptions} process
@@ -36,7 +40,13 @@ export declare class PidmanGroup {
      * @returns Array<PidmanProcess>
      */
     getProcesses(): Array<PidmanProcess>;
+    /**
+     * @returns void
+     */
     startMonitoring(): void;
     run(): void;
+    /**
+     * @returns boolean
+     */
     stop(): boolean;
 }

@@ -64,11 +64,20 @@ var PidmanProcess = /** @class */ (function () {
         return this.group;
     };
     /**
+     * @returns ProcessOptions
+     */
+    PidmanProcess.prototype.getOptions = function () {
+        return this.options;
+    };
+    /**
      * @returns ChildProcess
      */
     PidmanProcess.prototype.getChildProcess = function () {
         return this.ps;
     };
+    /**
+     * @returns void
+     */
     PidmanProcess.prototype.run = function () {
         var _this = this;
         var _a;
@@ -105,12 +114,18 @@ var PidmanProcess = /** @class */ (function () {
             });
         });
     };
+    /**
+     * @param  {PidmanGroup} group
+     */
     PidmanProcess.prototype.subscribe = function (group) {
         group.dataSubjects.push(this.dataSubject);
         group.errorSubjects.push(this.errorSubject);
         group.exitSubjects.push(this.exitSubject);
         group.closeSubjects.push(this.closeSubject);
     };
+    /**
+     * @returns boolean
+     */
     PidmanProcess.prototype.stop = function () {
         return this.ps.kill(this.options.killSignal);
     };

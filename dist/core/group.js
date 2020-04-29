@@ -41,6 +41,10 @@ var PidmanGroup = /** @class */ (function () {
         }
         this.setMonitor(monitor);
     }
+    /**
+     * @param  {PidmanMonitor|undefined} monitor
+     * @returns void
+     */
     PidmanGroup.prototype.setMonitor = function (monitor) {
         if (!this.options.monitor) {
             this.options.monitor = monitor;
@@ -67,6 +71,9 @@ var PidmanGroup = /** @class */ (function () {
     PidmanGroup.prototype.getProcesses = function () {
         return this.processes;
     };
+    /**
+     * @returns void
+     */
     PidmanGroup.prototype.startMonitoring = function () {
         var _a, _b, _c, _d, _e;
         if (!this.options.waitForCompletion) {
@@ -82,8 +89,15 @@ var PidmanGroup = /** @class */ (function () {
     PidmanGroup.prototype.run = function () {
         this.processes.forEach(function (process) { return process.run(); });
     };
+    /**
+     * @returns boolean
+     */
     PidmanGroup.prototype.stop = function () {
-        return true;
+        var ret = true;
+        this.processes.forEach(function (process) {
+            ret = ret && process.stop();
+        });
+        return ret;
     };
     PidmanGroup = __decorate([
         typescript_json_serializer_1.Serializable(),

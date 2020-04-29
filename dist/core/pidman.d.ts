@@ -32,5 +32,8 @@ export declare class Pidman {
      * @returns PidmanGroup
      */
     getProcessGroups(): Array<PidmanGroup>;
+    /**
+     * @returns void
+     */
     run(): void;
 }

@@ -79,12 +79,22 @@ export class PidmanProcess {
 	}
 
 	/**
+	 * @returns ProcessOptions
+	 */
+	getOptions(): ProcessOptions {
+		return this.options;
+	}
+
+	/**
 	 * @returns ChildProcess
 	 */
 	getChildProcess(): ChildProcess {
 		return this.ps;
 	}
 
+	/**
+	 * @returns void
+	 */
 	run(): void {
 		this.ps = spawn(this.options.command, this.options.arguments || [], {
 			uid:
@@ -122,6 +132,9 @@ export class PidmanProcess {
 		);
 	}
 
+	/**
+	 * @param  {PidmanGroup} group
+	 */
 	subscribe(group: PidmanGroup): void {
 		group.dataSubjects.push(this.dataSubject);
 		group.errorSubjects.push(this.errorSubject);
@@ -129,7 +142,10 @@ export class PidmanProcess {
 		group.closeSubjects.push(this.closeSubject);
 	}
 
-	protected stop(): boolean {
+	/**
+	 * @returns boolean
+	 */
+	stop(): boolean {
 		return this.ps.kill(this.options.killSignal);
 	}
 }

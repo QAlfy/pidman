@@ -37,6 +37,10 @@ export class PidmanGroup {
 		this.setMonitor(monitor);
 	}
 
+	/**
+	 * @param  {PidmanMonitor|undefined} monitor
+	 * @returns void
+	 */
 	setMonitor(monitor: PidmanMonitor | undefined): void {
 		if (!this.options.monitor) {
 			this.options.monitor = monitor;
@@ -68,6 +72,9 @@ export class PidmanGroup {
 		return this.processes;
 	}
 
+	/**
+	 * @returns void
+	 */
 	startMonitoring(): void {
 		if (!this.options.waitForCompletion) {
 			combineLatest(...this.dataSubjects).subscribe(
@@ -101,7 +108,16 @@ export class PidmanGroup {
 		this.processes.forEach(process => process.run());
 	}
 
+	/**
+	 * @returns boolean
+	 */
 	stop(): boolean {
-		return true;
+		let ret = true;
+
+		this.processes.forEach(process => {
+			ret = ret && process.stop();
+		});
+
+		return ret;
 	}
 }

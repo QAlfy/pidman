@@ -69,6 +69,9 @@ export class Pidman {
 		return this.groups;
 	}
 
+	/**
+	 * @returns void
+	 */
 	run(): void {
 		this.groups.forEach(group => group.run());
 	}

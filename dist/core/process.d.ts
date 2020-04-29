@@ -2,6 +2,13 @@
 import { BehaviorSubject } from 'rxjs';
 import { ChildProcess } from 'child_process';
 import { PidmanGroup } from './';
+export declare enum EventType {
+    onData = "data",
+    onError = "error",
+    onExit = "exit",
+    onClose = "close",
+    onComplete = "complete"
+}
 export interface ProcessOptions {
     id?: string;
     user?: string;

@@ -16,6 +16,14 @@ var rxjs_1 = require("rxjs");
 var child_process_1 = require("child_process");
 var typescript_json_serializer_1 = require("typescript-json-serializer");
 var utils_1 = require("../utils");
+var EventType;
+(function (EventType) {
+    EventType["onData"] = "data";
+    EventType["onError"] = "error";
+    EventType["onExit"] = "exit";
+    EventType["onClose"] = "close";
+    EventType["onComplete"] = "complete";
+})(EventType = exports.EventType || (exports.EventType = {}));
 var PidmanProcess = /** @class */ (function () {
     /**
      * @param  {ProcessOptions} privateoptions
@@ -73,16 +81,28 @@ var PidmanProcess = /** @class */ (function () {
             shell: this.options.shell || false,
         });
         (_a = this.ps.stdout) === null || _a === void 0 ? void 0 : _a.on('data', function (data) {
-            return _this.dataSubject.next({ data: data, process: _this });
+            return _this.dataSubject.next({
+                data: data, process: _this, time: Date.now(),
+                event: EventType.onData
+            });
         });
         this.ps.on('error', function (error) {
-            return _this.errorSubject.next({ error: error, process: _this });
+            return _this.errorSubject.next({
+                error: error, process: _this, time: Date.now(),
+                event: EventType.onError
+            });
         });
         this.ps.on('close', function (code, signal) {
-            return _this.closeSubject.next({ code: code, signal: signal, process: _this });
+            return _this.closeSubject.next({
+                code: code, signal: signal, process: _this, time: Date.now(),
+                event: EventType.onClose
+            });
         });
         this.ps.on('exit', function (code, signal) {
-            return _this.exitSubject.next({ code: code, signal: signal, process: _this });
+            return _this.exitSubject.next({
+                code: code, signal: signal, process: _this, time: Date.now(),
+                event: EventType.onExit
+            });
         });
     };
     PidmanProcess.prototype.subscribe = function (group) {

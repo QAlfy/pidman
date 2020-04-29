@@ -4,6 +4,14 @@ import { JsonProperty, Serializable } from 'typescript-json-serializer';
 import { PidmanGroup } from './';
 import { PidmanStringUtils, PidmanSysUtils } from '../utils';
 
+export enum EventType {
+	onData = 'data',
+	onError = 'error',
+	onExit = 'exit',
+	onClose = 'close',
+	onComplete = 'complete'
+}
+
 export interface ProcessOptions {
 	id?: string;
 	user?: string;
@@ -90,22 +98,26 @@ export class PidmanProcess {
 
 		this.ps.stdout?.on('data', (data) =>
 			this.dataSubject.next({
-				data, process: this, time: Date.now()
+				data, process: this, time: Date.now(),
+				event: EventType.onData
 			})
 		);
 		this.ps.on('error', (error) =>
 			this.errorSubject.next({
-				error, process: this, time: Date.now()
+				error, process: this, time: Date.now(),
+				event: EventType.onError
 			})
 		);
 		this.ps.on('close', (code: number, signal: string) =>
 			this.closeSubject.next({
-				code, signal, process: this, time: Date.now()
+				code, signal, process: this, time: Date.now(),
+				event: EventType.onClose
 			})
 		);
 		this.ps.on('exit', (code: number, signal: string) =>
 			this.exitSubject.next({
-				code, signal, process: this, time: Date.now()
+				code, signal, process: this, time: Date.now(),
+				event: EventType.onExit
 			})
 		);
 	}

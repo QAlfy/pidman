@@ -24,12 +24,12 @@ export class Pidman {
 	/**
 	 * @param  {PidmanOptions} privateoptions
 	 */
-	constructor(@JsonProperty() public options: PidmanOptions) {
-		if (!this.options.id) {
+	constructor(@JsonProperty() public options: PidmanOptions = {}) {
+		if (!this.options?.id) {
 			this.options.id = PidmanStringUtils.getId();
 		}
 
-		if (!this.options.connector) {
+		if (!this.options?.connector) {
 			this.options.connector = new MemoryConnector();
 		}
 	}

@@ -1,51 +1,32 @@
 const Pidman = require("../dist").Pidman;
 
-const pm = new Pidman({
-  monitor: {
-    onData: (data) => {
-      console.log(data);
-    },
-    onError: (data) => {
-      console.log(data);
-    },
-    onExit: (data) => {
-      console.log(data);
-    },
-    onClose: (data) => {
-      console.log(data);
-    },
-  },
-});
+const pm = new Pidman();
 
 pm.addProcessGroup({
   user: "nico",
-  waitForCompletion: false,
   processes: [
     {
-      command: "ls",
-      arguments: ["-lha", "/usr/share"],
+      command: "websockify",
+      arguments: ["-D 127.0.0.1:8080 0.0.0.0:80"],
     },
-    {
-      command: "echo",
-      arguments: ["'foo'"],
-    },
+    // {
+    //   command: "echo",
+    //   arguments: ["'foo'"],
+    // },
   ],
   monitor: {
-    onData: (data) => {
-      console.log(data);
+    onData: ({ data, process, time, event }) => {
+      console.log(data && data.toString());
     },
-    onError: (data) => {
-      console.log(data);
+    onError: ({ error, process, time, event }) => {
+      console.log(error);
     },
-    onExit: (data) => {
-      console.log(data);
+    onExit: ({ code, signal, process, time, event }) => {
+      console.log([code, signal]);
+      console.log(process);
     },
-    onClose: (data) => {
-      console.log(data);
-    },
-    onComplete: (data) => {
-      console.log(data);
-    },
+    onClose: ({ code, signal, process, time, event }) => {},
+    onComplete: (data) => {},
   },
 });
 

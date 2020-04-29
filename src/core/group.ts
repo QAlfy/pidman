@@ -1,5 +1,4 @@
-import { BehaviorSubject, forkJoin } from 'rxjs';
-import { concatAll } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 import { JsonProperty, Serializable } from 'typescript-json-serializer';
 import { PidmanMonitor } from './pidman';
 import { PidmanProcess, ProcessOptions } from './';
@@ -11,7 +10,6 @@ export interface GroupOptions {
 	group?: string;
 	envVars?: {};
 	processes: Array<ProcessOptions>;
-	waitForCompletion?: boolean;
 	monitor: PidmanMonitor;
 }
 
@@ -66,12 +64,10 @@ export class PidmanGroup {
 	 * @returns void
 	 */
 	startMonitoring(): void {
-		if (!this.options.waitForCompletion) {
-			this.dataSubject?.subscribe(this.options.monitor?.onData);
-			this.errorSubject?.subscribe(this.options.monitor?.onError);
-			this.closeSubject?.subscribe(this.options.monitor?.onClose);
-			this.exitSubject?.subscribe(this.options.monitor?.onExit);
-		}
+		this.dataSubject?.subscribe(this.options.monitor?.onData);
+		this.errorSubject?.subscribe(this.options.monitor?.onError);
+		this.closeSubject?.subscribe(this.options.monitor?.onClose);
+		this.exitSubject?.subscribe(this.options.monitor?.onExit);
 	}
 
 	run(): void {

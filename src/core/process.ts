@@ -89,16 +89,24 @@ export class PidmanProcess {
 		});
 
 		this.ps.stdout?.on('data', (data) =>
-			this.dataSubject.next({ data, process: this })
+			this.dataSubject.next({
+				data, process: this, time: Date.now()
+			})
 		);
 		this.ps.on('error', (error) =>
-			this.errorSubject.next({ error, process: this })
+			this.errorSubject.next({
+				error, process: this, time: Date.now()
+			})
 		);
 		this.ps.on('close', (code: number, signal: string) =>
-			this.closeSubject.next({ code, signal, process: this })
+			this.closeSubject.next({
+				code, signal, process: this, time: Date.now()
+			})
 		);
 		this.ps.on('exit', (code: number, signal: string) =>
-			this.exitSubject.next({ code, signal, process: this })
+			this.exitSubject.next({
+				code, signal, process: this, time: Date.now()
+			})
 		);
 	}
 

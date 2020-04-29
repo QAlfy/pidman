@@ -7,11 +7,11 @@ pm.addProcessGroup({
   processes: [
     {
       command: "websockify",
-      arguments: ["-D 127.0.0.1:8080 0.0.0.0:80"],
+      arguments: ["-D 127.0.0.1:8080 0.0.0.0:80".split(" ")],
     },
     // {
-    //   command: "echo",
-    //   arguments: ["'foo'"],
+    //   command: 'echo',
+    //   arguments: [''foo''],
     // },
   ],
   monitor: {
@@ -19,13 +19,14 @@ pm.addProcessGroup({
       console.log(data && data.toString());
     },
     onError: ({ error, process, time, event }) => {
-      console.log(error);
+      console.log(error && error.toString());
     },
     onExit: ({ code, signal, process, time, event }) => {
-      console.log([code, signal]);
-      console.log(process);
+      console.log([code, signal, event]);
     },
-    onClose: ({ code, signal, process, time, event }) => {},
+    onClose: ({ code, signal, process, time, event }) => {
+      console.log([code, signal, event]);
+    },
     onComplete: (data) => {},
   },
 });

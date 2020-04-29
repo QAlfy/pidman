@@ -10,7 +10,7 @@ export interface GroupOptions {
 	group?: string;
 	envVars?: {};
 	processes: Array<ProcessOptions>;
-	async?: boolean;
+	waitForCompletion?: boolean;
 	monitor?: PidmanMonitor;
 }
 
@@ -34,6 +34,10 @@ export class PidmanGroup {
 			this.options.id = PidmanStringUtils.getId();
 		}
 
+		this.setMonitor(monitor);
+	}
+
+	setMonitor(monitor: PidmanMonitor | undefined): void {
 		if (!this.options.monitor) {
 			this.options.monitor = monitor;
 		}
@@ -65,21 +69,32 @@ export class PidmanGroup {
 	}
 
 	startMonitoring(): void {
-		combineLatest(...this.dataSubjects).subscribe(
-			this.options.monitor?.onData
-		);
+		if (!this.options.waitForCompletion) {
+			combineLatest(...this.dataSubjects).subscribe(
+				this.options.monitor?.onData
+			);
 
-		combineLatest(...this.errorSubjects).subscribe(
-			this.options.monitor?.onError
-		);
+			combineLatest(...this.errorSubjects).subscribe(
+				this.options.monitor?.onError
+			);
 
-		combineLatest(...this.exitSubjects).subscribe(
-			this.options.monitor?.onExit
-		);
+			combineLatest(...this.exitSubjects).subscribe(
+				this.options.monitor?.onExit
+			);
 
-		combineLatest(...this.closeSubjects).subscribe(
-			this.options.monitor?.onClose
-		);
+			combineLatest(...this.closeSubjects).subscribe(
+				this.options.monitor?.onClose
+			);
+		} else {
+			combineLatest(
+				...this.dataSubjects,
+				...this.errorSubjects,
+				...this.exitSubjects,
+				...this.closeSubjects
+			).subscribe(
+				this.options.monitor?.onComplete
+			);
+		}
 	}
 
 	run(): void {

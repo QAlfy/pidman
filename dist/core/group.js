@@ -11,6 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var rxjs_1 = require("rxjs");
 var typescript_json_serializer_1 = require("typescript-json-serializer");
@@ -32,10 +39,13 @@ var PidmanGroup = /** @class */ (function () {
         if (!this.options.id) {
             this.options.id = utils_1.PidmanStringUtils.getId();
         }
+        this.setMonitor(monitor);
+    }
+    PidmanGroup.prototype.setMonitor = function (monitor) {
         if (!this.options.monitor) {
             this.options.monitor = monitor;
         }
-    }
+    };
     /**
      * @param  {ProcessOptions} process
      */
@@ -58,11 +68,16 @@ var PidmanGroup = /** @class */ (function () {
         return this.processes;
     };
     PidmanGroup.prototype.startMonitoring = function () {
-        var _a, _b, _c, _d;
-        rxjs_1.combineLatest.apply(void 0, this.dataSubjects).subscribe((_a = this.options.monitor) === null || _a === void 0 ? void 0 : _a.onData);
-        rxjs_1.combineLatest.apply(void 0, this.errorSubjects).subscribe((_b = this.options.monitor) === null || _b === void 0 ? void 0 : _b.onError);
-        rxjs_1.combineLatest.apply(void 0, this.exitSubjects).subscribe((_c = this.options.monitor) === null || _c === void 0 ? void 0 : _c.onExit);
-        rxjs_1.combineLatest.apply(void 0, this.closeSubjects).subscribe((_d = this.options.monitor) === null || _d === void 0 ? void 0 : _d.onClose);
+        var _a, _b, _c, _d, _e;
+        if (!this.options.waitForCompletion) {
+            rxjs_1.combineLatest.apply(void 0, this.dataSubjects).subscribe((_a = this.options.monitor) === null || _a === void 0 ? void 0 : _a.onData);
+            rxjs_1.combineLatest.apply(void 0, this.errorSubjects).subscribe((_b = this.options.monitor) === null || _b === void 0 ? void 0 : _b.onError);
+            rxjs_1.combineLatest.apply(void 0, this.exitSubjects).subscribe((_c = this.options.monitor) === null || _c === void 0 ? void 0 : _c.onExit);
+            rxjs_1.combineLatest.apply(void 0, this.closeSubjects).subscribe((_d = this.options.monitor) === null || _d === void 0 ? void 0 : _d.onClose);
+        }
+        else {
+            rxjs_1.combineLatest.apply(void 0, __spreadArrays(this.dataSubjects, this.errorSubjects, this.exitSubjects, this.closeSubjects)).subscribe((_e = this.options.monitor) === null || _e === void 0 ? void 0 : _e.onComplete);
+        }
     };
     PidmanGroup.prototype.run = function () {
         this.processes.forEach(function (process) { return process.run(); });

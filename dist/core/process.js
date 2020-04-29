@@ -73,16 +73,16 @@ var PidmanProcess = /** @class */ (function () {
             shell: this.options.shell || false,
         });
         (_a = this.ps.stdout) === null || _a === void 0 ? void 0 : _a.on('data', function (data) {
-            return _this.dataSubject.next({ data: data, group: _this });
+            return _this.dataSubject.next({ data: data, process: _this });
         });
         this.ps.on('error', function (error) {
-            return _this.errorSubject.next({ error: error, group: _this });
+            return _this.errorSubject.next({ error: error, process: _this });
         });
         this.ps.on('close', function (code, signal) {
-            return _this.closeSubject.next({ code: code, signal: signal, group: _this });
+            return _this.closeSubject.next({ code: code, signal: signal, process: _this });
         });
         this.ps.on('exit', function (code, signal) {
-            return _this.exitSubject.next({ code: code, signal: signal, group: _this });
+            return _this.exitSubject.next({ code: code, signal: signal, process: _this });
         });
     };
     PidmanProcess.prototype.subscribe = function (group) {

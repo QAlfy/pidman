@@ -40,14 +40,21 @@ var Pidman = /** @class */ (function () {
         return this.options;
     };
     /**
-     * @param  {GroupOptions} options
+     * @param  {GroupOptions | PidmanGroup} options
      * @returns void
      */
-    Pidman.prototype.addProcessGroup = function (options) {
-        var group = new _1.PidmanGroup(options, this.options.monitor);
-        options.processes.forEach(function (process) { return group.addProcess(process); });
-        group.startMonitoring();
-        this.groups.push(group);
+    Pidman.prototype.addProcessGroup = function (group) {
+        var newGroup;
+        if (group instanceof _1.PidmanGroup) {
+            newGroup = group;
+            newGroup.setMonitor(this.options.monitor);
+        }
+        else {
+            newGroup = new _1.PidmanGroup(group, this.options.monitor);
+            group.processes.forEach(function (process) { return newGroup.addProcess(process); });
+        }
+        newGroup.startMonitoring();
+        this.groups.push(newGroup);
     };
     /**
      * @returns PidmanGroup

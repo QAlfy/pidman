@@ -5,10 +5,11 @@ import { PidmanConnector } from '../connector';
 import { PidmanStringUtils } from '../utils';
 
 export interface PidmanMonitor {
-	onData(data: {}): void;
-	onError(error: {}): void;
-	onExit(exit: {}): void;
-	onClose(close: {}): void;
+	onData?(data: {}): void;
+	onError?(error: {}): void;
+	onExit?(exit: {}): void;
+	onClose?(close: {}): void;
+	onComplete?(data: {}): void;
 }
 
 export interface PidmanOptions {
@@ -42,17 +43,23 @@ export class Pidman {
 	}
 
 	/**
-	 * @param  {GroupOptions} options
+	 * @param  {GroupOptions | PidmanGroup} options
 	 * @returns void
 	 */
-	addProcessGroup(options: GroupOptions): void {
-		const group = new PidmanGroup(options, this.options.monitor);
+	addProcessGroup(group: GroupOptions | PidmanGroup): void {
+		let newGroup;
 
-		options.processes.forEach((process) => group.addProcess(process));
+		if (group instanceof PidmanGroup) {
+			newGroup = group;
+			newGroup.setMonitor(this.options.monitor);
+		} else {
+			newGroup = new PidmanGroup(group, this.options.monitor);
+			group.processes.forEach((process) => newGroup.addProcess(process));
+		}
 
-		group.startMonitoring();
+		newGroup.startMonitoring();
 
-		this.groups.push(group);
+		this.groups.push(newGroup);
 	}
 
 	/**

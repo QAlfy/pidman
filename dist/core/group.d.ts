@@ -1,4 +1,4 @@
-import { BehaviorSubject } from 'rxjs';
+/// <reference types="node" />
 import { PidmanMonitor } from './pidman';
 import { PidmanProcess, ProcessOptions } from './';
 export interface GroupOptions {
@@ -7,14 +7,14 @@ export interface GroupOptions {
     group?: string;
     envVars?: {};
     processes: Array<ProcessOptions>;
-    monitor: PidmanMonitor;
+    monitor?: PidmanMonitor;
 }
 export declare class PidmanGroup {
     private options;
-    dataSubject: BehaviorSubject<{}>;
-    errorSubject: BehaviorSubject<{}>;
-    exitSubject: BehaviorSubject<{}>;
-    closeSubject: BehaviorSubject<{}>;
+    private dataSubject;
+    private errorSubject;
+    private exitSubject;
+    private closeSubject;
     protected processes: Array<PidmanProcess>;
     /**
      * @param  {GroupOptions} privateoptions
@@ -33,13 +33,9 @@ export declare class PidmanGroup {
      * @returns Array<PidmanProcess>
      */
     getProcesses(): Array<PidmanProcess>;
-    /**
-     * @returns void
-     */
-    startMonitoring(): void;
     run(): void;
     /**
      * @returns boolean
      */
-    stop(): boolean;
+    stop(signal?: NodeJS.Signals): boolean;
 }

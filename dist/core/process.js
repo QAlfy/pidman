@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var child_process_1 = require("child_process");
 var typescript_json_serializer_1 = require("typescript-json-serializer");
 var utils_1 = require("../utils");
+var operators_1 = require("rxjs/operators");
+var rxjs_1 = require("rxjs");
 var EventType;
 (function (EventType) {
     EventType["onData"] = "data";
@@ -35,6 +37,10 @@ var PidmanProcess = /** @class */ (function () {
         if (!this.options.killSignal) {
             this.options.killSignal = 'SIGKILL';
         }
+        this.dataEvent = new rxjs_1.Observable();
+        this.exitEvent = new rxjs_1.Observable();
+        this.errorEvent = new rxjs_1.Observable();
+        this.closeEvent = new rxjs_1.Observable();
     }
     /**
      * @param  {PidmanGroup} group
@@ -74,8 +80,6 @@ var PidmanProcess = /** @class */ (function () {
      * @returns void
      */
     PidmanProcess.prototype.run = function () {
-        var _this = this;
-        var _a, _b;
         this.child = child_process_1.spawn(this.options.command, this.options.arguments || [], {
             uid: (!this.options.user && undefined) ||
                 utils_1.PidmanSysUtils.getUid(this.options.user || ''),
@@ -84,32 +88,33 @@ var PidmanProcess = /** @class */ (function () {
             gid: utils_1.PidmanSysUtils.getGid(this.options.group || ''),
             shell: this.options.shell || false,
         });
-        (_a = this.child.stdout) === null || _a === void 0 ? void 0 : _a.on('data', function (data) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.dataSubject.next({
-            data: data, process: _this, time: Date.now(),
-            event: EventType.onData
-        }); });
-        this.child.on('error', function (error) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.errorSubject.next({
-            error: error, process: _this, time: Date.now(),
-            event: EventType.onError
-        }); });
-        this.child.on('close', function (code, signal) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.closeSubject.next({
-            code: code, signal: signal, process: _this, time: Date.now(),
-            event: EventType.onClose
-        }); });
-        this.child.on('exit', function (code, signal) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.exitSubject.next({
-            code: code, signal: signal, process: _this, time: Date.now(),
-            event: EventType.onExit
-        }); });
-        (_b = this.child.stderr) === null || _b === void 0 ? void 0 : _b.on('data', function (error) { var _a; return (_a = _this.group) === null || _a === void 0 ? void 0 : _a.errorSubject.next({
-            error: error, process: _this, time: Date.now(),
-            event: EventType.onError
-        }); });
+        this.dataEvent = rxjs_1.fromEvent(this.child.stdout, 'data');
+        this.errorEvent = rxjs_1.fromEvent(this.child, 'error');
+        this.exitEvent = rxjs_1.fromEvent(this.child, 'exit');
+        this.closeEvent = rxjs_1.fromEvent(this.child.stderr, 'data');
+        this.startMonitoring();
+    };
+    /**
+     * @returns void
+     */
+    PidmanProcess.prototype.startMonitoring = function () {
+        var _a, _b, _c, _d, _e;
+        var metadata = {
+            process: this,
+            pid: (_a = this.child) === null || _a === void 0 ? void 0 : _a.pid,
+            time: Date.now()
+        };
+        this.dataEvent.subscribe((_c = (_b = this.options.monitor) === null || _b === void 0 ? void 0 : _b.onData) === null || _c === void 0 ? void 0 : _c.bind(metadata));
+        rxjs_1.merge(this.errorEvent, this.exitEvent, this.closeEvent)
+            .pipe(operators_1.scan(function (acc, data) { return acc.concat(data); }, []), operators_1.catchError(function (error) { return rxjs_1.of(error); }))
+            .subscribe((_e = (_d = this.options.monitor) === null || _d === void 0 ? void 0 : _d.onComplete) === null || _e === void 0 ? void 0 : _e.bind(metadata));
     };
     /**
      * @returns boolean
      */
-    PidmanProcess.prototype.stop = function () {
-        return this.child && this.child.kill(this.options.killSignal) || false;
+    PidmanProcess.prototype.stop = function (signal) {
+        return this.child && this.child.kill(signal
+            || this.options.killSignal) || false;
     };
     PidmanProcess = __decorate([
         typescript_json_serializer_1.Serializable(),

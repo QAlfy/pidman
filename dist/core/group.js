@@ -52,26 +52,16 @@ var PidmanGroup = /** @class */ (function () {
     PidmanGroup.prototype.getProcesses = function () {
         return this.processes;
     };
-    /**
-     * @returns void
-     */
-    PidmanGroup.prototype.startMonitoring = function () {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
-        (_a = this.dataSubject) === null || _a === void 0 ? void 0 : _a.subscribe((_b = this.options.monitor) === null || _b === void 0 ? void 0 : _b.onData);
-        (_c = this.errorSubject) === null || _c === void 0 ? void 0 : _c.subscribe((_d = this.options.monitor) === null || _d === void 0 ? void 0 : _d.onError);
-        (_e = this.closeSubject) === null || _e === void 0 ? void 0 : _e.subscribe((_f = this.options.monitor) === null || _f === void 0 ? void 0 : _f.onClose);
-        (_g = this.exitSubject) === null || _g === void 0 ? void 0 : _g.subscribe((_h = this.options.monitor) === null || _h === void 0 ? void 0 : _h.onExit);
-    };
     PidmanGroup.prototype.run = function () {
         this.processes.forEach(function (process) { return process.run(); });
     };
     /**
      * @returns boolean
      */
-    PidmanGroup.prototype.stop = function () {
+    PidmanGroup.prototype.stop = function (signal) {
         var ret = true;
         this.processes.forEach(function (process) {
-            ret = ret && process.stop();
+            ret = ret && process.stop(signal);
         });
         return ret;
     };

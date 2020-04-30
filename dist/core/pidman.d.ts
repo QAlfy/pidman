@@ -1,11 +1,8 @@
 import { GroupOptions, PidmanGroup } from './';
 import { PidmanConnector } from '../connector';
 export interface PidmanMonitor {
-    onData?(data: {}): void;
-    onError?(error: {}): void;
-    onExit?(exit: {}): void;
-    onClose?(close: {}): void;
-    onComplete?(data: {}): void;
+    onData?(data: unknown): void;
+    onComplete?(data: unknown): void;
 }
 export interface PidmanOptions {
     id?: string;

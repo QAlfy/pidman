@@ -1,6 +1,7 @@
 /// <reference types="node" />
 import { ChildProcess } from 'child_process';
-import { PidmanGroup } from './';
+import { PidmanGroup, PidmanMonitor } from './';
+import { Observable } from 'rxjs';
 export declare enum EventType {
     onData = "data",
     onError = "error",
@@ -18,9 +19,14 @@ export interface ProcessOptions {
     path?: string;
     shell?: boolean | string;
     killSignal?: NodeJS.Signals;
+    monitor?: PidmanMonitor;
 }
 export declare class PidmanProcess {
     private options;
+    protected exitEvent: Observable<unknown>;
+    protected errorEvent: Observable<unknown>;
+    protected closeEvent: Observable<unknown>;
+    protected dataEvent: Observable<unknown>;
     protected child: ChildProcess | undefined;
     protected group: PidmanGroup | undefined;
     /**
@@ -49,7 +55,11 @@ export declare class PidmanProcess {
      */
     run(): void;
     /**
+     * @returns void
+     */
+    startMonitoring(): void;
+    /**
      * @returns boolean
      */
-    stop(): boolean;
+    stop(signal?: NodeJS.Signals): boolean;
 }

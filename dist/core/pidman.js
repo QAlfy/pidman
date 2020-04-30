@@ -54,7 +54,6 @@ var Pidman = /** @class */ (function () {
             newGroup = new _1.PidmanGroup(group);
             group.processes.forEach(function (process) { return newGroup.addProcess(process); });
         }
-        newGroup.startMonitoring();
         this.groups.push(newGroup);
     };
     /**

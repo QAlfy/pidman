@@ -1,4 +1,5 @@
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { concatAll, withLatestFrom, mergeAll } from 'rxjs/operators';
 import { JsonProperty, Serializable } from 'typescript-json-serializer';
 import { PidmanMonitor } from './pidman';
 import { PidmanProcess, ProcessOptions } from './';
@@ -10,15 +11,15 @@ export interface GroupOptions {
 	group?: string;
 	envVars?: {};
 	processes: Array<ProcessOptions>;
-	monitor: PidmanMonitor;
+	monitor?: PidmanMonitor;
 }
 
 @Serializable()
 export class PidmanGroup {
-	public dataSubject: BehaviorSubject<{}>;
-	public errorSubject: BehaviorSubject<{}>;
-	public exitSubject: BehaviorSubject<{}>;
-	public closeSubject: BehaviorSubject<{}>;
+	private dataSubject: BehaviorSubject<{}>;
+	private errorSubject: BehaviorSubject<{}>;
+	private exitSubject: BehaviorSubject<{}>;
+	private closeSubject: BehaviorSubject<{}>;
 	protected processes: Array<PidmanProcess> = [];
 
 	/**
@@ -60,16 +61,6 @@ export class PidmanGroup {
 		return this.processes;
 	}
 
-	/**
-	 * @returns void
-	 */
-	startMonitoring(): void {
-		this.dataSubject?.subscribe(this.options.monitor?.onData);
-		this.errorSubject?.subscribe(this.options.monitor?.onError);
-		this.closeSubject?.subscribe(this.options.monitor?.onClose);
-		this.exitSubject?.subscribe(this.options.monitor?.onExit);
-	}
-
 	run(): void {
 		this.processes.forEach(process => process.run());
 	}
@@ -77,11 +68,11 @@ export class PidmanGroup {
 	/**
 	 * @returns boolean
 	 */
-	stop(): boolean {
+	stop(signal?: NodeJS.Signals): boolean {
 		let ret = true;
 
 		this.processes.forEach(process => {
-			ret = ret && process.stop();
+			ret = ret && process.stop(signal);
 		});
 
 		return ret;

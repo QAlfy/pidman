@@ -5,11 +5,8 @@ import { PidmanConnector } from '../connector';
 import { PidmanStringUtils } from '../utils';
 
 export interface PidmanMonitor {
-	onData?(data: {}): void;
-	onError?(error: {}): void;
-	onExit?(exit: {}): void;
-	onClose?(close: {}): void;
-	onComplete?(data: {}): void;
+	onData?(data: unknown): void;
+	onComplete?(data: unknown): void;
 }
 
 export interface PidmanOptions {
@@ -54,8 +51,6 @@ export class Pidman {
 			newGroup = new PidmanGroup(group);
 			group.processes.forEach((process) => newGroup.addProcess(process));
 		}
-
-		newGroup.startMonitoring();
 
 		this.groups.push(newGroup);
 	}

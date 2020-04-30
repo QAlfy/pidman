@@ -1,7 +1,17 @@
 import { ChildProcess, spawn } from 'child_process';
 import { JsonProperty, Serializable } from 'typescript-json-serializer';
-import { PidmanGroup } from './';
+import { PidmanGroup, PidmanMonitor } from './';
 import { PidmanStringUtils, PidmanSysUtils } from '../utils';
+import {
+	catchError,
+	scan,
+} from 'rxjs/operators';
+import {
+	fromEvent,
+	merge,
+	Observable,
+	of,
+} from 'rxjs';
 
 export enum EventType {
 	onData = 'data',
@@ -21,10 +31,15 @@ export interface ProcessOptions {
 	path?: string;
 	shell?: boolean | string;
 	killSignal?: NodeJS.Signals;
+	monitor?: PidmanMonitor;
 }
 
 @Serializable()
 export class PidmanProcess {
+	protected exitEvent: Observable<unknown>;
+	protected errorEvent: Observable<unknown>;
+	protected closeEvent: Observable<unknown>;
+	protected dataEvent: Observable<unknown>;
 	protected child: ChildProcess | undefined;
 	protected group: PidmanGroup | undefined;
 
@@ -39,6 +54,11 @@ export class PidmanProcess {
 		if (!this.options.killSignal) {
 			this.options.killSignal = 'SIGKILL';
 		}
+
+		this.dataEvent = new Observable();
+		this.exitEvent = new Observable();
+		this.errorEvent = new Observable();
+		this.closeEvent = new Observable();
 	}
 
 	/**
@@ -96,42 +116,45 @@ export class PidmanProcess {
 			shell: this.options.shell || false,
 		});
 
-		this.child.stdout?.on('data', (data) =>
-			this.group?.dataSubject.next({
-				data, process: this, time: Date.now(),
-				event: EventType.onData
-			})
+		this.dataEvent = fromEvent(this.child.stdout!, 'data');
+		this.errorEvent = fromEvent(this.child, 'error');
+		this.exitEvent = fromEvent(this.child, 'exit');
+		this.closeEvent = fromEvent(this.child.stderr!, 'data');
+
+		this.startMonitoring();
+	}
+
+	/**
+	 * @returns void
+	 */
+	startMonitoring(): void {
+		const metadata = {
+			process: this,
+			pid: this.child?.pid,
+			time: Date.now()
+		};
+
+		this.dataEvent.subscribe(
+			this.options.monitor?.onData?.bind(metadata)
 		);
-		this.child.on('error', (error) =>
-			this.group?.errorSubject.next({
-				error, process: this, time: Date.now(),
-				event: EventType.onError
-			})
-		);
-		this.child.on('close', (code: number, signal: string) =>
-			this.group?.closeSubject.next({
-				code, signal, process: this, time: Date.now(),
-				event: EventType.onClose
-			})
-		);
-		this.child.on('exit', (code: number, signal: string) =>
-			this.group?.exitSubject.next({
-				code, signal, process: this, time: Date.now(),
-				event: EventType.onExit
-			})
-		);
-		this.child.stderr?.on('data', (error) =>
-			this.group?.errorSubject.next({
-				error, process: this, time: Date.now(),
-				event: EventType.onError
-			})
-		);
+
+		merge(
+			this.errorEvent,
+			this.exitEvent,
+			this.closeEvent,
+		)
+			.pipe(
+				scan((acc: any, data: any) => acc.concat(data), []),
+				catchError(error => of(error))
+			)
+			.subscribe(this.options.monitor?.onComplete?.bind(metadata));
 	}
 
 	/**
 	 * @returns boolean
 	 */
-	stop(): boolean {
-		return this.child && this.child.kill(this.options.killSignal) || false;
+	stop(signal?: NodeJS.Signals): boolean {
+		return this.child && this.child.kill(signal
+			|| this.options.killSignal) || false;
 	}
 }

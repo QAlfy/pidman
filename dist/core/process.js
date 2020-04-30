@@ -88,6 +88,7 @@ var PidmanProcess = /** @class */ (function () {
             gid: utils_1.PidmanSysUtils.getGid(this.options.group || ''),
             shell: this.options.shell || false,
         });
+        // let's handle all important events; don't miss anything
         this.dataEvent = rxjs_1.fromEvent(this.child.stdout, 'data');
         this.errorEvent = rxjs_1.fromEvent(this.child, 'error');
         this.exitEvent = rxjs_1.fromEvent(this.child, 'exit');
@@ -99,14 +100,20 @@ var PidmanProcess = /** @class */ (function () {
      */
     PidmanProcess.prototype.startMonitoring = function () {
         var _a, _b, _c, _d, _e;
+        // basic metadata to be injected into the user's callbacks
         var metadata = {
             process: this,
             pid: (_a = this.child) === null || _a === void 0 ? void 0 : _a.pid,
             time: Date.now()
         };
+        // emit when new data goes to stdout
         this.dataEvent.subscribe((_c = (_b = this.options.monitor) === null || _b === void 0 ? void 0 : _b.onData) === null || _c === void 0 ? void 0 : _c.bind(metadata));
-        rxjs_1.merge(this.errorEvent, this.exitEvent, this.closeEvent)
-            .pipe(operators_1.scan(function (acc, data) { return acc.concat(data); }, []), operators_1.catchError(function (error) { return rxjs_1.of(error); }))
+        // emit concatenated version of error/close info and exit codes
+        rxjs_1.merge(this.errorEvent, this.closeEvent, this.exitEvent.pipe(operators_1.map(function (val) { return ({ code: val[0], signal: val[1] }); })))
+            .pipe(operators_1.scan(function (acc, data) { return acc.concat(data); }, []), 
+        /* this prevents a race condition; @todo improve rxjs flow here
+        or keep it this way, which works */
+        (this.options.shell ? operators_1.skipUntil(this.exitEvent) : operators_1.tap()), operators_1.catchError(function (error) { return rxjs_1.of(error); }))
             .subscribe((_e = (_d = this.options.monitor) === null || _d === void 0 ? void 0 : _d.onComplete) === null || _e === void 0 ? void 0 : _e.bind(metadata));
     };
     /**

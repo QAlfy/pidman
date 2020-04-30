@@ -23,7 +23,7 @@ export interface ProcessOptions {
 }
 export declare class PidmanProcess {
     private options;
-    protected exitEvent: Observable<unknown>;
+    protected exitEvent: Observable<[]>;
     protected errorEvent: Observable<unknown>;
     protected closeEvent: Observable<unknown>;
     protected dataEvent: Observable<unknown>;

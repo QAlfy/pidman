@@ -5,6 +5,8 @@ import { PidmanStringUtils, PidmanSysUtils } from '../utils';
 import {
 	catchError,
 	scan,
+	map,
+	skipUntil,
 } from 'rxjs/operators';
 import {
 	fromEvent,
@@ -36,9 +38,9 @@ export interface ProcessOptions {
 
 @Serializable()
 export class PidmanProcess {
-	protected exitEvent: Observable<unknown>;
+	protected closeEvent: Observable<[]>;
 	protected errorEvent: Observable<unknown>;
-	protected closeEvent: Observable<unknown>;
+	protected stderrEvent: Observable<unknown>;
 	protected dataEvent: Observable<unknown>;
 	protected child: ChildProcess | undefined;
 	protected group: PidmanGroup | undefined;
@@ -56,9 +58,9 @@ export class PidmanProcess {
 		}
 
 		this.dataEvent = new Observable();
-		this.exitEvent = new Observable();
-		this.errorEvent = new Observable();
 		this.closeEvent = new Observable();
+		this.errorEvent = new Observable();
+		this.stderrEvent = new Observable();
 	}
 
 	/**
@@ -116,10 +118,11 @@ export class PidmanProcess {
 			shell: this.options.shell || false,
 		});
 
+		// let's handle all important events; don't miss anything
 		this.dataEvent = fromEvent(this.child.stdout!, 'data');
 		this.errorEvent = fromEvent(this.child, 'error');
-		this.exitEvent = fromEvent(this.child, 'exit');
-		this.closeEvent = fromEvent(this.child.stderr!, 'data');
+		this.closeEvent = fromEvent(this.child, 'close');
+		this.stderrEvent = fromEvent(this.child.stderr!, 'data');
 
 		this.startMonitoring();
 	}
@@ -134,20 +137,36 @@ export class PidmanProcess {
 			time: Date.now()
 		};
 
+		// emit when new data goes to stdout
 		this.dataEvent.subscribe(
 			this.options.monitor?.onData?.bind(metadata)
 		);
 
+		// emit concatenated version of error/close info and exit codes
 		merge(
 			this.errorEvent,
-			this.exitEvent,
-			this.closeEvent,
+			this.stderrEvent,
+			this.closeEvent.pipe(
+				map((data: Array<unknown>) => ({
+					exitCode: data[0],
+					signalCode: data[1]
+				}))
+			),
 		)
 			.pipe(
-				scan((acc: any, data: any) => acc.concat(data), []),
+				scan((acc: any, data: any) => ([...acc, data]), []),
+				skipUntil(this.closeEvent),
 				catchError(error => of(error))
 			)
-			.subscribe(this.options.monitor?.onComplete?.bind(metadata));
+			.pipe(
+				map(output => ({
+					error: output[0] instanceof Buffer && output[0].toString()
+						|| output[0],
+					...output[1],
+					...metadata
+				}))
+			)
+			.subscribe(this.options.monitor?.onComplete);
 	}
 
 	/**

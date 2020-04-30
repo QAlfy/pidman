@@ -1,44 +1,45 @@
 {
-	"name": "pidman",
-	"version": "1.0.0",
-	"description": "A rock solid process orchestration library for Node",
-	"main": "dist/index.js",
-	"repository": "https://github.com/QAlfy/pidman",
-	"author": "Nicolas Iglesias",
-	"license": "MIT",
-	"devDependencies": {
-		"@types/lokijs": "^1.5.3",
-		"@types/node": "^13.13.4",
-		"@typescript-eslint/eslint-plugin": "^2.30.0",
-		"@typescript-eslint/parser": "^2.30.0",
-		"eslint": "^6.8.0",
-		"rimraf": "^3.0.2",
-		"tslint": "^6.1.2",
-		"tslint-eslint-rules": "^5.4.0",
-		"typedoc": "^0.17.6",
-		"typescript": "^3.8.3"
-	},
-	"homepage": "https://github.com/QAlfy/pidman#readme",
-	"bugs": {
-		"url": "https://github.com/QAlfy/pidman/issues"
-	},
-	"engines": {
-		"npm": ">=5.5.0",
-		"node": ">=9.3.0"
-	},
-	"scripts": {
-		"build": "yarn run clean && yarn run lint && tsc --build tsconfig.json",
-		"docs": "typedoc",
-		"clean": "rimraf dist/",
-		"lint": "yarn run lint.eslint && yarn run lint.types",
-		"lint.eslint": "eslint src/**/* --ext ts",
-		"lint.types": "tsc --noEmit"
-	},
-	"dependencies": {
-		"crypto": "^1.0.1",
-		"find-process": "^1.4.3",
-		"lokijs": "^1.5.8",
-		"rxjs": "^6.5.5",
-		"typescript-json-serializer": "^2.0.0"
-	}
+  "name": "pidman",
+  "version": "1.0.0",
+  "description": "A rock solid process orchestration library for Node",
+  "main": "dist/index.js",
+  "repository": "https://github.com/QAlfy/pidman",
+  "author": "Nicolas Iglesias",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/lokijs": "^1.5.3",
+    "@types/node": "^13.13.4",
+    "@typescript-eslint/eslint-plugin": "^2.30.0",
+    "@typescript-eslint/parser": "^2.30.0",
+    "eslint": "^6.8.0",
+    "rimraf": "^3.0.2",
+    "tslint": "^6.1.2",
+    "tslint-eslint-rules": "^5.4.0",
+    "typedoc": "^0.17.6",
+    "typescript": "^3.8.3"
+  },
+  "homepage": "https://github.com/QAlfy/pidman#readme",
+  "bugs": {
+    "url": "https://github.com/QAlfy/pidman/issues"
+  },
+  "engines": {
+    "npm": ">=5.5.0",
+    "node": ">=9.3.0"
+  },
+  "scripts": {
+    "build": "yarn run clean && yarn run lint && tsc --build tsconfig.json",
+    "dev": "tsc --build tsconfig.json --watch ",
+    "docs": "typedoc",
+    "clean": "rimraf dist/",
+    "lint": "yarn run lint.eslint && yarn run lint.types",
+    "lint.eslint": "eslint src/**/* --ext ts",
+    "lint.types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "find-process": "^1.4.3",
+    "lokijs": "^1.5.8",
+    "rxjs": "^6.5.5",
+    "typescript-json-serializer": "^2.0.0"
+  }
 }

@@ -1,4 +1,8 @@
-import { JsonProperty, Serializable } from 'typescript-json-serializer';
+import {
+	JsonProperty,
+	Serializable,
+	serialize
+} from 'typescript-json-serializer';
 import { PidmanMonitor } from './pidman';
 import { PidmanProcess, ProcessOptions } from './';
 import { PidmanStringUtils } from '../utils';
@@ -24,16 +28,26 @@ export class PidmanGroup {
 		if (!this.options.id) {
 			this.options.id = PidmanStringUtils.getId();
 		}
+
+		if (this.options.processes) {
+			this.options.processes.forEach(process => this.addProcess(process));
+		}
 	}
 
 	/**
 	 * @param  {ProcessOptions} process
 	 */
-	addProcess(options: ProcessOptions): void {
-		const process = new PidmanProcess(options);
-		process.setGroup(this);
+	addProcess(process: ProcessOptions | PidmanProcess): void {
+		let newProcess;
 
-		this.processes.push(process);
+		if (process instanceof PidmanProcess) {
+			newProcess = process;
+		} else {
+			newProcess = new PidmanProcess(process);
+		}
+
+		newProcess.setGroup(this);
+		this.processes.push(newProcess);
 	}
 
 	/**
@@ -57,13 +71,21 @@ export class PidmanGroup {
 	/**
 	 * @returns boolean
 	 */
-	stop(signal?: NodeJS.Signals): boolean {
+	kill(signal?: NodeJS.Signals): boolean {
 		let ret = true;
 
 		this.processes.forEach(process => {
-			ret = ret && process.stop(signal);
+			ret = ret && process.kill(signal);
 		});
 
 		return ret;
+	}
+
+	serialize(): unknown {
+		return serialize(this);
+	}
+
+	deserialize(json): PidmanGroup {
+		return new PidmanGroup(json.options as GroupOptions);
 	}
 }

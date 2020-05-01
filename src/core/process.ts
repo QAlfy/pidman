@@ -1,5 +1,9 @@
 import { ChildProcess, spawn } from 'child_process';
-import { JsonProperty, Serializable } from 'typescript-json-serializer';
+import {
+	JsonProperty,
+	Serializable,
+	serialize
+} from 'typescript-json-serializer';
 import { PidmanGroup, PidmanMonitor } from './';
 import { PidmanStringUtils, PidmanSysUtils } from '../utils';
 import { reduce } from 'lodash';
@@ -187,8 +191,16 @@ export class PidmanProcess {
 	/**
 	 * @returns boolean
 	 */
-	stop(signal?: NodeJS.Signals): boolean {
+	kill(signal?: NodeJS.Signals): boolean {
 		return this.child && this.child.kill(signal
 			|| this.options.killSignal) || false;
+	}
+
+	serialize(): unknown {
+		return serialize(this);
+	}
+
+	deserialize(json): PidmanProcess {
+		return new PidmanProcess(json.options as ProcessOptions);
 	}
 }

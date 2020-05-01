@@ -1,5 +1,10 @@
 import { ConsoleTransportInstance } from 'winston/lib/winston/transports';
-import { createLogger, Logger, transports } from 'winston';
+import { createLogger, Logger, transports, format } from 'winston';
+
+const { combine, timestamp, label, printf } = format;
+const pidmanLogFormat = printf(({ level, message, label, timestamp }) => {
+	return `${timestamp} [${label}] ${level}: ${message}`;
+});
 
 export enum LoggerLevel {
 	emerg = 'emerg',
@@ -36,6 +41,11 @@ export class PidmanLogger {
 		}
 
 		this.#logger = createLogger({
+			format: combine(
+				label({ label: 'Pidman' }),
+				timestamp(),
+				pidmanLogFormat
+			),
 			transports: [this.options?.transport! || new transports.Console()],
 			exceptionHandlers: [this.options?.transport!
 				|| new transports.Console()],

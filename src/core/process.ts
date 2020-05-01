@@ -220,7 +220,8 @@ export class PidmanProcess {
 					`process ${this.options.id}`,
 					`(PID: ${this.child?.pid})`,
 					`has already exited with code ${exitCode}.`,
-					`PID might be not longer ours.`
+					'PID might be not longer ours',
+					'or process has been daemonized.'
 				].join(' '));
 			}
 		}

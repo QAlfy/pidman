@@ -15,14 +15,14 @@ pm.addProcessGroup({
   processes: [
     {
       command: "websockify",
-      arguments: ["-D 127.0.0.1:8080 0.0.0.0:80".split(" ")],
+      arguments: "-D 127.0.0.1:8080 0.0.0.0:80".split(" "),
       monitor,
-      shell: false,
+      shell: true,
     },
     {
-      command: "echo",
+      command: "ecsho",
       arguments: ['"free"'],
-      shell: true,
+      shell: false,
       monitor,
     },
   ],

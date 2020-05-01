@@ -8,7 +8,7 @@
 		"noResolve": false,
 		"moduleResolution": "node",
 		"module": "commonjs",
-		"target": "es5",
+		"target": "es2015",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"sourceMap": true,

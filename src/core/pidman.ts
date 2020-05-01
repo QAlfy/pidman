@@ -1,6 +1,5 @@
 import MemoryConnector from '../connector/memory';
 import { GroupOptions, PidmanGroup } from './';
-import { JsonProperty, Serializable } from 'typescript-json-serializer';
 import { PidmanConnector } from '../connector';
 import { PidmanStringUtils } from '../utils';
 
@@ -14,14 +13,13 @@ export interface PidmanOptions {
 	connector?: PidmanConnector;
 }
 
-@Serializable()
 export class Pidman {
 	protected groups: Array<PidmanGroup> = [];
 
 	/**
 	 * @param  {PidmanOptions} privateoptions
 	 */
-	constructor(@JsonProperty() public options: PidmanOptions = {}) {
+	constructor(public options: PidmanOptions = {}) {
 		if (!this.options?.id) {
 			this.options.id = PidmanStringUtils.getId();
 		}

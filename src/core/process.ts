@@ -38,12 +38,12 @@ export interface ProcessOptions {
 
 @Serializable()
 export class PidmanProcess {
-	protected closeEvent: Observable<[]>;
-	protected errorEvent: Observable<unknown>;
-	protected stderrEvent: Observable<unknown>;
-	protected dataEvent: Observable<unknown>;
-	protected child: ChildProcess | undefined;
-	protected group: PidmanGroup | undefined;
+	#closeEvent: Observable<[]>;
+	#errorEvent: Observable<unknown>;
+	#stderrEvent: Observable<unknown>;
+	#dataEvent: Observable<unknown>;
+	child: ChildProcess | undefined;
+	group: PidmanGroup | undefined;
 
 	/**
 	 * @param  {ProcessOptions} privateoptions
@@ -57,10 +57,10 @@ export class PidmanProcess {
 			this.options.killSignal = 'SIGKILL';
 		}
 
-		this.dataEvent = new Observable();
-		this.closeEvent = new Observable();
-		this.errorEvent = new Observable();
-		this.stderrEvent = new Observable();
+		this.#dataEvent = new Observable();
+		this.#closeEvent = new Observable();
+		this.#errorEvent = new Observable();
+		this.#stderrEvent = new Observable();
 	}
 
 	/**
@@ -119,10 +119,10 @@ export class PidmanProcess {
 		});
 
 		// let's handle all important events; don't miss anything
-		this.dataEvent = fromEvent(this.child.stdout!, 'data');
-		this.errorEvent = fromEvent(this.child, 'error');
-		this.closeEvent = fromEvent(this.child, 'close');
-		this.stderrEvent = fromEvent(this.child.stderr!, 'data');
+		this.#dataEvent = fromEvent(this.child.stdout!, 'data');
+		this.#errorEvent = fromEvent(this.child, 'error');
+		this.#closeEvent = fromEvent(this.child, 'close');
+		this.#stderrEvent = fromEvent(this.child.stderr!, 'data');
 
 		this.startMonitoring();
 	}
@@ -138,15 +138,15 @@ export class PidmanProcess {
 		};
 
 		// emit when new data goes to stdout
-		this.dataEvent.subscribe(
+		this.#dataEvent.subscribe(
 			this.options.monitor?.onData?.bind(metadata)
 		);
 
 		// emit concatenated version of error/close info and exit codes
 		merge(
-			this.errorEvent,
-			this.stderrEvent,
-			this.closeEvent.pipe(
+			this.#errorEvent,
+			this.#stderrEvent,
+			this.#closeEvent.pipe(
 				map((data: Array<unknown>) => ({
 					exitCode: data[0],
 					signalCode: data[1]

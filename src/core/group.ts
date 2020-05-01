@@ -1,5 +1,3 @@
-import { BehaviorSubject, combineLatest } from 'rxjs';
-import { concatAll, withLatestFrom, mergeAll } from 'rxjs/operators';
 import { JsonProperty, Serializable } from 'typescript-json-serializer';
 import { PidmanMonitor } from './pidman';
 import { PidmanProcess, ProcessOptions } from './';
@@ -16,10 +14,6 @@ export interface GroupOptions {
 
 @Serializable()
 export class PidmanGroup {
-	private dataSubject: BehaviorSubject<{}>;
-	private errorSubject: BehaviorSubject<{}>;
-	private exitSubject: BehaviorSubject<{}>;
-	private closeSubject: BehaviorSubject<{}>;
 	protected processes: Array<PidmanProcess> = [];
 
 	/**
@@ -30,11 +24,6 @@ export class PidmanGroup {
 		if (!this.options.id) {
 			this.options.id = PidmanStringUtils.getId();
 		}
-
-		this.dataSubject = new BehaviorSubject({});
-		this.errorSubject = new BehaviorSubject({});
-		this.exitSubject = new BehaviorSubject({});
-		this.closeSubject = new BehaviorSubject({});
 	}
 
 	/**

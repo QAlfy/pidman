@@ -24,7 +24,7 @@
     "url": "https://github.com/QAlfy/pidman/issues"
   },
   "engines": {
-    "npm": ">=5.5.0",
+    "yarn": ">=1.20.0",
     "node": ">=9.3.0"
   },
   "scripts": {
@@ -37,11 +37,15 @@
     "lint.types": "tsc --noEmit"
   },
   "dependencies": {
+    "@types/winston": "^2.4.4",
     "crypto": "^1.0.1",
     "find-process": "^1.4.3",
     "lodash": "^4.17.15",
     "lokijs": "^1.5.8",
+    "ps-tree": "^1.2.0",
     "rxjs": "^6.5.5",
-    "typescript-json-serializer": "^2.0.0"
+    "typescript-json-serializer": "^2.0.0",
+    "winston": "^3.2.1",
+    "winston-transport": "^4.3.0"
   }
 }

@@ -25,22 +25,16 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     return privateMap.get(receiver);
 };
 var _closeEvent, _errorEvent, _stderrEvent, _dataEvent;
+var PidmanProcess_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 const child_process_1 = require("child_process");
 const typescript_json_serializer_1 = require("typescript-json-serializer");
+const logger_1 = require("../utils/logger");
 const utils_1 = require("../utils");
 const lodash_1 = require("lodash");
 const operators_1 = require("rxjs/operators");
 const rxjs_1 = require("rxjs");
-var EventType;
-(function (EventType) {
-    EventType["onData"] = "data";
-    EventType["onError"] = "error";
-    EventType["onExit"] = "exit";
-    EventType["onClose"] = "close";
-    EventType["onComplete"] = "complete";
-})(EventType = exports.EventType || (exports.EventType = {}));
-let PidmanProcess = class PidmanProcess {
+let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
     /**
      * @param  {ProcessOptions} privateoptions
      */
@@ -54,7 +48,7 @@ let PidmanProcess = class PidmanProcess {
             this.options.id = utils_1.PidmanStringUtils.getId();
         }
         if (!this.options.killSignal) {
-            this.options.killSignal = 'SIGKILL';
+            this.options.killSignal = 'SIGTERM';
         }
         __classPrivateFieldSet(this, _dataEvent, new rxjs_1.Observable());
         __classPrivateFieldSet(this, _closeEvent, new rxjs_1.Observable());
@@ -99,6 +93,10 @@ let PidmanProcess = class PidmanProcess {
      * @returns void
      */
     run() {
+        logger_1.PidmanLogger.instance().info([
+            `starting process ${this.options.id} as:`,
+            JSON.stringify(this.serialize())
+        ].join(' '));
         this.child = child_process_1.spawn(this.options.command, this.options.arguments || [], {
             uid: (!this.options.user && undefined) ||
                 utils_1.PidmanSysUtils.getUid(this.options.user || ''),
@@ -106,6 +104,7 @@ let PidmanProcess = class PidmanProcess {
             env: this.options.envVars || {},
             gid: utils_1.PidmanSysUtils.getGid(this.options.group || ''),
             shell: this.options.shell || false,
+            detached: true
         });
         // let's handle all important events; don't miss anything
         __classPrivateFieldSet(this, _dataEvent, rxjs_1.fromEvent(this.child.stdout, 'data'));
@@ -113,6 +112,7 @@ let PidmanProcess = class PidmanProcess {
         __classPrivateFieldSet(this, _closeEvent, rxjs_1.fromEvent(this.child, 'close'));
         __classPrivateFieldSet(this, _stderrEvent, rxjs_1.fromEvent(this.child.stderr, 'data'));
         this.startMonitoring();
+        this.child.unref();
     }
     /**
      * @returns void
@@ -152,13 +152,50 @@ let PidmanProcess = class PidmanProcess {
     /**
      * @returns boolean
      */
-    stop(signal) {
-        return this.child && this.child.kill(signal
-            || this.options.killSignal) || false;
+    kill(signal) {
+        var _a, _b, _c;
+        let killed = false;
+        if (this.child) {
+            const exitCode = lodash_1.get(this.child, 'exitCode');
+            if (exitCode === null) {
+                signal = signal || this.options.killSignal;
+                killed = this.child && this.child.kill(signal) || false;
+                if (killed) {
+                    logger_1.PidmanLogger.instance().info([
+                        `killed process ${this.options.id}`,
+                        `(PID: ${(_a = this.child) === null || _a === void 0 ? void 0 : _a.pid})`,
+                        `with signal ${signal}`
+                    ].join(' '));
+                }
+                else {
+                    logger_1.PidmanLogger.instance().error([
+                        `unable to kill process ${this.options.id}`,
+                        `(PID: ${(_b = this.child) === null || _b === void 0 ? void 0 : _b.pid})`,
+                        `with signal ${signal}`
+                    ].join(' '));
+                }
+            }
+            else {
+                logger_1.PidmanLogger.instance().info([
+                    `process ${this.options.id}`,
+                    `(PID: ${(_c = this.child) === null || _c === void 0 ? void 0 : _c.pid})`,
+                    `has already exited with code ${exitCode}.`,
+                    'PID might be not longer ours',
+                    'or process has been daemonized.'
+                ].join(' '));
+            }
+        }
+        return killed;
+    }
+    serialize() {
+        return typescript_json_serializer_1.serialize(this);
+    }
+    deserialize(json) {
+        return new PidmanProcess_1(json.options);
     }
 };
 _closeEvent = new WeakMap(), _errorEvent = new WeakMap(), _stderrEvent = new WeakMap(), _dataEvent = new WeakMap();
-PidmanProcess = __decorate([
+PidmanProcess = PidmanProcess_1 = __decorate([
     typescript_json_serializer_1.Serializable(),
     __param(0, typescript_json_serializer_1.JsonProperty()),
     __metadata("design:paramtypes", [Object])

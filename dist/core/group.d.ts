@@ -20,7 +20,7 @@ export declare class PidmanGroup {
     /**
      * @param  {ProcessOptions} process
      */
-    addProcess(options: ProcessOptions): void;
+    addProcess(process: ProcessOptions | PidmanProcess): void;
     /**
      * @returns GroupOptions
      */
@@ -33,5 +33,7 @@ export declare class PidmanGroup {
     /**
      * @returns boolean
      */
-    stop(signal?: NodeJS.Signals): boolean;
+    kill(signal?: NodeJS.Signals): boolean;
+    serialize(): unknown;
+    deserialize(json: any): PidmanGroup;
 }

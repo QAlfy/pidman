@@ -1,4 +1,5 @@
 import { GroupOptions, PidmanGroup } from './';
+import { LoggerOptions } from '../utils/logger';
 import { PidmanConnector } from '../connector';
 export interface PidmanMonitor {
     onData?(data: unknown): void;
@@ -7,6 +8,7 @@ export interface PidmanMonitor {
 export interface PidmanOptions {
     id?: string;
     connector?: PidmanConnector;
+    logger?: LoggerOptions;
 }
 export declare class Pidman {
     options: PidmanOptions;

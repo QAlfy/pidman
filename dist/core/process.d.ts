@@ -1,13 +1,7 @@
 /// <reference types="node" />
 import { ChildProcess } from 'child_process';
 import { PidmanGroup, PidmanMonitor } from './';
-export declare enum EventType {
-    onData = "data",
-    onError = "error",
-    onExit = "exit",
-    onClose = "close",
-    onComplete = "complete"
-}
+export declare type KillSignals = NodeJS.Signals;
 export interface ProcessOptions {
     id?: string;
     user?: string;
@@ -57,5 +51,7 @@ export declare class PidmanProcess {
     /**
      * @returns boolean
      */
-    stop(signal?: NodeJS.Signals): boolean;
+    kill(signal?: NodeJS.Signals): boolean;
+    serialize(): unknown;
+    deserialize(json: any): PidmanProcess;
 }

@@ -38,7 +38,6 @@ class Pidman {
         }
         else {
             newGroup = new _1.PidmanGroup(group);
-            group.processes.forEach((process) => newGroup.addProcess(process));
         }
         this.groups.push(newGroup);
     }

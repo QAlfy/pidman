@@ -11,11 +11,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var PidmanGroup_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 const typescript_json_serializer_1 = require("typescript-json-serializer");
 const _1 = require("./");
 const utils_1 = require("../utils");
-let PidmanGroup = class PidmanGroup {
+let PidmanGroup = PidmanGroup_1 = class PidmanGroup {
     /**
      * @param  {GroupOptions} privateoptions
      * @param  {PidmanMonitor} publicmonitor
@@ -26,14 +27,23 @@ let PidmanGroup = class PidmanGroup {
         if (!this.options.id) {
             this.options.id = utils_1.PidmanStringUtils.getId();
         }
+        if (this.options.processes) {
+            this.options.processes.forEach(process => this.addProcess(process));
+        }
     }
     /**
      * @param  {ProcessOptions} process
      */
-    addProcess(options) {
-        const process = new _1.PidmanProcess(options);
-        process.setGroup(this);
-        this.processes.push(process);
+    addProcess(process) {
+        let newProcess;
+        if (process instanceof _1.PidmanProcess) {
+            newProcess = process;
+        }
+        else {
+            newProcess = new _1.PidmanProcess(process);
+        }
+        newProcess.setGroup(this);
+        this.processes.push(newProcess);
     }
     /**
      * @returns GroupOptions
@@ -53,15 +63,21 @@ let PidmanGroup = class PidmanGroup {
     /**
      * @returns boolean
      */
-    stop(signal) {
+    kill(signal) {
         let ret = true;
         this.processes.forEach(process => {
-            ret = ret && process.stop(signal);
+            ret = ret && process.kill(signal);
         });
         return ret;
     }
+    serialize() {
+        return typescript_json_serializer_1.serialize(this);
+    }
+    deserialize(json) {
+        return new PidmanGroup_1(json.options);
+    }
 };
-PidmanGroup = __decorate([
+PidmanGroup = PidmanGroup_1 = __decorate([
     typescript_json_serializer_1.Serializable(),
     __param(0, typescript_json_serializer_1.JsonProperty()),
     __metadata("design:paramtypes", [Object])

@@ -6,6 +6,7 @@ import {
 import { PidmanMonitor } from './pidman';
 import { PidmanProcess, ProcessOptions } from './';
 import { PidmanStringUtils } from '../utils';
+import { PidmanLogger } from '../utils/logger';
 
 export interface GroupOptions {
 	id?: string;

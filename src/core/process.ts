@@ -1,5 +1,9 @@
 import { ChildProcess, spawn } from 'child_process';
-import { JsonProperty, Serializable, serialize } from 'typescript-json-serializer';
+import {
+	JsonProperty,
+	Serializable,
+	serialize
+} from 'typescript-json-serializer';
 import { PidmanGroup, PidmanMonitor } from './';
 import { PidmanLogger } from '../utils/logger';
 import { PidmanStringUtils, PidmanSysUtils } from '../utils';
@@ -104,6 +108,11 @@ export class PidmanProcess {
 	 * @returns void
 	 */
 	run(): void {
+		PidmanLogger.instance().info([
+			`starting process ${this.options.id} as:`,
+			JSON.stringify(this.serialize())
+		].join(' '));
+
 		this.child = spawn(this.options.command, this.options.arguments || [], {
 			uid:
 				(!this.options.user && undefined) ||
@@ -198,12 +207,20 @@ export class PidmanProcess {
 						`(PID: ${this.child?.pid})`,
 						`with signal ${signal}`
 					].join(' '));
+				} else {
+					PidmanLogger.instance().error([
+						`unable to kill process ${this.options.id}`,
+						`(PID: ${this.child?.pid})`,
+						`with signal ${signal}`
+					].join(' '));
+
 				}
 			} else {
 				PidmanLogger.instance().info([
 					`process ${this.options.id}`,
 					`(PID: ${this.child?.pid})`,
-					`has already exited with code ${exitCode}`
+					`has already exited with code ${exitCode}.`,
+					`PID might be not longer ours.`
 				].join(' '));
 			}
 		}

@@ -37,6 +37,9 @@ export class PidmanLogger {
 
 		this.#logger = createLogger({
 			transports: [this.options?.transport! || new transports.Console()],
+			exceptionHandlers: [this.options?.transport!
+				|| new transports.Console()],
+			exitOnError: false,
 			level: this.options?.level
 		});
 

@@ -2,7 +2,6 @@ import MemoryConnector from '../connector/memory';
 import { GroupOptions, PidmanGroup } from './';
 import { LoggerOptions } from '../utils/logger';
 import { PidmanConnector } from '../connector';
-import { PidmanLogger } from '../utils/logger';
 import { PidmanStringUtils } from '../utils';
 
 export interface PidmanMonitor {

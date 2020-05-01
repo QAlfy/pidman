@@ -3,7 +3,7 @@ import { JsonProperty, Serializable, serialize } from 'typescript-json-serialize
 import { PidmanGroup, PidmanMonitor } from './';
 import { PidmanLogger } from '../utils/logger';
 import { PidmanStringUtils, PidmanSysUtils } from '../utils';
-import { reduce } from 'lodash';
+import { reduce, get } from 'lodash';
 import {
 	catchError,
 	scan,
@@ -16,6 +16,8 @@ import {
 	Observable,
 	of,
 } from 'rxjs';
+
+export type KillSignals = NodeJS.Signals;
 
 export interface ProcessOptions {
 	id?: string;
@@ -48,7 +50,7 @@ export class PidmanProcess {
 		}
 
 		if (!this.options.killSignal) {
-			this.options.killSignal = 'SIGKILL';
+			this.options.killSignal = 'SIGTERM';
 		}
 
 		this.#dataEvent = new Observable();
@@ -181,12 +183,32 @@ export class PidmanProcess {
 	 * @returns boolean
 	 */
 	kill(signal?: NodeJS.Signals): boolean {
-		PidmanLogger.instance().info(
-			`killing process ${this.options.id} (PID: ${this.child?.pid})`
-		);
+		let killed = false;
 
-		return this.child && this.child.kill(signal
-			|| this.options.killSignal) || false;
+		if (this.child) {
+			const exitCode = get(this.child, 'exitCode');
+
+			if (exitCode === null) {
+				signal = signal || this.options.killSignal;
+				killed = this.child && this.child.kill(signal) || false;
+
+				if (killed) {
+					PidmanLogger.instance().info([
+						`killed process ${this.options.id}`,
+						`(PID: ${this.child?.pid})`,
+						`with signal ${signal}`
+					].join(' '));
+				}
+			} else {
+				PidmanLogger.instance().info([
+					`process ${this.options.id}`,
+					`(PID: ${this.child?.pid})`,
+					`has already exited with code ${exitCode}`
+				].join(' '));
+			}
+		}
+
+		return killed;
 	}
 
 	serialize(): unknown {

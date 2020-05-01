@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,6 +21,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var child_process_1 = require("child_process");
@@ -38,9 +56,9 @@ var PidmanProcess = /** @class */ (function () {
             this.options.killSignal = 'SIGKILL';
         }
         this.dataEvent = new rxjs_1.Observable();
-        this.exitEvent = new rxjs_1.Observable();
-        this.errorEvent = new rxjs_1.Observable();
         this.closeEvent = new rxjs_1.Observable();
+        this.errorEvent = new rxjs_1.Observable();
+        this.stderrEvent = new rxjs_1.Observable();
     }
     /**
      * @param  {PidmanGroup} group
@@ -91,16 +109,15 @@ var PidmanProcess = /** @class */ (function () {
         // let's handle all important events; don't miss anything
         this.dataEvent = rxjs_1.fromEvent(this.child.stdout, 'data');
         this.errorEvent = rxjs_1.fromEvent(this.child, 'error');
-        this.exitEvent = rxjs_1.fromEvent(this.child, 'exit');
-        this.closeEvent = rxjs_1.fromEvent(this.child.stderr, 'data');
+        this.closeEvent = rxjs_1.fromEvent(this.child, 'close');
+        this.stderrEvent = rxjs_1.fromEvent(this.child.stderr, 'data');
         this.startMonitoring();
     };
     /**
      * @returns void
      */
     PidmanProcess.prototype.startMonitoring = function () {
-        var _a, _b, _c, _d, _e;
-        // basic metadata to be injected into the user's callbacks
+        var _a, _b, _c, _d;
         var metadata = {
             process: this,
             pid: (_a = this.child) === null || _a === void 0 ? void 0 : _a.pid,
@@ -109,12 +126,14 @@ var PidmanProcess = /** @class */ (function () {
         // emit when new data goes to stdout
         this.dataEvent.subscribe((_c = (_b = this.options.monitor) === null || _b === void 0 ? void 0 : _b.onData) === null || _c === void 0 ? void 0 : _c.bind(metadata));
         // emit concatenated version of error/close info and exit codes
-        rxjs_1.merge(this.errorEvent, this.closeEvent, this.exitEvent.pipe(operators_1.map(function (val) { return ({ code: val[0], signal: val[1] }); })))
-            .pipe(operators_1.scan(function (acc, data) { return acc.concat(data); }, []), 
-        /* this prevents a race condition; @todo improve rxjs flow here
-        or keep it this way, which works */
-        (this.options.shell ? operators_1.skipUntil(this.exitEvent) : operators_1.tap()), operators_1.catchError(function (error) { return rxjs_1.of(error); }))
-            .subscribe((_e = (_d = this.options.monitor) === null || _d === void 0 ? void 0 : _d.onComplete) === null || _e === void 0 ? void 0 : _e.bind(metadata));
+        rxjs_1.merge(this.errorEvent, this.stderrEvent, this.closeEvent.pipe(operators_1.map(function (data) { return ({
+            exitCode: data[0],
+            signalCode: data[1]
+        }); })))
+            .pipe(operators_1.scan(function (acc, data) { return (__spreadArrays(acc, [data])); }, []), operators_1.skipUntil(this.closeEvent), operators_1.catchError(function (error) { return rxjs_1.of(error); }))
+            .pipe(operators_1.map(function (output) { return (__assign(__assign({ error: output[0] instanceof Buffer && output[0].toString()
+                || output[0] }, output[1]), metadata)); }))
+            .subscribe((_d = this.options.monitor) === null || _d === void 0 ? void 0 : _d.onComplete);
     };
     /**
      * @returns boolean

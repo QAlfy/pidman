@@ -121,6 +121,7 @@ export class PidmanProcess {
 			env: this.options.envVars || {},
 			gid: PidmanSysUtils.getGid(this.options.group || ''),
 			shell: this.options.shell || false,
+			detached: true
 		});
 
 		// let's handle all important events; don't miss anything
@@ -130,6 +131,8 @@ export class PidmanProcess {
 		this.#stderrEvent = fromEvent(this.child.stderr!, 'data');
 
 		this.startMonitoring();
+
+		this.child.unref();
 	}
 
 	/**

@@ -2,6 +2,7 @@ import { ChildProcess, spawn } from 'child_process';
 import { JsonProperty, Serializable } from 'typescript-json-serializer';
 import { PidmanGroup, PidmanMonitor } from './';
 import { PidmanStringUtils, PidmanSysUtils } from '../utils';
+import { reduce } from 'lodash';
 import {
 	catchError,
 	scan,
@@ -155,16 +156,30 @@ export class PidmanProcess {
 		)
 			.pipe(
 				scan((acc: any, data: any) => ([...acc, data]), []),
-				skipUntil(this.closeEvent),
+				skipUntil(this.#closeEvent),
 				catchError(error => of(error))
 			)
 			.pipe(
-				map(output => ({
-					error: output[0] instanceof Buffer && output[0].toString()
-						|| output[0],
-					...output[1],
-					...metadata
-				}))
+				map(data => {
+					/* handle various types of process termination
+					(e.g. a program goes into daemon mode) */
+					let output = { message: '' };
+
+					output = reduce(data, (acc, val) => {
+						if (val instanceof Buffer) {
+							acc.message += val.toString();
+						} else if (val instanceof Object) {
+							acc = { ...acc, ...val };
+						}
+
+						return acc;
+					}, output);
+
+					return ({
+						...output,
+						...metadata
+					})
+				})
 			)
 			.subscribe(this.options.monitor?.onComplete);
 	}

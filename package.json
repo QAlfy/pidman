@@ -7,6 +7,7 @@
   "author": "Nicolas Iglesias",
   "license": "MIT",
   "devDependencies": {
+    "@types/lodash": "^4.14.150",
     "@types/lokijs": "^1.5.3",
     "@types/node": "^13.13.4",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
@@ -38,6 +39,7 @@
   "dependencies": {
     "crypto": "^1.0.1",
     "find-process": "^1.4.3",
+    "lodash": "^4.17.15",
     "lokijs": "^1.5.8",
     "rxjs": "^6.5.5",
     "typescript-json-serializer": "^2.0.0"

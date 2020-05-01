@@ -12,65 +12,59 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var rxjs_1 = require("rxjs");
-var typescript_json_serializer_1 = require("typescript-json-serializer");
-var _1 = require("./");
-var utils_1 = require("../utils");
-var PidmanGroup = /** @class */ (function () {
+const typescript_json_serializer_1 = require("typescript-json-serializer");
+const _1 = require("./");
+const utils_1 = require("../utils");
+let PidmanGroup = class PidmanGroup {
     /**
      * @param  {GroupOptions} privateoptions
      * @param  {PidmanMonitor} publicmonitor
      */
-    function PidmanGroup(options) {
+    constructor(options) {
         this.options = options;
         this.processes = [];
         if (!this.options.id) {
             this.options.id = utils_1.PidmanStringUtils.getId();
         }
-        this.dataSubject = new rxjs_1.BehaviorSubject({});
-        this.errorSubject = new rxjs_1.BehaviorSubject({});
-        this.exitSubject = new rxjs_1.BehaviorSubject({});
-        this.closeSubject = new rxjs_1.BehaviorSubject({});
     }
     /**
      * @param  {ProcessOptions} process
      */
-    PidmanGroup.prototype.addProcess = function (options) {
-        var process = new _1.PidmanProcess(options);
+    addProcess(options) {
+        const process = new _1.PidmanProcess(options);
         process.setGroup(this);
         this.processes.push(process);
-    };
+    }
     /**
      * @returns GroupOptions
      */
-    PidmanGroup.prototype.getOptions = function () {
+    getOptions() {
         return this.options;
-    };
+    }
     /**
      * @returns Array<PidmanProcess>
      */
-    PidmanGroup.prototype.getProcesses = function () {
+    getProcesses() {
         return this.processes;
-    };
-    PidmanGroup.prototype.run = function () {
-        this.processes.forEach(function (process) { return process.run(); });
-    };
+    }
+    run() {
+        this.processes.forEach(process => process.run());
+    }
     /**
      * @returns boolean
      */
-    PidmanGroup.prototype.stop = function (signal) {
-        var ret = true;
-        this.processes.forEach(function (process) {
+    stop(signal) {
+        let ret = true;
+        this.processes.forEach(process => {
             ret = ret && process.stop(signal);
         });
         return ret;
-    };
-    PidmanGroup = __decorate([
-        typescript_json_serializer_1.Serializable(),
-        __param(0, typescript_json_serializer_1.JsonProperty()),
-        __metadata("design:paramtypes", [Object])
-    ], PidmanGroup);
-    return PidmanGroup;
-}());
+    }
+};
+PidmanGroup = __decorate([
+    typescript_json_serializer_1.Serializable(),
+    __param(0, typescript_json_serializer_1.JsonProperty()),
+    __metadata("design:paramtypes", [Object])
+], PidmanGroup);
 exports.PidmanGroup = PidmanGroup;
 //# sourceMappingURL=group.js.map

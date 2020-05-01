@@ -1,7 +1,6 @@
 /// <reference types="node" />
 import { ChildProcess } from 'child_process';
 import { PidmanGroup, PidmanMonitor } from './';
-import { Observable } from 'rxjs';
 export declare enum EventType {
     onData = "data",
     onError = "error",
@@ -22,13 +21,10 @@ export interface ProcessOptions {
     monitor?: PidmanMonitor;
 }
 export declare class PidmanProcess {
+    #private;
     private options;
-    protected closeEvent: Observable<[]>;
-    protected errorEvent: Observable<unknown>;
-    protected stderrEvent: Observable<unknown>;
-    protected dataEvent: Observable<unknown>;
-    protected child: ChildProcess | undefined;
-    protected group: PidmanGroup | undefined;
+    child: ChildProcess | undefined;
+    group: PidmanGroup | undefined;
     /**
      * @param  {ProcessOptions} privateoptions
      */

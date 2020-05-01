@@ -11,10 +11,6 @@ export interface GroupOptions {
 }
 export declare class PidmanGroup {
     private options;
-    private dataSubject;
-    private errorSubject;
-    private exitSubject;
-    private closeSubject;
     protected processes: Array<PidmanProcess>;
     /**
      * @param  {GroupOptions} privateoptions

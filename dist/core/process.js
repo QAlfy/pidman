@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22,19 +11,27 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, privateMap, value) {
+    if (!privateMap.has(receiver)) {
+        throw new TypeError("attempted to set private field on non-instance");
+    }
+    privateMap.set(receiver, value);
+    return value;
 };
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, privateMap) {
+    if (!privateMap.has(receiver)) {
+        throw new TypeError("attempted to get private field on non-instance");
+    }
+    return privateMap.get(receiver);
+};
+var _closeEvent, _errorEvent, _stderrEvent, _dataEvent;
 Object.defineProperty(exports, "__esModule", { value: true });
-var child_process_1 = require("child_process");
-var typescript_json_serializer_1 = require("typescript-json-serializer");
-var utils_1 = require("../utils");
-var operators_1 = require("rxjs/operators");
-var rxjs_1 = require("rxjs");
+const child_process_1 = require("child_process");
+const typescript_json_serializer_1 = require("typescript-json-serializer");
+const utils_1 = require("../utils");
+const lodash_1 = require("lodash");
+const operators_1 = require("rxjs/operators");
+const rxjs_1 = require("rxjs");
 var EventType;
 (function (EventType) {
     EventType["onData"] = "data";
@@ -43,28 +40,32 @@ var EventType;
     EventType["onClose"] = "close";
     EventType["onComplete"] = "complete";
 })(EventType = exports.EventType || (exports.EventType = {}));
-var PidmanProcess = /** @class */ (function () {
+let PidmanProcess = class PidmanProcess {
     /**
      * @param  {ProcessOptions} privateoptions
      */
-    function PidmanProcess(options) {
+    constructor(options) {
         this.options = options;
+        _closeEvent.set(this, void 0);
+        _errorEvent.set(this, void 0);
+        _stderrEvent.set(this, void 0);
+        _dataEvent.set(this, void 0);
         if (!this.options.id) {
             this.options.id = utils_1.PidmanStringUtils.getId();
         }
         if (!this.options.killSignal) {
             this.options.killSignal = 'SIGKILL';
         }
-        this.dataEvent = new rxjs_1.Observable();
-        this.closeEvent = new rxjs_1.Observable();
-        this.errorEvent = new rxjs_1.Observable();
-        this.stderrEvent = new rxjs_1.Observable();
+        __classPrivateFieldSet(this, _dataEvent, new rxjs_1.Observable());
+        __classPrivateFieldSet(this, _closeEvent, new rxjs_1.Observable());
+        __classPrivateFieldSet(this, _errorEvent, new rxjs_1.Observable());
+        __classPrivateFieldSet(this, _stderrEvent, new rxjs_1.Observable());
     }
     /**
      * @param  {PidmanGroup} group
      * @returns void
      */
-    PidmanProcess.prototype.setGroup = function (group) {
+    setGroup(group) {
         this.group = group;
         if (!this.options.user) {
             this.options.user = this.group.getOptions().user;
@@ -75,29 +76,29 @@ var PidmanProcess = /** @class */ (function () {
         if (!this.options.envVars) {
             this.options.envVars = this.group.getOptions().envVars;
         }
-    };
+    }
     /**
      * @returns PidmanGroup
      */
-    PidmanProcess.prototype.getGroup = function () {
+    getGroup() {
         return this.group;
-    };
+    }
     /**
      * @returns ProcessOptions
      */
-    PidmanProcess.prototype.getOptions = function () {
+    getOptions() {
         return this.options;
-    };
+    }
     /**
      * @returns ChildProcess
      */
-    PidmanProcess.prototype.getChildProcess = function () {
+    getChildProcess() {
         return this.child;
-    };
+    }
     /**
      * @returns void
      */
-    PidmanProcess.prototype.run = function () {
+    run() {
         this.child = child_process_1.spawn(this.options.command, this.options.arguments || [], {
             uid: (!this.options.user && undefined) ||
                 utils_1.PidmanSysUtils.getUid(this.options.user || ''),
@@ -107,47 +108,60 @@ var PidmanProcess = /** @class */ (function () {
             shell: this.options.shell || false,
         });
         // let's handle all important events; don't miss anything
-        this.dataEvent = rxjs_1.fromEvent(this.child.stdout, 'data');
-        this.errorEvent = rxjs_1.fromEvent(this.child, 'error');
-        this.closeEvent = rxjs_1.fromEvent(this.child, 'close');
-        this.stderrEvent = rxjs_1.fromEvent(this.child.stderr, 'data');
+        __classPrivateFieldSet(this, _dataEvent, rxjs_1.fromEvent(this.child.stdout, 'data'));
+        __classPrivateFieldSet(this, _errorEvent, rxjs_1.fromEvent(this.child, 'error'));
+        __classPrivateFieldSet(this, _closeEvent, rxjs_1.fromEvent(this.child, 'close'));
+        __classPrivateFieldSet(this, _stderrEvent, rxjs_1.fromEvent(this.child.stderr, 'data'));
         this.startMonitoring();
-    };
+    }
     /**
      * @returns void
      */
-    PidmanProcess.prototype.startMonitoring = function () {
+    startMonitoring() {
         var _a, _b, _c, _d;
-        var metadata = {
+        const metadata = {
             process: this,
             pid: (_a = this.child) === null || _a === void 0 ? void 0 : _a.pid,
             time: Date.now()
         };
         // emit when new data goes to stdout
-        this.dataEvent.subscribe((_c = (_b = this.options.monitor) === null || _b === void 0 ? void 0 : _b.onData) === null || _c === void 0 ? void 0 : _c.bind(metadata));
+        __classPrivateFieldGet(this, _dataEvent).subscribe((_c = (_b = this.options.monitor) === null || _b === void 0 ? void 0 : _b.onData) === null || _c === void 0 ? void 0 : _c.bind(metadata));
         // emit concatenated version of error/close info and exit codes
-        rxjs_1.merge(this.errorEvent, this.stderrEvent, this.closeEvent.pipe(operators_1.map(function (data) { return ({
+        rxjs_1.merge(__classPrivateFieldGet(this, _errorEvent), __classPrivateFieldGet(this, _stderrEvent), __classPrivateFieldGet(this, _closeEvent).pipe(operators_1.map((data) => ({
             exitCode: data[0],
             signalCode: data[1]
-        }); })))
-            .pipe(operators_1.scan(function (acc, data) { return (__spreadArrays(acc, [data])); }, []), operators_1.skipUntil(this.closeEvent), operators_1.catchError(function (error) { return rxjs_1.of(error); }))
-            .pipe(operators_1.map(function (output) { return (__assign(__assign({ error: output[0] instanceof Buffer && output[0].toString()
-                || output[0] }, output[1]), metadata)); }))
+        }))))
+            .pipe(operators_1.scan((acc, data) => ([...acc, data]), []), operators_1.skipUntil(__classPrivateFieldGet(this, _closeEvent)), operators_1.catchError(error => rxjs_1.of(error)))
+            .pipe(operators_1.map(data => {
+            /* handle various types of process termination
+            (e.g. a program goes into daemon mode) */
+            let output = { message: '' };
+            output = lodash_1.reduce(data, (acc, val) => {
+                if (val instanceof Buffer) {
+                    acc.message += val.toString();
+                }
+                else if (val instanceof Object) {
+                    acc = Object.assign(Object.assign({}, acc), val);
+                }
+                return acc;
+            }, output);
+            return (Object.assign(Object.assign({}, output), metadata));
+        }))
             .subscribe((_d = this.options.monitor) === null || _d === void 0 ? void 0 : _d.onComplete);
-    };
+    }
     /**
      * @returns boolean
      */
-    PidmanProcess.prototype.stop = function (signal) {
+    stop(signal) {
         return this.child && this.child.kill(signal
             || this.options.killSignal) || false;
-    };
-    PidmanProcess = __decorate([
-        typescript_json_serializer_1.Serializable(),
-        __param(0, typescript_json_serializer_1.JsonProperty()),
-        __metadata("design:paramtypes", [Object])
-    ], PidmanProcess);
-    return PidmanProcess;
-}());
+    }
+};
+_closeEvent = new WeakMap(), _errorEvent = new WeakMap(), _stderrEvent = new WeakMap(), _dataEvent = new WeakMap();
+PidmanProcess = __decorate([
+    typescript_json_serializer_1.Serializable(),
+    __param(0, typescript_json_serializer_1.JsonProperty()),
+    __metadata("design:paramtypes", [Object])
+], PidmanProcess);
 exports.PidmanProcess = PidmanProcess;
 //# sourceMappingURL=process.js.map

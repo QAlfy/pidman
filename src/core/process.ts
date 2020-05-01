@@ -20,14 +20,6 @@ import {
 	of,
 } from 'rxjs';
 
-export enum EventType {
-	onData = 'data',
-	onError = 'error',
-	onExit = 'exit',
-	onClose = 'close',
-	onComplete = 'complete'
-}
-
 export interface ProcessOptions {
 	id?: string;
 	user?: string;

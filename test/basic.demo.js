@@ -44,7 +44,7 @@ const group = new PidmanGroup({
       command: "websockify",
       arguments: "127.0.0.1:8080 0.0.0.0:80".split(" "),
       monitor,
-      shell: false,
+      shell: true,
     },
   ],
 });
@@ -62,4 +62,8 @@ group.addProcess({
 group.run();
 
 // And kill them at once after a few seconds.
-setTimeout(() => group.kill(), 5000);
+setTimeout(async () => {
+  const killed = await group.kill();
+
+  console.info(killed);
+}, 5000);

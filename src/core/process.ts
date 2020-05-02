@@ -236,10 +236,11 @@ export class PidmanProcess {
 				const childrenKilled$ = from(
 					PidmanProcessUtils.killTree(this.child?.pid)
 				).pipe(
+					// @todo generate new channel to inform user
 					multicast(new Subject()), refCount()
 				);
 
-				childrenKilled$.subscribe(success => {
+				const childrenKilledSub = childrenKilled$.subscribe(success => {
 					signal = signal || this.options.killSignal;
 					killed = this.child && this.child.kill(signal) || false;
 
@@ -256,6 +257,8 @@ export class PidmanProcess {
 							`with signal ${signal}`
 						].join(' '));
 					}
+
+					childrenKilledSub.unsubscribe();
 				});
 			} else {
 				PidmanLogger.instance().info([

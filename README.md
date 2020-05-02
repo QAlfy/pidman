@@ -21,7 +21,7 @@ Pidman is a library designed to make external processes management an easy task.
 
 It avoids the typical callback hell where you get into when using native API while at the same time enhances the default language functionality by allowing you to create groups of processes, monitor their activity and gives you the option to manage their statuses at any given time, whether there is data flowing, an error occurs or whenever the process closes or exits. If the later, you'll be provided with all the required information and metadata to help you react accordingly.
 
-Grouping a series of external commands or programs is useful when they depend on each other. Obviously, you can run an individual process if you don't need to manage a group.
+Grouping a serie of external commands or programs is useful when they depend on each other. Obviously, you can run an individual process if you don't need to manage a group.
 
 ### Goal
 

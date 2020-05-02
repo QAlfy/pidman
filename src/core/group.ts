@@ -6,6 +6,7 @@ import {
 import { PidmanMonitor } from './pidman';
 import { PidmanProcess, ProcessOptions } from './';
 import { PidmanStringUtils } from '../utils';
+import { Promise as promise } from 'bluebird';
 
 export interface GroupOptions {
 	id?: string;

@@ -5,7 +5,8 @@ import {
 	Observable,
 	of,
 	Subject,
-	from
+	from,
+	Subscription
 } from 'rxjs';
 import { get, reduce } from 'lodash';
 import {
@@ -30,7 +31,7 @@ import {
 } from 'rxjs/operators';
 
 export type KillSignals = NodeJS.Signals;
-type ProcessEventSubscriptions = Record<string, Observable<unknown>>;
+type ProcessEventSubscriptions = Record<string, Subscription>;
 
 export interface ProcessOptions {
 	id?: string;
@@ -164,8 +165,12 @@ export class PidmanProcess {
 				multicast(new Subject()), refCount()
 			);
 
-		processDataEvent$.subscribe(this.group?.options.monitor?.onData);
-		processDataEvent$.subscribe(this.options.monitor?.onData);
+		this.#subscriptionsMap.dataToSelf = processDataEvent$.subscribe(
+			this.group?.options.monitor?.onData
+		);
+		this.#subscriptionsMap.dataToGroup = processDataEvent$.subscribe(
+			this.options.monitor?.onData
+		);
 
 		// emit concatenated version of error/close info and exit codes
 		const processCloseEvent$ = merge(
@@ -209,8 +214,12 @@ export class PidmanProcess {
 				multicast(new Subject()), refCount()
 			);
 
-		processCloseEvent$.subscribe(this.options.monitor?.onComplete);
-		processCloseEvent$.subscribe(this.group?.options.monitor?.onComplete);
+		this.#subscriptionsMap.closeToSelf = processCloseEvent$.subscribe(
+			this.options.monitor?.onComplete
+		);
+		this.#subscriptionsMap.closeToGroup = processCloseEvent$.subscribe(
+			this.group?.options.monitor?.onComplete
+		);
 	}
 
 	/**

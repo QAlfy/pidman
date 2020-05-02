@@ -8,9 +8,10 @@ export interface GroupOptions {
     envVars?: {};
     processes: Array<ProcessOptions>;
     monitor?: PidmanMonitor;
+    timeout?: number;
 }
 export declare class PidmanGroup {
-    private options;
+    options: GroupOptions;
     protected processes: Array<PidmanProcess>;
     /**
      * @param  {GroupOptions} privateoptions
@@ -33,7 +34,7 @@ export declare class PidmanGroup {
     /**
      * @returns boolean
      */
-    kill(signal?: NodeJS.Signals): boolean;
+    kill(signal?: NodeJS.Signals, callback?: void): Promise<boolean>;
     serialize(): unknown;
     deserialize(json: any): PidmanGroup;
 }

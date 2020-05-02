@@ -13,6 +13,7 @@ export interface ProcessOptions {
     shell?: boolean | string;
     killSignal?: NodeJS.Signals;
     monitor?: PidmanMonitor;
+    timeout?: number;
 }
 export declare class PidmanProcess {
     #private;
@@ -49,9 +50,10 @@ export declare class PidmanProcess {
      */
     startMonitoring(): void;
     /**
-     * @returns boolean
+     * @param  {NodeJS.Signals} signal?
+     * @returns Promise
      */
-    kill(signal?: NodeJS.Signals): boolean;
+    kill(signal?: NodeJS.Signals, callback?: void): boolean;
     serialize(): unknown;
     deserialize(json: any): PidmanProcess;
 }

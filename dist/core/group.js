@@ -16,6 +16,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const typescript_json_serializer_1 = require("typescript-json-serializer");
 const _1 = require("./");
 const utils_1 = require("../utils");
+const bluebird_1 = require("bluebird");
 let PidmanGroup = PidmanGroup_1 = class PidmanGroup {
     /**
      * @param  {GroupOptions} privateoptions
@@ -63,12 +64,12 @@ let PidmanGroup = PidmanGroup_1 = class PidmanGroup {
     /**
      * @returns boolean
      */
-    kill(signal) {
+    kill(signal, callback) {
         let ret = true;
-        this.processes.forEach(process => {
-            ret = ret && process.kill(signal);
+        this.processes.forEach((process) => {
+            ret = ret && (process.kill(signal, callback));
         });
-        return ret;
+        return bluebird_1.Promise.resolve(ret);
     }
     serialize() {
         return typescript_json_serializer_1.serialize(this);

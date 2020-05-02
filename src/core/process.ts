@@ -4,7 +4,8 @@ import {
 	merge,
 	Observable,
 	of,
-	Subject
+	Subject,
+	from
 } from 'rxjs';
 import { get, reduce } from 'lodash';
 import {
@@ -14,7 +15,6 @@ import {
 } from 'typescript-json-serializer';
 import { PidmanGroup, PidmanMonitor } from './';
 import { PidmanLogger } from '../utils/logger';
-import { Promise as promise } from 'bluebird';
 import {
 	PidmanStringUtils,
 	PidmanSysUtils,
@@ -30,6 +30,7 @@ import {
 } from 'rxjs/operators';
 
 export type KillSignals = NodeJS.Signals;
+type ProcessEventSubscriptions = Record<string, Observable<unknown>>;
 
 export interface ProcessOptions {
 	id?: string;
@@ -42,10 +43,12 @@ export interface ProcessOptions {
 	shell?: boolean | string;
 	killSignal?: NodeJS.Signals;
 	monitor?: PidmanMonitor;
+	timeout?: number;
 }
 
 @Serializable()
 export class PidmanProcess {
+	#subscriptionsMap: ProcessEventSubscriptions;
 	#closeEvent: Observable<[]>;
 	#errorEvent: Observable<unknown>;
 	#stderrEvent: Observable<unknown>;
@@ -69,6 +72,7 @@ export class PidmanProcess {
 		this.#closeEvent = new Observable();
 		this.#errorEvent = new Observable();
 		this.#stderrEvent = new Observable();
+		this.#subscriptionsMap = {};
 	}
 
 	/**
@@ -129,8 +133,11 @@ export class PidmanProcess {
 			env: this.options.envVars || {},
 			gid: PidmanSysUtils.getGid(this.options.group || ''),
 			shell: this.options.shell || false,
-			detached: true
+			detached: true,
+			windowsHide: true
 		});
+
+		this.child.unref();
 
 		// let's handle all important events; don't miss anything
 		this.#dataEvent = fromEvent(this.child.stdout!, 'data');
@@ -139,8 +146,6 @@ export class PidmanProcess {
 		this.#stderrEvent = fromEvent(this.child.stderr!, 'data');
 
 		this.startMonitoring();
-
-		this.child.unref();
 	}
 
 	/**
@@ -160,9 +165,7 @@ export class PidmanProcess {
 			);
 
 		processDataEvent$.subscribe(this.group?.options.monitor?.onData);
-		processDataEvent$.subscribe(
-			this.options.monitor?.onData?.bind(metadata)
-		);
+		processDataEvent$.subscribe(this.options.monitor?.onData);
 
 		// emit concatenated version of error/close info and exit codes
 		const processCloseEvent$ = merge(
@@ -182,8 +185,10 @@ export class PidmanProcess {
 			)
 			.pipe(
 				map(data => {
-					/* handle various types of process termination
-					(e.g. a program goes into daemon mode) */
+					/*
+					handle various types of process termination
+					(e.g. a program goes into daemon mode).
+					*/
 					let output = { message: '' };
 
 					output = reduce(data, (acc, val) => {
@@ -212,30 +217,37 @@ export class PidmanProcess {
 	 * @param  {NodeJS.Signals} signal?
 	 * @returns Promise
 	 */
-	kill(signal?: NodeJS.Signals): boolean {
+	kill(signal?: NodeJS.Signals, callback?: void): boolean {
 		let killed = false;
 
 		if (this.child) {
 			const exitCode = get(this.child, 'exitCode');
 
 			if (exitCode === null) {
-				signal = signal || this.options.killSignal;
-				killed = this.child && this.child.kill(signal) || false;
+				const childrenKilled$ = from(
+					PidmanProcessUtils.killTree(this.child?.pid)
+				).pipe(
+					multicast(new Subject()), refCount()
+				);
 
-				if (killed) {
-					PidmanLogger.instance().info([
-						`killed process ${this.options.id}`,
-						`(PID: ${this.child?.pid})`,
-						`with signal ${signal}`
-					].join(' '));
-				} else {
-					PidmanLogger.instance().error([
-						`unable to kill process ${this.options.id}`,
-						`(PID: ${this.child?.pid})`,
-						`with signal ${signal}`
-					].join(' '));
+				childrenKilled$.subscribe(success => {
+					signal = signal || this.options.killSignal;
+					killed = this.child && this.child.kill(signal) || false;
 
-				}
+					if (killed) {
+						PidmanLogger.instance().info([
+							`killed process ${this.options.id}`,
+							`(PID: ${this.child?.pid})`,
+							`with signal ${signal}`
+						].join(' '));
+					} else {
+						PidmanLogger.instance().error([
+							`unable to kill process ${this.options.id}`,
+							`(PID: ${this.child?.pid})`,
+							`with signal ${signal}`
+						].join(' '));
+					}
+				});
 			} else {
 				PidmanLogger.instance().info([
 					`process ${this.options.id}`,

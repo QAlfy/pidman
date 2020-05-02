@@ -24,7 +24,7 @@ export class PidmanGroup {
 	 * @param  {GroupOptions} privateoptions
 	 * @param  {PidmanMonitor} publicmonitor
 	 */
-	constructor(@JsonProperty() private options: GroupOptions) {
+	constructor(@JsonProperty() public options: GroupOptions) {
 		if (!this.options.id) {
 			this.options.id = PidmanStringUtils.getId();
 		}

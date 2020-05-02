@@ -1,25 +1,33 @@
 import { ChildProcess, spawn } from 'child_process';
 import {
+	fromEvent,
+	merge,
+	Observable,
+	of,
+	Subject
+} from 'rxjs';
+import { get, reduce } from 'lodash';
+import {
 	JsonProperty,
 	Serializable,
 	serialize
 } from 'typescript-json-serializer';
 import { PidmanGroup, PidmanMonitor } from './';
 import { PidmanLogger } from '../utils/logger';
-import { PidmanStringUtils, PidmanSysUtils } from '../utils';
-import { reduce, get } from 'lodash';
+import { Promise as promise } from 'bluebird';
+import {
+	PidmanStringUtils,
+	PidmanSysUtils,
+	PidmanProcessUtils
+} from '../utils';
 import {
 	catchError,
 	scan,
 	map,
 	skipUntil,
+	multicast,
+	refCount,
 } from 'rxjs/operators';
-import {
-	fromEvent,
-	merge,
-	Observable,
-	of,
-} from 'rxjs';
 
 export type KillSignals = NodeJS.Signals;
 
@@ -146,12 +154,18 @@ export class PidmanProcess {
 		};
 
 		// emit when new data goes to stdout
-		this.#dataEvent.subscribe(
+		const processDataEvent$ = this.#dataEvent
+			.pipe(
+				multicast(new Subject()), refCount()
+			);
+
+		processDataEvent$.subscribe(this.group?.options.monitor?.onData);
+		processDataEvent$.subscribe(
 			this.options.monitor?.onData?.bind(metadata)
 		);
 
 		// emit concatenated version of error/close info and exit codes
-		merge(
+		const processCloseEvent$ = merge(
 			this.#errorEvent,
 			this.#stderrEvent,
 			this.#closeEvent.pipe(
@@ -186,13 +200,17 @@ export class PidmanProcess {
 						...output,
 						...metadata
 					})
-				})
-			)
-			.subscribe(this.options.monitor?.onComplete);
+				}),
+				multicast(new Subject()), refCount()
+			);
+
+		processCloseEvent$.subscribe(this.options.monitor?.onComplete);
+		processCloseEvent$.subscribe(this.group?.options.monitor?.onComplete);
 	}
 
 	/**
-	 * @returns boolean
+	 * @param  {NodeJS.Signals} signal?
+	 * @returns Promise
 	 */
 	kill(signal?: NodeJS.Signals): boolean {
 		let killed = false;

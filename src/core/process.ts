@@ -259,6 +259,7 @@ export class PidmanProcess {
 					}
 
 					childrenKilledSub.unsubscribe();
+					this.unsubscribeAll();
 				});
 			} else {
 				PidmanLogger.instance().info([
@@ -272,6 +273,12 @@ export class PidmanProcess {
 		}
 
 		return killed;
+	}
+
+	unsubscribeAll(): void {
+		Object.keys(this.#subscriptionsMap).forEach(subKey => {
+			this.#subscriptionsMap[subKey].unsubscribe();
+		});
 	}
 
 	serialize(): unknown {

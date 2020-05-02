@@ -1,4 +1,4 @@
-import { ChildProcess, spawn } from 'child_process';
+import { ChildProcess, spawn, fork } from 'child_process';
 import {
 	fromEvent,
 	merge,
@@ -30,6 +30,9 @@ import {
 	refCount,
 } from 'rxjs/operators';
 import { Promise as promise } from 'bluebird';
+
+// don't remove, needs to be compiled
+import { ForkedMessageType, ForkedMessage } from './forked';
 
 export type KillSignals = NodeJS.Signals;
 type ProcessEventSubscriptions = Record<string, Subscription>;
@@ -127,27 +130,46 @@ export class PidmanProcess {
 			JSON.stringify(this.serialize())
 		].join(' '));
 
-		this.child = spawn(this.options.command, this.options.arguments || [], {
+		const cmdAndArgs = [this.options.command]
+			.concat(this.options.arguments || []);
+
+		this.child = fork(`${__dirname}/forked.js`, undefined, {
 			uid:
 				(!this.options.user && undefined) ||
 				PidmanSysUtils.getUid(this.options.user || ''),
 			cwd: this.options.path,
 			env: this.options.envVars || {},
 			gid: PidmanSysUtils.getGid(this.options.group || ''),
-			shell: this.options.shell || false,
+			// shell: this.options.shell || false,
 			detached: true,
-			windowsHide: true
+			stdio: [null, 'pipe', 'pipe', 'ipc']
+			// windowsHide: true
+		});
+
+		// initialize IPC channel (first handshake)
+		this.child.send(
+			new ForkedMessage(ForkedMessageType.options, this.options),
+			(err) => {
+				if (err) {
+					PidmanLogger.instance().error(err.toString());
+				}
+			});
+
+		this.child.on('message', (msg: ForkedMessage) => {
+			if (msg.type === ForkedMessageType.options) {
+				console.log(msg);
+			}
 		});
 
 		this.child.unref();
 
 		// let's handle all important events; don't miss anything
-		this.#dataEvent = fromEvent(this.child.stdout!, 'data');
-		this.#errorEvent = fromEvent(this.child, 'error');
-		this.#closeEvent = fromEvent(this.child, 'close');
-		this.#stderrEvent = fromEvent(this.child.stderr!, 'data');
+		// this.#dataEvent = fromEvent(this.child.stdout!, 'data');
+		// this.#errorEvent = fromEvent(this.child, 'error');
+		// this.#closeEvent = fromEvent(this.child, 'close');
+		// this.#stderrEvent = fromEvent(this.child.stderr!, 'data');
 
-		this.startMonitoring();
+		// this.startMonitoring();
 	}
 
 	/**

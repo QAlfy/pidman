@@ -29,6 +29,7 @@ import {
 	multicast,
 	refCount,
 } from 'rxjs/operators';
+import { Promise as promise } from 'bluebird';
 
 export type KillSignals = NodeJS.Signals;
 type ProcessEventSubscriptions = Record<string, Subscription>;
@@ -226,53 +227,65 @@ export class PidmanProcess {
 	 * @param  {NodeJS.Signals} signal?
 	 * @returns Promise
 	 */
-	kill(signal?: NodeJS.Signals): boolean {
-		let killed = false;
+	kill(signal?: NodeJS.Signals): Promise<boolean> {
+		return new promise((resolve, reject) => {
+			if (this.child) {
+				let killed = false;
+				const exitCode = get(this.child, 'exitCode');
 
-		if (this.child) {
-			const exitCode = get(this.child, 'exitCode');
+				if (exitCode === null) {
+					const childrenKilled$ = from(
+						PidmanProcessUtils.killTree(this.child?.pid)
+					).pipe(
+						// @todo generate new channel to inform user
+						multicast(new Subject()), refCount(),
+						catchError(error => of(error))
+					);
 
-			if (exitCode === null) {
-				const childrenKilled$ = from(
-					PidmanProcessUtils.killTree(this.child?.pid)
-				).pipe(
-					// @todo generate new channel to inform user
-					multicast(new Subject()), refCount()
-				);
+					const childrenKilledSub = childrenKilled$
+						.subscribe(success => {
+							signal = signal || this.options.killSignal;
+							killed = this.child && this.child.kill(signal)
+								|| false;
 
-				const childrenKilledSub = childrenKilled$.subscribe(success => {
-					signal = signal || this.options.killSignal;
-					killed = this.child && this.child.kill(signal) || false;
+							if (killed) {
+								PidmanLogger.instance().info([
+									`killed process ${this.options.id}`,
+									`(PID: ${this.child?.pid})`,
+									`with signal ${signal}`
+								].join(' '));
+							} else {
+								PidmanLogger.instance().error([
+									`unable to kill process ${this.options.id}`,
+									`(PID: ${this.child?.pid})`,
+									`with signal ${signal}`
+								].join(' '));
+							}
 
-					if (killed) {
-						PidmanLogger.instance().info([
-							`killed process ${this.options.id}`,
-							`(PID: ${this.child?.pid})`,
-							`with signal ${signal}`
-						].join(' '));
-					} else {
-						PidmanLogger.instance().error([
-							`unable to kill process ${this.options.id}`,
-							`(PID: ${this.child?.pid})`,
-							`with signal ${signal}`
-						].join(' '));
-					}
+							childrenKilledSub.unsubscribe();
+							this.unsubscribeAll();
 
-					childrenKilledSub.unsubscribe();
-					this.unsubscribeAll();
-				});
+							if (typeof success === 'boolean') {
+								resolve(killed && success);
+							} else {
+								reject(success);
+							}
+						});
+				} else {
+					PidmanLogger.instance().info([
+						`process ${this.options.id}`,
+						`(PID: ${this.child?.pid})`,
+						`has already exited with code ${exitCode}.`,
+						'PID might be not longer ours',
+						'or process has been daemonized.'
+					].join(' '));
+
+					resolve(false);
+				}
 			} else {
-				PidmanLogger.instance().info([
-					`process ${this.options.id}`,
-					`(PID: ${this.child?.pid})`,
-					`has already exited with code ${exitCode}.`,
-					'PID might be not longer ours',
-					'or process has been daemonized.'
-				].join(' '));
+				resolve(false);
 			}
-		}
-
-		return killed;
+		});
 	}
 
 	unsubscribeAll(): void {

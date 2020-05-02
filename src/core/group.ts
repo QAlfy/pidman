@@ -72,14 +72,14 @@ export class PidmanGroup {
 	/**
 	 * @returns boolean
 	 */
-	kill(signal?: NodeJS.Signals): boolean {
+	kill(signal?: NodeJS.Signals, callback?: void): Promise<boolean> {
 		let ret = true;
 
-		this.processes.forEach(process => {
-			ret = ret && process.kill(signal);
+		this.processes.forEach((process) => {
+			ret = ret && (process.kill(signal, callback));
 		});
 
-		return ret;
+		return promise.resolve(ret);
 	}
 
 	serialize(): unknown {

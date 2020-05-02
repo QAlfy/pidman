@@ -34,6 +34,7 @@ const typescript_json_serializer_1 = require("typescript-json-serializer");
 const logger_1 = require("../utils/logger");
 const utils_1 = require("../utils");
 const operators_1 = require("rxjs/operators");
+const bluebird_1 = require("bluebird");
 let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
     /**
      * @param  {ProcessOptions} privateoptions
@@ -162,46 +163,65 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
      * @returns Promise
      */
     kill(signal) {
-        var _a, _b;
-        let killed = false;
-        if (this.child) {
-            const exitCode = lodash_1.get(this.child, 'exitCode');
-            if (exitCode === null) {
-                const childrenKilled$ = rxjs_1.from(utils_1.PidmanProcessUtils.killTree((_a = this.child) === null || _a === void 0 ? void 0 : _a.pid)).pipe(
-                // @todo generate new channel to inform user
-                operators_1.multicast(new rxjs_1.Subject()), operators_1.refCount());
-                const childrenKilledSub = childrenKilled$.subscribe(success => {
-                    var _a, _b;
-                    signal = signal || this.options.killSignal;
-                    killed = this.child && this.child.kill(signal) || false;
-                    if (killed) {
-                        logger_1.PidmanLogger.instance().info([
-                            `killed process ${this.options.id}`,
-                            `(PID: ${(_a = this.child) === null || _a === void 0 ? void 0 : _a.pid})`,
-                            `with signal ${signal}`
-                        ].join(' '));
-                    }
-                    else {
-                        logger_1.PidmanLogger.instance().error([
-                            `unable to kill process ${this.options.id}`,
-                            `(PID: ${(_b = this.child) === null || _b === void 0 ? void 0 : _b.pid})`,
-                            `with signal ${signal}`
-                        ].join(' '));
-                    }
-                    childrenKilledSub.unsubscribe();
-                });
+        return new bluebird_1.Promise((resolve, reject) => {
+            var _a, _b;
+            if (this.child) {
+                let killed = false;
+                const exitCode = lodash_1.get(this.child, 'exitCode');
+                if (exitCode === null) {
+                    const childrenKilled$ = rxjs_1.from(utils_1.PidmanProcessUtils.killTree((_a = this.child) === null || _a === void 0 ? void 0 : _a.pid)).pipe(
+                    // @todo generate new channel to inform user
+                    operators_1.multicast(new rxjs_1.Subject()), operators_1.refCount(), operators_1.catchError(error => rxjs_1.of(error)));
+                    const childrenKilledSub = childrenKilled$
+                        .subscribe(success => {
+                        var _a, _b;
+                        signal = signal || this.options.killSignal;
+                        killed = this.child && this.child.kill(signal)
+                            || false;
+                        if (killed) {
+                            logger_1.PidmanLogger.instance().info([
+                                `killed process ${this.options.id}`,
+                                `(PID: ${(_a = this.child) === null || _a === void 0 ? void 0 : _a.pid})`,
+                                `with signal ${signal}`
+                            ].join(' '));
+                        }
+                        else {
+                            logger_1.PidmanLogger.instance().error([
+                                `unable to kill process ${this.options.id}`,
+                                `(PID: ${(_b = this.child) === null || _b === void 0 ? void 0 : _b.pid})`,
+                                `with signal ${signal}`
+                            ].join(' '));
+                        }
+                        childrenKilledSub.unsubscribe();
+                        this.unsubscribeAll();
+                        if (typeof success === 'boolean') {
+                            resolve(killed && success);
+                        }
+                        else {
+                            reject(success);
+                        }
+                    });
+                }
+                else {
+                    logger_1.PidmanLogger.instance().info([
+                        `process ${this.options.id}`,
+                        `(PID: ${(_b = this.child) === null || _b === void 0 ? void 0 : _b.pid})`,
+                        `has already exited with code ${exitCode}.`,
+                        'PID might be not longer ours',
+                        'or process has been daemonized.'
+                    ].join(' '));
+                    resolve(false);
+                }
             }
             else {
-                logger_1.PidmanLogger.instance().info([
-                    `process ${this.options.id}`,
-                    `(PID: ${(_b = this.child) === null || _b === void 0 ? void 0 : _b.pid})`,
-                    `has already exited with code ${exitCode}.`,
-                    'PID might be not longer ours',
-                    'or process has been daemonized.'
-                ].join(' '));
+                resolve(false);
             }
-        }
-        return killed;
+        });
+    }
+    unsubscribeAll() {
+        Object.keys(__classPrivateFieldGet(this, _subscriptionsMap)).forEach(subKey => {
+            __classPrivateFieldGet(this, _subscriptionsMap)[subKey].unsubscribe();
+        });
     }
     serialize() {
         return typescript_json_serializer_1.serialize(this);

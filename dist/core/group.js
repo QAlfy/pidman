@@ -65,11 +65,11 @@ let PidmanGroup = PidmanGroup_1 = class PidmanGroup {
      * @returns boolean
      */
     kill(signal) {
-        let ret = true;
-        this.processes.forEach((process) => {
-            ret = ret && (process.kill(signal));
+        return new bluebird_1.Promise((resolve, reject) => {
+            bluebird_1.Promise.all(this.processes.map(process => process.kill(signal)))
+                .then(resolve)
+                .catch(reject);
         });
-        return bluebird_1.Promise.resolve(ret);
     }
     serialize() {
         return typescript_json_serializer_1.serialize(this);

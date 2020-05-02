@@ -161,7 +161,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
      * @param  {NodeJS.Signals} signal?
      * @returns Promise
      */
-    kill(signal, callback) {
+    kill(signal) {
         var _a, _b;
         let killed = false;
         if (this.child) {

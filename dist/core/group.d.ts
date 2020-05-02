@@ -34,7 +34,7 @@ export declare class PidmanGroup {
     /**
      * @returns boolean
      */
-    kill(signal?: NodeJS.Signals, callback?: void): Promise<boolean>;
+    kill(signal?: NodeJS.Signals): Promise<boolean>;
     serialize(): unknown;
     deserialize(json: any): PidmanGroup;
 }

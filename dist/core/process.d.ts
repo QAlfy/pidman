@@ -53,7 +53,7 @@ export declare class PidmanProcess {
      * @param  {NodeJS.Signals} signal?
      * @returns Promise
      */
-    kill(signal?: NodeJS.Signals, callback?: void): boolean;
+    kill(signal?: NodeJS.Signals): boolean;
     serialize(): unknown;
     deserialize(json: any): PidmanProcess;
 }

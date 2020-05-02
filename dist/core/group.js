@@ -64,10 +64,10 @@ let PidmanGroup = PidmanGroup_1 = class PidmanGroup {
     /**
      * @returns boolean
      */
-    kill(signal, callback) {
+    kill(signal) {
         let ret = true;
         this.processes.forEach((process) => {
-            ret = ret && (process.kill(signal, callback));
+            ret = ret && (process.kill(signal));
         });
         return bluebird_1.Promise.resolve(ret);
     }

@@ -64,7 +64,7 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<h1 align="center">Welcome to pidman 👋</h1>
+				<h1 align="center">Welcome to Pidman 👋</h1>
 				<p>
 					<img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
 					<img src="https://img.shields.io/badge/npm-%3E%3D5.5.0-blue.svg" />
@@ -77,22 +77,37 @@
 					</a>
 				</p>
 				<blockquote>
-					<p>A rock solid process orchestration library for Node</p>
+					<p>A rock solid process orchestration library for Node (<strong>WIP: Work In Progress)</strong></p>
 				</blockquote>
 				<a href="#🏠-homepage" id="🏠-homepage" style="color: inherit; text-decoration: none;">
 					<h3>🏠 <a href="https://qalfy.com">Homepage</a></h3>
 				</a>
+				<a href="#about" id="about" style="color: inherit; text-decoration: none;">
+					<h2>About</h2>
+				</a>
+				<p>Pidman is a library designed to make external processes management an easy task.</p>
+				<p>It avoids the typical callback hell where you get into when using native API while at the same time enhances the default language functionality by allowing you to create groups of processes, monitor their activity and gives you the option to manage their statuses at any given time, whether there is data flowing, an error occurs or whenever the process closes or exits. If the later, you&#39;ll be provided with all the required information and metadata to help you react accordingly.</p>
+				<p>Grouping a serie of external commands or programs is useful when they depend on each other. Obviously, you can run an individual process if you don&#39;t need to manage a group.</p>
+				<a href="#goal" id="goal" style="color: inherit; text-decoration: none;">
+					<h3>Goal</h3>
+				</a>
+				<p>The goal of Pidman is to provide the most reliable process management tool without entering into dark territories. It has to remain simple to use and be easy to setup. In a matter of seconds, you should be able to orchestrate a series of programs or external commands while ensuring you won&#39;t loose their traces.</p>
+				<a href="#persistence" id="persistence" style="color: inherit; text-decoration: none;">
+					<h3>Persistence</h3>
+				</a>
+				<p>Pidman stores your groups and processes&#39; metadata using <em>Connectors*. Currently, there is a single connector called *MemoryConnector</em> which can be persisted locally. You&#39;ll be always in sync with the processes that run over Pidman.</p>
+				<p>There are plans to add more connectors (NoSQL, MySQL, etc).</p>
 				<a href="#prerequisites" id="prerequisites" style="color: inherit; text-decoration: none;">
 					<h2>Prerequisites</h2>
 				</a>
 				<ul>
-					<li>npm &gt;=5.5.0</li>
+					<li>yarn &gt;=1.20.0</li>
 					<li>node &gt;=9.3.0</li>
 				</ul>
 				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
 					<h2>Install</h2>
 				</a>
-				<pre><code class="language-sh">yarn install</code></pre>
+				<pre><code class="language-sh">yarn</code></pre>
 				<a href="#author" id="author" style="color: inherit; text-decoration: none;">
 					<h2>Author</h2>
 				</a>
@@ -147,6 +162,12 @@
 						<a href="modules/_utils_index_.html">&quot;utils/index&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/_utils_logger_.html">&quot;utils/logger&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_utils_process_.html">&quot;utils/process&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/_utils_strings_.html">&quot;utils/strings&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -165,6 +186,10 @@
 	<div class="container">
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
 			</ul>

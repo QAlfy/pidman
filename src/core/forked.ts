@@ -1,12 +1,12 @@
-import { ProcessOptions } from './process';
-import { spawn } from 'child_process';
+import { ChildProcess, spawn } from 'child_process';
 import { PidmanSysUtils } from '../utils';
+import { ProcessOptions } from './process';
 
-let forkedProcess;
+let forkedProcess: ForkedProcess;
 
 export enum ForkedMessageType {
-  closed,
-  error,
+  data,
+  complete,
   started,
   options,
   kill,
@@ -16,32 +16,51 @@ export enum ForkedMessageType {
 export class ForkedMessage {
   constructor(public type: ForkedMessageType, public body: unknown) { }
 }
-export class ForkedProcess {
+class ForkedProcess {
+  #child?: ChildProcess;
+
+  /**
+   * @param  {ProcessOptions} privateoptions
+   */
   constructor(private options: ProcessOptions) { }
-}
 
-process.on('message', (msg: ForkedMessage) => {
-  // first handshake
-  if (msg.type === ForkedMessageType.options) {
-    const options = msg.body as ProcessOptions;
-
-    forkedProcess = spawn(options.command, options.arguments || [], {
+  /**
+   * @returns number
+   */
+  run(): number {
+    this.#child = spawn(this.options.command, this.options.arguments || [], {
       uid:
-        (!options.user && undefined) ||
-        PidmanSysUtils.getUid(options.user || ''),
-      cwd: options.path,
-      env: options.envVars || {},
-      gid: PidmanSysUtils.getGid(options.group || ''),
-      shell: options.shell || false,
-      detached: true,
-      stdio: [null, 'pipe', 'pipe'],
+        (!this.options.user && undefined) ||
+        PidmanSysUtils.getUid(this.options.user || ''),
+      cwd: this.options.path,
+      env: this.options.envVars || {},
+      gid: PidmanSysUtils.getGid(this.options.group || ''),
+      shell: this.options.shell || false,
+      // detached: true,
+      stdio: 'inherit',
       windowsHide: true
     });
 
-    forkedProcess.unref();
+    // this.#child.unref();
 
-    if (process.send) {
-      process.send(options);
+    return this.#child.pid;
+  }
+}
+
+process.on('message', async (msg: ForkedMessage) => {
+  if (process.send) {
+    // first handshake
+    if (msg.type === ForkedMessageType.options) {
+      const options = msg.body as ProcessOptions;
+
+      // run process
+      forkedProcess = new ForkedProcess(options);
+      const pid = forkedProcess.run();
+
+      // ACK
+      process.send(
+        new ForkedMessage(ForkedMessageType.started, pid)
+      );
     }
   }
 });

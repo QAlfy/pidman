@@ -15,6 +15,7 @@ export interface GroupOptions {
 	envVars?: {};
 	processes: Array<ProcessOptions>;
 	monitor?: PidmanMonitor;
+	timeout?: number;
 }
 
 @Serializable()

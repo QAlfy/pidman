@@ -1,11 +1,12 @@
-import { ChildProcess, spawn, fork } from 'child_process';
+import { ChildProcess, fork } from 'child_process';
+import { ForkedMessage, ForkedMessageType } from './forked';
 import {
+	from,
 	fromEvent,
 	merge,
 	Observable,
 	of,
 	Subject,
-	from,
 	Subscription
 } from 'rxjs';
 import { get, reduce } from 'lodash';
@@ -17,10 +18,11 @@ import {
 import { PidmanGroup, PidmanMonitor } from './';
 import { PidmanLogger } from '../utils/logger';
 import {
+	PidmanProcessUtils,
 	PidmanStringUtils,
-	PidmanSysUtils,
-	PidmanProcessUtils
+	PidmanSysUtils
 } from '../utils';
+import { Promise as promise } from 'bluebird';
 import {
 	catchError,
 	scan,
@@ -29,13 +31,9 @@ import {
 	multicast,
 	refCount,
 } from 'rxjs/operators';
-import { Promise as promise } from 'bluebird';
-
-// don't remove, needs to be compiled
-import { ForkedMessageType, ForkedMessage } from './forked';
 
 export type KillSignals = NodeJS.Signals;
-type ProcessEventSubscriptions = Record<string, Subscription>;
+export type ProcessEventSubscriptions = Record<string, Subscription>;
 
 export interface ProcessOptions {
 	id?: string;
@@ -130,9 +128,6 @@ export class PidmanProcess {
 			JSON.stringify(this.serialize())
 		].join(' '));
 
-		const cmdAndArgs = [this.options.command]
-			.concat(this.options.arguments || []);
-
 		this.child = fork(`${__dirname}/forked.js`, undefined, {
 			uid:
 				(!this.options.user && undefined) ||
@@ -140,10 +135,9 @@ export class PidmanProcess {
 			cwd: this.options.path,
 			env: this.options.envVars || {},
 			gid: PidmanSysUtils.getGid(this.options.group || ''),
-			// shell: this.options.shell || false,
 			detached: true,
-			stdio: [null, 'pipe', 'pipe', 'ipc']
-			// windowsHide: true
+			stdio: [null, 'pipe', 'pipe', 'ipc'],
+			silent: true
 		});
 
 		// initialize IPC channel (first handshake)
@@ -156,20 +150,24 @@ export class PidmanProcess {
 			});
 
 		this.child.on('message', (msg: ForkedMessage) => {
-			if (msg.type === ForkedMessageType.options) {
-				console.log(msg);
+			if (msg.type === ForkedMessageType.started) {
+				const pid = msg.body as number;
+
+				console.log(pid);
+			}
+
+			if (msg.type === ForkedMessageType.complete) {
+				console.log(msg.body);
+			}
+
+			if (msg.type === ForkedMessageType.data) {
+				console.log(msg.body);
 			}
 		});
 
 		this.child.unref();
 
-		// let's handle all important events; don't miss anything
-		// this.#dataEvent = fromEvent(this.child.stdout!, 'data');
-		// this.#errorEvent = fromEvent(this.child, 'error');
-		// this.#closeEvent = fromEvent(this.child, 'close');
-		// this.#stderrEvent = fromEvent(this.child.stderr!, 'data');
-
-		// this.startMonitoring();
+		this.startMonitoring();
 	}
 
 	/**
@@ -181,6 +179,12 @@ export class PidmanProcess {
 			pid: this.child?.pid,
 			time: Date.now()
 		};
+
+		// let's handle all important events; don't miss anything
+		this.#dataEvent = fromEvent(this.child?.stdout!, 'data');
+		this.#errorEvent = fromEvent(this.child!, 'error');
+		this.#closeEvent = fromEvent(this.child!, 'close');
+		this.#stderrEvent = fromEvent(this.child!.stderr!, 'data');
 
 		// emit when new data goes to stdout
 		const processDataEvent$ = this.#dataEvent

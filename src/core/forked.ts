@@ -1,16 +1,15 @@
 import { ChildProcess, spawn } from 'child_process';
-import { PidmanSysUtils } from '../utils';
+import { PidmanSysUtils, PidmanProcessUtils } from '../utils';
 import { ProcessOptions } from './process';
 
 let forkedProcess: ForkedProcess;
 
 export enum ForkedMessageType {
-  data,
-  complete,
   started,
   options,
   kill,
-  killed
+  killed,
+  fail
 }
 
 export class ForkedMessage {
@@ -45,6 +44,10 @@ class ForkedProcess {
 
     return this.#child.pid;
   }
+
+  getPid(): number {
+    return this.#child!.pid;
+  }
 }
 
 process.on('message', async (msg: ForkedMessage) => {
@@ -61,6 +64,26 @@ process.on('message', async (msg: ForkedMessage) => {
       process.send(
         new ForkedMessage(ForkedMessageType.started, pid)
       );
+    }
+
+    // kill request
+    if (msg.type === ForkedMessageType.kill) {
+      try {
+        const childrens = await PidmanProcessUtils.getPidChildrens(
+          forkedProcess.getPid()
+        );
+        const killed = await PidmanProcessUtils.killTree(
+          forkedProcess.getPid()
+        );
+
+        process.send(
+          new ForkedMessage(ForkedMessageType.killed, childrens)
+        );
+      } catch (err) {
+        process.send(
+          new ForkedMessage(ForkedMessageType.fail, err)
+        );
+      }
     }
   }
 });

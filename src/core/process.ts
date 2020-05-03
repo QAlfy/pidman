@@ -58,6 +58,7 @@ export class PidmanProcess {
 	#dataEvent: Observable<unknown>;
 	child: ChildProcess | undefined;
 	group: PidmanGroup | undefined;
+	running = false;
 
 	/**
 	 * @param  {ProcessOptions} privateoptions
@@ -151,17 +152,7 @@ export class PidmanProcess {
 
 		this.child.on('message', (msg: ForkedMessage) => {
 			if (msg.type === ForkedMessageType.started) {
-				const pid = msg.body as number;
-
-				console.log(pid);
-			}
-
-			if (msg.type === ForkedMessageType.complete) {
-				console.log(msg.body);
-			}
-
-			if (msg.type === ForkedMessageType.data) {
-				console.log(msg.body);
+				this.running = true;
 			}
 		});
 
@@ -260,41 +251,53 @@ export class PidmanProcess {
 				const exitCode = get(this.child, 'exitCode');
 
 				if (exitCode === null) {
-					const childrenKilled$ = from(
-						PidmanProcessUtils.killTree(this.child?.pid)
-					).pipe(
-						// @todo generate new channel to inform user
-						multicast(new Subject()), refCount(),
-						catchError(error => of(error))
+					// inform the child about the kill
+					this.child?.send(
+						new ForkedMessage(
+							ForkedMessageType.kill,
+							null
+						),
+						(err) => {
+							if (err) {
+								reject(err);
+							}
+						}
 					);
 
-					const childrenKilledSub = childrenKilled$
-						.subscribe(success => {
-							signal = signal || this.options.killSignal;
-							killed = this.child && this.child.kill(signal)
-								|| false;
+					// wait for child's confirmation
+					this.child?.on('message',
+						(msg: ForkedMessage) => {
+							if (msg.type
+								=== ForkedMessageType.killed) {
+								signal = signal || this.options.killSignal;
+								killed = this.child && this.child.kill(signal)
+									|| false;
 
-							if (killed) {
-								PidmanLogger.instance().info([
-									`killed process ${this.options.id}`,
-									`(PID: ${this.child?.pid})`,
-									`with signal ${signal}`
-								].join(' '));
-							} else {
-								PidmanLogger.instance().error([
-									`unable to kill process ${this.options.id}`,
-									`(PID: ${this.child?.pid})`,
-									`with signal ${signal}`
-								].join(' '));
-							}
+								if (killed) {
+									PidmanLogger.instance().info([
+										`killed process ${this.options.id}`,
+										`(PID: ${this.child?.pid})`,
+										// eslint-disable-next-line max-len
+										`and its childrens with signal ${signal}`
+									].join(' '));
 
-							childrenKilledSub.unsubscribe();
-							this.unsubscribeAll();
+									console.info(msg.body);
 
-							if (typeof success === 'boolean') {
-								resolve(killed && success);
-							} else {
-								reject(success);
+									resolve(true);
+								} else {
+									PidmanLogger.instance().error([
+										// eslint-disable-next-line max-len
+										`unable to kill process ${this.options.id}`,
+										`(PID: ${this.child?.pid})`,
+										`with signal ${signal}`
+									].join(' '));
+
+									reject('Unable to kill forked process');
+								}
+							} else if (
+								msg.type === ForkedMessageType.fail
+							) {
+								reject(msg.body);
 							}
 						});
 				} else {
@@ -306,9 +309,13 @@ export class PidmanProcess {
 						'or process has been daemonized.'
 					].join(' '));
 
+					this.running = false;
+
 					resolve(false);
 				}
 			} else {
+				this.running = false;
+
 				resolve(false);
 			}
 		});

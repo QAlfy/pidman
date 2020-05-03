@@ -282,6 +282,7 @@ export class PidmanProcess {
 									].join(' '));
 
 									this.running = false;
+									this.unsubscribeAll();
 
 									resolve(true);
 								} else {
@@ -310,11 +311,13 @@ export class PidmanProcess {
 					].join(' '));
 
 					this.running = false;
+					this.unsubscribeAll();
 
 					resolve(false);
 				}
 			} else {
 				this.running = false;
+				this.unsubscribeAll();
 
 				resolve(false);
 			}

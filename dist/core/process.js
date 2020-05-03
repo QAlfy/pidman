@@ -204,6 +204,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
                                     `and its childrens with signal ${signal}`
                                 ].join(' '));
                                 this.running = false;
+                                this.unsubscribeAll();
                                 resolve(true);
                             }
                             else {
@@ -230,11 +231,13 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
                         'or process has been daemonized.'
                     ].join(' '));
                     this.running = false;
+                    this.unsubscribeAll();
                     resolve(false);
                 }
             }
             else {
                 this.running = false;
+                this.unsubscribeAll();
                 resolve(false);
             }
         });

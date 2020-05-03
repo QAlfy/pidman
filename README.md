@@ -37,7 +37,7 @@ There are plans to add more connectors (NoSQL, MySQL, etc). Contributors are wel
 
 Pidman offers a vast set of logging targets to keep you informed. Thanks to the use of [Winston transports](https://github.com/winstonjs/winston/blob/master/docs/transports.md#winston-core), the output of this library can be redirected to either console, Slack, MongoDB, Sentry, New Relic, a file, a stream and dozens of other popular destinations.
 
-Just include the preffered one when initializing the `Pidman` instance:
+Just include the preferred one when initializing the `Pidman` instance:
 
 ```
 const SlackHook = require('winston-slack-webhook-transport');

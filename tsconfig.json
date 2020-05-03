@@ -26,5 +26,5 @@
 	"typedocOptions": {
 		"mode": "modules",
 		"out": "docs"
-	}
+  }
 }

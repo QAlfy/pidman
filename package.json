@@ -1,6 +1,6 @@
 {
   "name": "pidman",
-  "version": "1.0.1",
+  "version": "1.0.5",
   "description": "A rock solid process orchestration library for Node",
   "main": "dist/index.js",
   "repository": "https://github.com/QAlfy/pidman",
@@ -10,7 +10,7 @@
     "@types/bluebird": "^3.5.30",
     "@types/lodash": "^4.14.150",
     "@types/lokijs": "^1.5.3",
-    "@types/node": "^13.13.4",
+    "@types/node": "^9.3.0",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
     "eslint": "^6.8.0",
@@ -25,11 +25,11 @@
     "url": "https://github.com/QAlfy/pidman/issues"
   },
   "engines": {
-    "yarn": ">=1.20.0",
+    "npm": ">=5.8.0",
     "node": ">=9.3.0"
   },
   "scripts": {
-    "build": "npm run clean && npm run lint && tsc --build tsconfig.json",
+    "build": "npm run clean && tsc --build tsconfig.json",
     "dev": "tsc --build tsconfig.json --watch ",
     "docs": "typedoc",
     "clean": "rimraf dist/",

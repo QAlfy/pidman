@@ -203,7 +203,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
                                     // eslint-disable-next-line max-len
                                     `and its childrens with signal ${signal}`
                                 ].join(' '));
-                                console.info(msg.body);
+                                this.running = false;
                                 resolve(true);
                             }
                             else {

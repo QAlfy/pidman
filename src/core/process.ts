@@ -281,8 +281,6 @@ export class PidmanProcess {
 										`and its childrens with signal ${signal}`
 									].join(' '));
 
-									console.info(msg.body);
-
 									resolve(true);
 								} else {
 									PidmanLogger.instance().error([

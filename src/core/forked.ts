@@ -15,6 +15,7 @@ export enum ForkedMessageType {
 export class ForkedMessage {
   constructor(public type: ForkedMessageType, public body: unknown) { }
 }
+
 class ForkedProcess {
   #child?: ChildProcess;
 

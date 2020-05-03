@@ -201,7 +201,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
                                     `Killed process ${this.options.id}`,
                                     `(PID: ${(_a = this.child) === null || _a === void 0 ? void 0 : _a.pid})`,
                                     // eslint-disable-next-line max-len
-                                    `and its childrens with signal ${signal}`,
+                                    `and its childrens with signal ${signal}.`,
                                 ].join(' '));
                                 logger_1.PidmanLogger.instance().info([
                                     'Daemonized/background processes',

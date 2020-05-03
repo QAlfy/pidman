@@ -278,7 +278,7 @@ export class PidmanProcess {
 										`Killed process ${this.options.id}`,
 										`(PID: ${this.child?.pid})`,
 										// eslint-disable-next-line max-len
-										`and its childrens with signal ${signal}`,
+										`and its childrens with signal ${signal}.`,
 									].join(' '));
 									PidmanLogger.instance().info([
 										'Daemonized/background processes',

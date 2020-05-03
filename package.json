@@ -29,14 +29,14 @@
     "node": ">=9.3.0"
   },
   "scripts": {
-    "build": "yarn run clean && yarn run lint && tsc --build tsconfig.json",
+    "build": "npm run clean && npm run lint && tsc --build tsconfig.json",
     "dev": "tsc --build tsconfig.json --watch ",
     "docs": "typedoc",
     "clean": "rimraf dist/",
-    "lint": "yarn run lint.eslint && yarn run lint.types",
+    "lint": "npm run lint.eslint && npm run lint.types",
     "lint.eslint": "eslint src/**/* --ext ts",
     "lint.types": "tsc --noEmit",
-    "install": "yarn run build"
+    "install": "npm run build"
   },
   "dependencies": {
     "@types/winston": "^2.4.4",

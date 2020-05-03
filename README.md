@@ -51,6 +51,10 @@ const pm = new Pidman({
 })
 ```
 
+### Thread Behavior
+
+Pidman run processes in forked mode. This means, your program's event loop won't be locked once you run a process using Pidman. This is a pseudo-thread mechanism that allows running commands and programs on the background while you keep communication for any event that might arise.
+
 ## Prerequisites
 
 - yarn >=1.20.0

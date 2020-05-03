@@ -58,8 +58,11 @@ group.addProcess({
   monitor,
 });
 
+// attach group
+pm.addProcessGroup(group);
+
 // Let's run all these processes.
-group.run();
+pm.run();
 
 // And kill them at once after a few seconds.
 setTimeout(async () => {

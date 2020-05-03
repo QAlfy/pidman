@@ -280,7 +280,7 @@ export class PidmanProcess {
 										// eslint-disable-next-line max-len
 										`and its childrens with signal ${signal}.`,
 									].join(' '));
-									PidmanLogger.instance().info([
+									PidmanLogger.instance().warn([
 										'Daemonized/background processes',
 										'might not be killed.',
 										'They will remain orphan.',

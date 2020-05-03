@@ -206,7 +206,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
                                     // eslint-disable-next-line max-len
                                     `and its childrens with signal ${signal}.`,
                                 ].join(' '));
-                                logger_1.PidmanLogger.instance().info([
+                                logger_1.PidmanLogger.instance().warn([
                                     'Daemonized/background processes',
                                     'might not be killed.',
                                     'They will remain orphan.',

@@ -1,13 +1,9 @@
 import { ConsoleTransportInstance } from 'winston/lib/winston/transports';
 export declare enum LoggerLevel {
-    emerg = "emerg",
-    alert = "alert",
-    crit = "crit",
     error = "error",
     warning = "warning",
     notice = "notice",
-    info = "info",
-    debug = "debug"
+    info = "info"
 }
 export interface LoggerOptions {
     transport?: ConsoleTransportInstance;
@@ -21,4 +17,5 @@ export declare class PidmanLogger {
     static instance(options?: LoggerOptions): PidmanLogger;
     info(msg: string): void;
     error(msg: string): void;
+    warn(msg: string): void;
 }

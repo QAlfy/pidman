@@ -21,14 +21,10 @@ const pidmanLogFormat = printf(({ level, message, label, timestamp }) => {
 });
 var LoggerLevel;
 (function (LoggerLevel) {
-    LoggerLevel["emerg"] = "emerg";
-    LoggerLevel["alert"] = "alert";
-    LoggerLevel["crit"] = "crit";
     LoggerLevel["error"] = "error";
     LoggerLevel["warning"] = "warning";
     LoggerLevel["notice"] = "notice";
     LoggerLevel["info"] = "info";
-    LoggerLevel["debug"] = "debug";
 })(LoggerLevel = exports.LoggerLevel || (exports.LoggerLevel = {}));
 class PidmanLogger {
     constructor(options) {
@@ -65,6 +61,9 @@ class PidmanLogger {
     }
     error(msg) {
         __classPrivateFieldGet(this, _logger).log('error', msg);
+    }
+    warn(msg) {
+        __classPrivateFieldGet(this, _logger).log('warn', msg);
     }
 }
 exports.PidmanLogger = PidmanLogger;

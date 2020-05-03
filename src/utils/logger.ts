@@ -7,14 +7,10 @@ const pidmanLogFormat = printf(({ level, message, label, timestamp }) => {
 });
 
 export enum LoggerLevel {
-	emerg = 'emerg',
-	alert = 'alert',
-	crit = 'crit',
 	error = 'error',
 	warning = 'warning',
 	notice = 'notice',
-	info = 'info',
-	debug = 'debug'
+	info = 'info'
 }
 
 export interface LoggerOptions {
@@ -71,6 +67,11 @@ export class PidmanLogger {
 
 	error(msg: string): void {
 		this.#logger.log('error', msg);
+
+	}
+
+	warn(msg: string): void {
+		this.#logger.log('warn', msg);
 
 	}
 }

@@ -16,7 +16,7 @@ const ps_tree_1 = __importDefault(require("ps-tree"));
 const bluebird_1 = require("bluebird");
 const child_process_1 = require("child_process");
 class PidmanProcessUtils {
-    static killTree(pid) {
+    static getPidChildrens(pid) {
         return __awaiter(this, void 0, void 0, function* () {
             return new bluebird_1.Promise((resolve, reject) => {
                 ps_tree_1.default(pid, (err, childrens) => {
@@ -24,21 +24,34 @@ class PidmanProcessUtils {
                         reject(err);
                     }
                     else {
-                        if (process.platform !== 'win32') {
-                            try {
-                                child_process_1.spawnSync('kill', ['-9'].concat(childrens.map(p => p.PID)));
-                                resolve(true);
-                            }
-                            catch (err) {
-                                reject(err);
-                            }
-                        }
-                        else {
-                            resolve(true);
-                        }
+                        resolve(childrens);
                     }
                 });
             });
+        });
+    }
+    static killTree(pid) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new bluebird_1.Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const childrens = yield PidmanProcessUtils.getPidChildrens(pid);
+                    if (process.platform !== 'win32') {
+                        try {
+                            child_process_1.spawnSync('kill', ['-9'].concat(childrens.map(p => p.PID)));
+                            resolve(true);
+                        }
+                        catch (err) {
+                            reject(err);
+                        }
+                    }
+                    else {
+                        resolve(true);
+                    }
+                }
+                catch (err) {
+                    reject(err);
+                }
+            }));
         });
     }
 }

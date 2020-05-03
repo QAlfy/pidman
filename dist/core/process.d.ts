@@ -1,7 +1,9 @@
 /// <reference types="node" />
 import { ChildProcess } from 'child_process';
+import { Subscription } from 'rxjs';
 import { PidmanGroup, PidmanMonitor } from './';
 export declare type KillSignals = NodeJS.Signals;
+export declare type ProcessEventSubscriptions = Record<string, Subscription>;
 export interface ProcessOptions {
     id?: string;
     user?: string;
@@ -20,6 +22,7 @@ export declare class PidmanProcess {
     private options;
     child: ChildProcess | undefined;
     group: PidmanGroup | undefined;
+    running: boolean;
     /**
      * @param  {ProcessOptions} privateoptions
      */

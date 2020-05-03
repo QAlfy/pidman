@@ -35,7 +35,8 @@
     "clean": "rimraf dist/",
     "lint": "yarn run lint.eslint && yarn run lint.types",
     "lint.eslint": "eslint src/**/* --ext ts",
-    "lint.types": "tsc --noEmit"
+    "lint.types": "tsc --noEmit",
+    "install": "yarn run build"
   },
   "dependencies": {
     "@types/winston": "^2.4.4",

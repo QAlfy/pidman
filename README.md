@@ -31,8 +31,25 @@ The goal of Pidman is to provide the most reliable process management tool witho
 
 Pidman stores your groups and processes' metadata using *Connectors*. Currently, there is a single connector called *MemoryConnector* which can be persisted locally. You'll be always in sync with the processes that run over Pidman.
 
-There are plans to add more connectors (NoSQL, MySQL, etc).
+There are plans to add more connectors (NoSQL, MySQL, etc). Contributors are welcome.
 
+### Logging
+
+Pidman offers a vast set of logging targets to keep you informed. Thanks to the use of [Winston transports](https://github.com/winstonjs/winston/blob/master/docs/transports.md#winston-core), the output of this library can be redirected to either console, Slack, MongoDB, Sentry, New Relic, a file, a stream and dozens of other popular destinations.
+
+Just include the preffered one when initializing the `Pidman` instance:
+
+```
+const SlackHook = require('winston-slack-webhook-transport');
+
+const pm = new Pidman({
+  logger: {
+    transport: new SlackHook({
+			webhookUrl: 'https://hooks.slack.com/services/xxx/xxx/xxx'
+		})
+  }
+})
+```
 
 ## Prerequisites
 
@@ -44,6 +61,11 @@ There are plans to add more connectors (NoSQL, MySQL, etc).
 ```sh
 yarn
 ```
+
+## Usage
+
+For a quick hands-on usage explanation, check out the [basic demo](https://github.com/QAlfy/pidman/blob/master/test/basic.demo.js) and read the comments in there.
+
 
 ## Author
 

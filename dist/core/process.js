@@ -99,7 +99,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
      */
     run() {
         logger_1.PidmanLogger.instance().info([
-            `starting process ${this.options.id} as:`,
+            `Starting process ${this.options.id} as:`,
             JSON.stringify(this.serialize())
         ].join(' '));
         this.child = child_process_1.fork(`${__dirname}/forked.js`, undefined, {
@@ -198,10 +198,16 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
                                 || false;
                             if (killed) {
                                 logger_1.PidmanLogger.instance().info([
-                                    `killed process ${this.options.id}`,
+                                    `Killed process ${this.options.id}`,
                                     `(PID: ${(_a = this.child) === null || _a === void 0 ? void 0 : _a.pid})`,
                                     // eslint-disable-next-line max-len
-                                    `and its childrens with signal ${signal}`
+                                    `and its childrens with signal ${signal}`,
+                                ].join(' '));
+                                logger_1.PidmanLogger.instance().info([
+                                    'Daemonized/background processes',
+                                    'might not be killed.',
+                                    'They will remain orphan.',
+                                    'See https://github.com/QAlfy/pidman#daemons-and-background-processes'
                                 ].join(' '));
                                 this.running = false;
                                 this.unsubscribeAll();
@@ -210,7 +216,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
                             else {
                                 logger_1.PidmanLogger.instance().error([
                                     // eslint-disable-next-line max-len
-                                    `unable to kill process ${this.options.id}`,
+                                    `Unable to kill process ${this.options.id}`,
                                     `(PID: ${(_b = this.child) === null || _b === void 0 ? void 0 : _b.pid})`,
                                     `with signal ${signal}`
                                 ].join(' '));
@@ -224,7 +230,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
                 }
                 else {
                     logger_1.PidmanLogger.instance().info([
-                        `process ${this.options.id}`,
+                        `Process ${this.options.id}`,
                         `(PID: ${(_c = this.child) === null || _c === void 0 ? void 0 : _c.pid})`,
                         `has already exited with code ${exitCode}.`,
                         'PID might be not longer ours',

@@ -125,7 +125,7 @@ export class PidmanProcess {
 	 */
 	run(): void {
 		PidmanLogger.instance().info([
-			`starting process ${this.options.id} as:`,
+			`Starting process ${this.options.id} as:`,
 			JSON.stringify(this.serialize())
 		].join(' '));
 
@@ -275,10 +275,16 @@ export class PidmanProcess {
 
 								if (killed) {
 									PidmanLogger.instance().info([
-										`killed process ${this.options.id}`,
+										`Killed process ${this.options.id}`,
 										`(PID: ${this.child?.pid})`,
 										// eslint-disable-next-line max-len
-										`and its childrens with signal ${signal}`
+										`and its childrens with signal ${signal}`,
+									].join(' '));
+									PidmanLogger.instance().info([
+										'Daemonized/background processes',
+										'might not be killed.',
+										'They will remain orphan.',
+										'See https://github.com/QAlfy/pidman#daemons-and-background-processes'
 									].join(' '));
 
 									this.running = false;
@@ -288,7 +294,7 @@ export class PidmanProcess {
 								} else {
 									PidmanLogger.instance().error([
 										// eslint-disable-next-line max-len
-										`unable to kill process ${this.options.id}`,
+										`Unable to kill process ${this.options.id}`,
 										`(PID: ${this.child?.pid})`,
 										`with signal ${signal}`
 									].join(' '));
@@ -303,7 +309,7 @@ export class PidmanProcess {
 						});
 				} else {
 					PidmanLogger.instance().info([
-						`process ${this.options.id}`,
+						`Process ${this.options.id}`,
 						`(PID: ${this.child?.pid})`,
 						`has already exited with code ${exitCode}.`,
 						'PID might be not longer ours',

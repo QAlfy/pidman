@@ -1,6 +1,6 @@
 {
   "name": "pidman",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A rock solid process orchestration library for Node",
   "main": "dist/index.js",
   "repository": "https://github.com/QAlfy/pidman",

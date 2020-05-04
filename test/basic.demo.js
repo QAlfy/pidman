@@ -49,12 +49,12 @@ const group = new PidmanGroup({
 });
 
 // Add one more process using PidmanGroup's addProcess method.
-// group.addProcess({
-//   // A forced typo. This will produce an error.
-//   command: "ls",
-//   arguments: ['.'],
-//   monitor,
-// });
+group.addProcess({
+  // A forced typo. This will produce an error.
+  command: "echos",
+  arguments: ['"foo"'],
+  monitor,
+});
 
 // attach group
 pm.addProcessGroup(group);

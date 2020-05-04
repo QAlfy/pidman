@@ -57,13 +57,13 @@ Pidman run processes in forked mode. This means, your program's event loop won't
 
 ## Prerequisites
 
-- yarn >=1.20.0
+- npm >=5.8.0
 - node >=9.3.0
 
 ## Install
 
 ```sh
-yarn
+npm i pidman
 ```
 
 ## Usage

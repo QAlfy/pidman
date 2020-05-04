@@ -45,8 +45,8 @@
     "find-process": "^1.4.3",
     "lodash": "^4.17.15",
     "lokijs": "^1.5.8",
-    "ps-tree": "^1.2.0",
     "rxjs": "^6.5.5",
+    "terminate": "^2.1.2",
     "typescript-json-serializer": "^2.1.0",
     "winston": "^3.2.1",
     "winston-transport": "^4.3.0"

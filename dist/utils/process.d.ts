@@ -1,4 +1,9 @@
+/// <reference types="node" />
 export declare class PidmanProcessUtils {
-    static getPidChildrens(pid: number): Promise<any[]>;
-    static killTree(pid: number): Promise<boolean>;
+    /**
+     * @param  {number} pid
+     * @param  {NodeJS.Signals} signal?
+     * @returns Promise
+     */
+    static killTree(pid: number, signal?: NodeJS.Signals): Promise<boolean>;
 }

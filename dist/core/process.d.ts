@@ -12,7 +12,6 @@ export interface ProcessOptions {
     arguments?: Array<string>;
     envVars?: {};
     path?: string;
-    shell?: boolean | string;
     killSignal?: NodeJS.Signals;
     monitor?: PidmanMonitor;
     timeout?: number;
@@ -20,7 +19,6 @@ export interface ProcessOptions {
 export declare class PidmanProcess {
     #private;
     private options;
-    child: ChildProcess | undefined;
     group: PidmanGroup | undefined;
     running: boolean;
     /**

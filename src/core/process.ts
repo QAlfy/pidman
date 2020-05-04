@@ -1,7 +1,6 @@
 import { ChildProcess, fork } from 'child_process';
 import { ForkedMessage, ForkedMessageType } from './forked';
 import {
-	from,
 	fromEvent,
 	merge,
 	Observable,
@@ -17,19 +16,15 @@ import {
 } from 'typescript-json-serializer';
 import { PidmanGroup, PidmanMonitor } from './';
 import { PidmanLogger } from '../utils/logger';
-import {
-	PidmanProcessUtils,
-	PidmanStringUtils,
-	PidmanSysUtils
-} from '../utils';
+import { PidmanStringUtils, PidmanSysUtils } from '../utils';
 import { Promise as promise } from 'bluebird';
 import {
 	catchError,
-	scan,
+	filter,
 	map,
-	skipUntil,
 	multicast,
 	refCount,
+	scan,
 } from 'rxjs/operators';
 
 export type KillSignals = NodeJS.Signals;
@@ -43,7 +38,6 @@ export interface ProcessOptions {
 	arguments?: Array<string>;
 	envVars?: {};
 	path?: string;
-	shell?: boolean | string;
 	killSignal?: NodeJS.Signals;
 	monitor?: PidmanMonitor;
 	timeout?: number;
@@ -56,7 +50,9 @@ export class PidmanProcess {
 	#errorEvent: Observable<unknown>;
 	#stderrEvent: Observable<unknown>;
 	#dataEvent: Observable<unknown>;
-	child: ChildProcess | undefined;
+	#forkedCloseEvent: Observable<unknown>;
+	#child: ChildProcess | undefined;
+	#forkedPID = 0;
 	group: PidmanGroup | undefined;
 	running = false;
 
@@ -76,6 +72,7 @@ export class PidmanProcess {
 		this.#closeEvent = new Observable();
 		this.#errorEvent = new Observable();
 		this.#stderrEvent = new Observable();
+		this.#forkedCloseEvent = new Observable();
 		this.#subscriptionsMap = {};
 	}
 
@@ -117,7 +114,7 @@ export class PidmanProcess {
 	 * @returns ChildProcess
 	 */
 	getChildProcess(): ChildProcess | undefined {
-		return this.child;
+		return this.#child;
 	}
 
 	/**
@@ -129,7 +126,7 @@ export class PidmanProcess {
 			JSON.stringify(this.serialize())
 		].join(' '));
 
-		this.child = fork(`${__dirname}/forked.js`, undefined, {
+		this.#child = fork(`${__dirname}/forked.js`, undefined, {
 			uid:
 				(!this.options.user && undefined) ||
 				PidmanSysUtils.getUid(this.options.user || ''),
@@ -137,12 +134,11 @@ export class PidmanProcess {
 			env: this.options.envVars || {},
 			gid: PidmanSysUtils.getGid(this.options.group || ''),
 			detached: true,
-			stdio: [null, 'pipe', 'pipe', 'ipc'],
 			silent: true
 		});
 
 		// initialize IPC channel (first handshake)
-		this.child.send(
+		this.#child.send(
 			new ForkedMessage(ForkedMessageType.options, this.options),
 			(err) => {
 				if (err) {
@@ -150,13 +146,14 @@ export class PidmanProcess {
 				}
 			});
 
-		this.child.on('message', (msg: ForkedMessage) => {
+		this.#child.on('message', (msg: ForkedMessage) => {
 			if (msg.type === ForkedMessageType.started) {
 				this.running = true;
+				this.#forkedPID = msg.body as number;
 			}
 		});
 
-		this.child.unref();
+		this.#child.unref();
 
 		this.startMonitoring();
 	}
@@ -167,15 +164,19 @@ export class PidmanProcess {
 	startMonitoring(): void {
 		const metadata = {
 			process: this,
-			pid: this.child?.pid,
-			time: Date.now()
+			pid: this.#forkedPID !== 0 && this.#forkedPID || this.#child?.pid,
 		};
 
 		// let's handle all important events; don't miss anything
-		this.#dataEvent = fromEvent(this.child?.stdout!, 'data');
-		this.#errorEvent = fromEvent(this.child!, 'error');
-		this.#closeEvent = fromEvent(this.child!, 'close');
-		this.#stderrEvent = fromEvent(this.child!.stderr!, 'data');
+		this.#errorEvent = fromEvent(this.#child!, 'error');
+		this.#closeEvent = fromEvent(this.#child!, 'close');
+		this.#dataEvent = fromEvent(this.#child?.stdout!, 'data');
+		this.#stderrEvent = fromEvent(this.#child?.stderr!, 'data');
+		this.#forkedCloseEvent = fromEvent(this.#child!, 'message').pipe(
+			map((msg: any) => msg[0]),
+			filter((msg: any) => msg.type === ForkedMessageType.closed),
+			map(msg => ({ ...msg.body })),
+		);
 
 		// emit when new data goes to stdout
 		const processDataEvent$ = this.#dataEvent
@@ -191,32 +192,29 @@ export class PidmanProcess {
 		);
 
 		// emit concatenated version of error/close info and exit codes
-		const processCloseEvent$ = merge(
+		const processChildEvent$ = merge(
 			this.#errorEvent,
 			this.#stderrEvent,
 			this.#closeEvent.pipe(
 				map((data: Array<unknown>) => ({
 					exitCode: data[0],
 					signalCode: data[1]
-				}))
+				})),
 			),
+			this.#forkedCloseEvent,
 		)
 			.pipe(
 				scan((acc: any, data: any) => ([...acc, data]), []),
-				skipUntil(this.#closeEvent),
-				catchError(error => of(error))
-			)
-			.pipe(
 				map(data => {
 					/*
 					handle various types of process termination
 					(e.g. a program goes into daemon mode).
 					*/
-					let output = { message: '' };
+					let output = { output: '' };
 
 					output = reduce(data, (acc, val) => {
 						if (val instanceof Buffer) {
-							acc.message += val.toString();
+							acc.output += val.toString();
 						} else if (val instanceof Object) {
 							acc = { ...acc, ...val };
 						}
@@ -226,16 +224,18 @@ export class PidmanProcess {
 
 					return ({
 						...output,
-						...metadata
+						...metadata,
+						time: Date.now()
 					})
 				}),
-				multicast(new Subject()), refCount()
+				multicast(new Subject()), refCount(),
+				catchError(error => of(error))
 			);
 
-		this.#subscriptionsMap.closeToSelf = processCloseEvent$.subscribe(
+		this.#subscriptionsMap.closeToSelf = processChildEvent$.subscribe(
 			this.options.monitor?.onComplete
 		);
-		this.#subscriptionsMap.closeToGroup = processCloseEvent$.subscribe(
+		this.#subscriptionsMap.closeToGroup = processChildEvent$.subscribe(
 			this.group?.options.monitor?.onComplete
 		);
 	}
@@ -246,13 +246,13 @@ export class PidmanProcess {
 	 */
 	kill(signal?: NodeJS.Signals): Promise<boolean> {
 		return new promise((resolve, reject) => {
-			if (this.child) {
+			if (this.#child) {
 				let killed = false;
-				const exitCode = get(this.child, 'exitCode');
+				const exitCode = get(this.#child, 'exitCode');
 
 				if (exitCode === null) {
 					// inform the child about the kill
-					this.child?.send(
+					this.#child?.send(
 						new ForkedMessage(
 							ForkedMessageType.kill,
 							null
@@ -265,18 +265,18 @@ export class PidmanProcess {
 					);
 
 					// wait for child's confirmation
-					this.child?.on('message',
+					this.#child?.on('message',
 						(msg: ForkedMessage) => {
 							if (msg.type
 								=== ForkedMessageType.killed) {
 								signal = signal || this.options.killSignal;
-								killed = this.child && this.child.kill(signal)
+								killed = this.#child && this.#child.kill(signal)
 									|| false;
 
 								if (killed) {
 									PidmanLogger.instance().info([
 										`Killed process ${this.options.id}`,
-										`(PID: ${this.child?.pid})`,
+										`(PID: ${this.#child?.pid})`,
 										// eslint-disable-next-line max-len
 										`and its childrens with signal ${signal}.`,
 									].join(' '));
@@ -295,7 +295,7 @@ export class PidmanProcess {
 									PidmanLogger.instance().error([
 										// eslint-disable-next-line max-len
 										`Unable to kill process ${this.options.id}`,
-										`(PID: ${this.child?.pid})`,
+										`(PID: ${this.#child?.pid})`,
 										`with signal ${signal}`
 									].join(' '));
 
@@ -310,7 +310,7 @@ export class PidmanProcess {
 				} else {
 					PidmanLogger.instance().info([
 						`Process ${this.options.id}`,
-						`(PID: ${this.child?.pid})`,
+						`(PID: ${this.#child?.pid})`,
 						`has already exited with code ${exitCode}.`,
 						'PID might be not longer ours',
 						'or process has been daemonized.'

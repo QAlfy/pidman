@@ -24,7 +24,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     }
     return privateMap.get(receiver);
 };
-var _subscriptionsMap, _closeEvent, _errorEvent, _stderrEvent, _dataEvent;
+var _subscriptionsMap, _closeEvent, _errorEvent, _stderrEvent, _dataEvent, _forkedCloseEvent, _child, _forkedPID;
 var PidmanProcess_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 const child_process_1 = require("child_process");
@@ -47,6 +47,9 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
         _errorEvent.set(this, void 0);
         _stderrEvent.set(this, void 0);
         _dataEvent.set(this, void 0);
+        _forkedCloseEvent.set(this, void 0);
+        _child.set(this, void 0);
+        _forkedPID.set(this, 0);
         this.running = false;
         if (!this.options.id) {
             this.options.id = utils_1.PidmanStringUtils.getId();
@@ -58,6 +61,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
         __classPrivateFieldSet(this, _closeEvent, new rxjs_1.Observable());
         __classPrivateFieldSet(this, _errorEvent, new rxjs_1.Observable());
         __classPrivateFieldSet(this, _stderrEvent, new rxjs_1.Observable());
+        __classPrivateFieldSet(this, _forkedCloseEvent, new rxjs_1.Observable());
         __classPrivateFieldSet(this, _subscriptionsMap, {});
     }
     /**
@@ -92,7 +96,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
      * @returns ChildProcess
      */
     getChildProcess() {
-        return this.child;
+        return __classPrivateFieldGet(this, _child);
     }
     /**
      * @returns void
@@ -102,74 +106,73 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
             `Starting process ${this.options.id} as:`,
             JSON.stringify(this.serialize())
         ].join(' '));
-        this.child = child_process_1.fork(`${__dirname}/forked.js`, undefined, {
+        __classPrivateFieldSet(this, _child, child_process_1.fork(`${__dirname}/forked.js`, undefined, {
             uid: (!this.options.user && undefined) ||
                 utils_1.PidmanSysUtils.getUid(this.options.user || ''),
             cwd: this.options.path,
             env: this.options.envVars || {},
             gid: utils_1.PidmanSysUtils.getGid(this.options.group || ''),
             detached: true,
-            stdio: [null, 'pipe', 'pipe', 'ipc'],
             silent: true
-        });
+        }));
         // initialize IPC channel (first handshake)
-        this.child.send(new forked_1.ForkedMessage(forked_1.ForkedMessageType.options, this.options), (err) => {
+        __classPrivateFieldGet(this, _child).send(new forked_1.ForkedMessage(forked_1.ForkedMessageType.options, this.options), (err) => {
             if (err) {
                 logger_1.PidmanLogger.instance().error(err.toString());
             }
         });
-        this.child.on('message', (msg) => {
+        __classPrivateFieldGet(this, _child).on('message', (msg) => {
             if (msg.type === forked_1.ForkedMessageType.started) {
                 this.running = true;
+                __classPrivateFieldSet(this, _forkedPID, msg.body);
             }
         });
-        this.child.unref();
+        __classPrivateFieldGet(this, _child).unref();
         this.startMonitoring();
     }
     /**
      * @returns void
      */
     startMonitoring() {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         const metadata = {
             process: this,
-            pid: (_a = this.child) === null || _a === void 0 ? void 0 : _a.pid,
-            time: Date.now()
+            pid: __classPrivateFieldGet(this, _forkedPID) !== 0 && __classPrivateFieldGet(this, _forkedPID) || ((_a = __classPrivateFieldGet(this, _child)) === null || _a === void 0 ? void 0 : _a.pid),
         };
         // let's handle all important events; don't miss anything
-        __classPrivateFieldSet(this, _dataEvent, rxjs_1.fromEvent((_b = this.child) === null || _b === void 0 ? void 0 : _b.stdout, 'data'));
-        __classPrivateFieldSet(this, _errorEvent, rxjs_1.fromEvent(this.child, 'error'));
-        __classPrivateFieldSet(this, _closeEvent, rxjs_1.fromEvent(this.child, 'close'));
-        __classPrivateFieldSet(this, _stderrEvent, rxjs_1.fromEvent(this.child.stderr, 'data'));
+        __classPrivateFieldSet(this, _errorEvent, rxjs_1.fromEvent(__classPrivateFieldGet(this, _child), 'error'));
+        __classPrivateFieldSet(this, _closeEvent, rxjs_1.fromEvent(__classPrivateFieldGet(this, _child), 'close'));
+        __classPrivateFieldSet(this, _dataEvent, rxjs_1.fromEvent((_b = __classPrivateFieldGet(this, _child)) === null || _b === void 0 ? void 0 : _b.stdout, 'data'));
+        __classPrivateFieldSet(this, _stderrEvent, rxjs_1.fromEvent((_c = __classPrivateFieldGet(this, _child)) === null || _c === void 0 ? void 0 : _c.stderr, 'data'));
+        __classPrivateFieldSet(this, _forkedCloseEvent, rxjs_1.fromEvent(__classPrivateFieldGet(this, _child), 'message').pipe(operators_1.map((msg) => msg[0]), operators_1.filter((msg) => msg.type === forked_1.ForkedMessageType.closed), operators_1.map(msg => (Object.assign({}, msg.body)))));
         // emit when new data goes to stdout
         const processDataEvent$ = __classPrivateFieldGet(this, _dataEvent).pipe(operators_1.multicast(new rxjs_1.Subject()), operators_1.refCount());
-        __classPrivateFieldGet(this, _subscriptionsMap).dataToSelf = processDataEvent$.subscribe((_d = (_c = this.group) === null || _c === void 0 ? void 0 : _c.options.monitor) === null || _d === void 0 ? void 0 : _d.onData);
-        __classPrivateFieldGet(this, _subscriptionsMap).dataToGroup = processDataEvent$.subscribe((_e = this.options.monitor) === null || _e === void 0 ? void 0 : _e.onData);
+        __classPrivateFieldGet(this, _subscriptionsMap).dataToSelf = processDataEvent$.subscribe((_e = (_d = this.group) === null || _d === void 0 ? void 0 : _d.options.monitor) === null || _e === void 0 ? void 0 : _e.onData);
+        __classPrivateFieldGet(this, _subscriptionsMap).dataToGroup = processDataEvent$.subscribe((_f = this.options.monitor) === null || _f === void 0 ? void 0 : _f.onData);
         // emit concatenated version of error/close info and exit codes
-        const processCloseEvent$ = rxjs_1.merge(__classPrivateFieldGet(this, _errorEvent), __classPrivateFieldGet(this, _stderrEvent), __classPrivateFieldGet(this, _closeEvent).pipe(operators_1.map((data) => ({
+        const processChildEvent$ = rxjs_1.merge(__classPrivateFieldGet(this, _errorEvent), __classPrivateFieldGet(this, _stderrEvent), __classPrivateFieldGet(this, _closeEvent).pipe(operators_1.map((data) => ({
             exitCode: data[0],
             signalCode: data[1]
-        }))))
-            .pipe(operators_1.scan((acc, data) => ([...acc, data]), []), operators_1.skipUntil(__classPrivateFieldGet(this, _closeEvent)), operators_1.catchError(error => rxjs_1.of(error)))
-            .pipe(operators_1.map(data => {
+        }))), __classPrivateFieldGet(this, _forkedCloseEvent))
+            .pipe(operators_1.scan((acc, data) => ([...acc, data]), []), operators_1.map(data => {
             /*
             handle various types of process termination
             (e.g. a program goes into daemon mode).
             */
-            let output = { message: '' };
+            let output = { output: '' };
             output = lodash_1.reduce(data, (acc, val) => {
                 if (val instanceof Buffer) {
-                    acc.message += val.toString();
+                    acc.output += val.toString();
                 }
                 else if (val instanceof Object) {
                     acc = Object.assign(Object.assign({}, acc), val);
                 }
                 return acc;
             }, output);
-            return (Object.assign(Object.assign({}, output), metadata));
-        }), operators_1.multicast(new rxjs_1.Subject()), operators_1.refCount());
-        __classPrivateFieldGet(this, _subscriptionsMap).closeToSelf = processCloseEvent$.subscribe((_f = this.options.monitor) === null || _f === void 0 ? void 0 : _f.onComplete);
-        __classPrivateFieldGet(this, _subscriptionsMap).closeToGroup = processCloseEvent$.subscribe((_h = (_g = this.group) === null || _g === void 0 ? void 0 : _g.options.monitor) === null || _h === void 0 ? void 0 : _h.onComplete);
+            return (Object.assign(Object.assign(Object.assign({}, output), metadata), { time: Date.now() }));
+        }), operators_1.multicast(new rxjs_1.Subject()), operators_1.refCount(), operators_1.catchError(error => rxjs_1.of(error)));
+        __classPrivateFieldGet(this, _subscriptionsMap).closeToSelf = processChildEvent$.subscribe((_g = this.options.monitor) === null || _g === void 0 ? void 0 : _g.onComplete);
+        __classPrivateFieldGet(this, _subscriptionsMap).closeToGroup = processChildEvent$.subscribe((_j = (_h = this.group) === null || _h === void 0 ? void 0 : _h.options.monitor) === null || _j === void 0 ? void 0 : _j.onComplete);
     }
     /**
      * @param  {NodeJS.Signals} signal?
@@ -178,28 +181,28 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
     kill(signal) {
         return new bluebird_1.Promise((resolve, reject) => {
             var _a, _b, _c;
-            if (this.child) {
+            if (__classPrivateFieldGet(this, _child)) {
                 let killed = false;
-                const exitCode = lodash_1.get(this.child, 'exitCode');
+                const exitCode = lodash_1.get(__classPrivateFieldGet(this, _child), 'exitCode');
                 if (exitCode === null) {
                     // inform the child about the kill
-                    (_a = this.child) === null || _a === void 0 ? void 0 : _a.send(new forked_1.ForkedMessage(forked_1.ForkedMessageType.kill, null), (err) => {
+                    (_a = __classPrivateFieldGet(this, _child)) === null || _a === void 0 ? void 0 : _a.send(new forked_1.ForkedMessage(forked_1.ForkedMessageType.kill, null), (err) => {
                         if (err) {
                             reject(err);
                         }
                     });
                     // wait for child's confirmation
-                    (_b = this.child) === null || _b === void 0 ? void 0 : _b.on('message', (msg) => {
+                    (_b = __classPrivateFieldGet(this, _child)) === null || _b === void 0 ? void 0 : _b.on('message', (msg) => {
                         var _a, _b;
                         if (msg.type
                             === forked_1.ForkedMessageType.killed) {
                             signal = signal || this.options.killSignal;
-                            killed = this.child && this.child.kill(signal)
+                            killed = __classPrivateFieldGet(this, _child) && __classPrivateFieldGet(this, _child).kill(signal)
                                 || false;
                             if (killed) {
                                 logger_1.PidmanLogger.instance().info([
                                     `Killed process ${this.options.id}`,
-                                    `(PID: ${(_a = this.child) === null || _a === void 0 ? void 0 : _a.pid})`,
+                                    `(PID: ${(_a = __classPrivateFieldGet(this, _child)) === null || _a === void 0 ? void 0 : _a.pid})`,
                                     // eslint-disable-next-line max-len
                                     `and its childrens with signal ${signal}.`,
                                 ].join(' '));
@@ -217,7 +220,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
                                 logger_1.PidmanLogger.instance().error([
                                     // eslint-disable-next-line max-len
                                     `Unable to kill process ${this.options.id}`,
-                                    `(PID: ${(_b = this.child) === null || _b === void 0 ? void 0 : _b.pid})`,
+                                    `(PID: ${(_b = __classPrivateFieldGet(this, _child)) === null || _b === void 0 ? void 0 : _b.pid})`,
                                     `with signal ${signal}`
                                 ].join(' '));
                                 reject('Unable to kill forked process');
@@ -231,7 +234,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
                 else {
                     logger_1.PidmanLogger.instance().info([
                         `Process ${this.options.id}`,
-                        `(PID: ${(_c = this.child) === null || _c === void 0 ? void 0 : _c.pid})`,
+                        `(PID: ${(_c = __classPrivateFieldGet(this, _child)) === null || _c === void 0 ? void 0 : _c.pid})`,
                         `has already exited with code ${exitCode}.`,
                         'PID might be not longer ours',
                         'or process has been daemonized.'
@@ -260,7 +263,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
         return new PidmanProcess_1(json.options);
     }
 };
-_subscriptionsMap = new WeakMap(), _closeEvent = new WeakMap(), _errorEvent = new WeakMap(), _stderrEvent = new WeakMap(), _dataEvent = new WeakMap();
+_subscriptionsMap = new WeakMap(), _closeEvent = new WeakMap(), _errorEvent = new WeakMap(), _stderrEvent = new WeakMap(), _dataEvent = new WeakMap(), _forkedCloseEvent = new WeakMap(), _child = new WeakMap(), _forkedPID = new WeakMap();
 PidmanProcess = PidmanProcess_1 = __decorate([
     typescript_json_serializer_1.Serializable(),
     __param(0, typescript_json_serializer_1.JsonProperty()),

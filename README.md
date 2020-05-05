@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to Pidman 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-1.1.0-blue.svg?cacheSeconds=2592000" />
   <img src="https://img.shields.io/badge/npm-%3E%3D5.8.0-blue.svg" />
   <img src="https://img.shields.io/badge/node-%3E%3D9.3.0-blue.svg" />
   <a href="https://github.com/QAlfy/pidman/wiki" target="_blank">
@@ -53,7 +53,7 @@ const pm = new Pidman({
 
 ### Thread Behavior
 
-Pidman run processes in forked mode. This means, your program's event loop won't be locked once you run a process using Pidman. This is a pseudo-thread mechanism that allows running commands and programs on the background while you keep communication for any event that might arise.
+Pidman run processes in forked mode. This means, your program's event loop won't be locked. This is a pseudo-thread mechanism that allows running commands and programs on the background while you keep communication for any event that might arise.
 
 ## Prerequisites
 

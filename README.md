@@ -124,6 +124,10 @@ group.addProcess({
   path: "/home/someuser",
   command: "rm -rf ./docs",
 });
+
+pm.addProcessGroup(group);
+
+pm.run();
 ```
 
 The only required property is `command`, otherwise nothing runs. You can see a description of the different options [here](https://pidman.qalfy.com/interfaces/_core_process_.processoptions.html). You can optionally identify this group using a unique `id` string or let Pidman choose a random one.
@@ -144,6 +148,8 @@ group.addProcess({
   command: "rm -rf ./docs",
 });
 
+pm.addProcessGroup(group);
+
 const lockProcess = new PidmanProcess({
   user: "www",
   group: "www",
@@ -157,6 +163,8 @@ group.addProcess(lockProcess);
 someEvent.on('doit', () => {
   group.run();
 });
+
+pm.run();
 ```
 
 ### Monitor Groups and Process

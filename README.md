@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to Pidman 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.1.0-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-1.1.3-blue.svg?cacheSeconds=2592000" />
   <img src="https://img.shields.io/badge/npm-%3E%3D5.8.0-blue.svg" />
   <img src="https://img.shields.io/badge/node-%3E%3D9.3.0-blue.svg" />
   <a href="https://github.com/QAlfy/pidman/wiki" target="_blank">
@@ -13,7 +13,7 @@
 
 > A rock solid process orchestration library for Node (**WIP: Work In Progress)**
 
-### 🏠 [Homepage](https://qalfy.com)
+### 🏠 [Homepage](https://pidman.qalfy.com)
 
 ## About
 
@@ -53,7 +53,7 @@ const pm = new Pidman({
 
 ### Thread Behavior
 
-Pidman run processes in forked mode. This means, your program's event loop won't be locked. This is a pseudo-thread mechanism that allows running commands and programs on the background while you keep communication for any event that might arise.
+Pidman run processes in forked mode. This means, your program's event loop won't be locked. This is a pseudo-thread mechanism that allows running commands and programs on the background while you keep listening for any event that might arise during execution of these commands.
 
 ## Prerequisites
 
@@ -71,11 +71,13 @@ npm i pidman
 For a quick hands-on usage explanation, check out the [basic demo](https://github.com/QAlfy/pidman/blob/master/test/basic.demo.js) and read the comments in there.
 
 
+
+
 ## Author
 
 👤 **Nicolas Iglesias**
 
-* Website: https://qalfy.com
+* Website: https://pidman.qalfy.com
 * Github: [@webpolis](https://github.com/webpolis)
 
 ## 🤝 Contributing

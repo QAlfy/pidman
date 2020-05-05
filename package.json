@@ -1,16 +1,21 @@
 {
   "name": "pidman",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "A rock solid process orchestration library for Node",
   "main": "dist/index.js",
-  "repository": "https://github.com/QAlfy/pidman",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QAlfy/pidman.git"
+  },
   "author": "Nicolas Iglesias",
   "license": "MIT",
+  "types": "dist/index.d.ts",
   "devDependencies": {
     "@types/bluebird": "^3.5.30",
     "@types/lodash": "^4.14.150",
     "@types/lokijs": "^1.5.3",
     "@types/node": "^9.3.0",
+    "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
     "eslint": "^6.8.0",
@@ -29,17 +34,18 @@
     "node": ">=9.3.0"
   },
   "scripts": {
-    "build": "npm run clean && tsc --build tsconfig.json",
+    "prepublish": "npm run clean && npm run lint",
+    "prepare": "npm run build",
+    "postversion": "git push && git push --tags",
+    "build": "tsc --build tsconfig.json",
     "dev": "tsc --build tsconfig.json --watch ",
     "docs": "typedoc",
     "clean": "rimraf dist/",
     "lint": "npm run lint.eslint && npm run lint.types",
     "lint.eslint": "eslint src/**/* --ext ts",
-    "lint.types": "tsc --noEmit",
-    "install": "npm run build"
+    "lint.types": "tsc --noEmit"
   },
   "dependencies": {
-    "@types/winston": "^2.4.4",
     "bluebird": "^3.7.2",
     "crypto": "^1.0.1",
     "find-process": "^1.4.3",

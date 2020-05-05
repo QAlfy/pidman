@@ -6,7 +6,7 @@ import { PidmanStringUtils } from '../utils';
 
 export interface PidmanMonitor {
 	onData?(data: unknown): void;
-	onComplete?(data: unknown): void;
+	onClose?(data: unknown): void;
 }
 
 export interface PidmanOptions {

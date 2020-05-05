@@ -5,23 +5,33 @@ import { get } from 'lodash';
 
 let forkedProcess: ForkedProcess;
 
-const catchError = function (error): void {
-  console.error(error);
-  process.exit();
-};
-
 export enum ForkedMessageType {
   started,
   closed,
   options,
+  errored,
   kill,
   killed,
-  fail
+  killfail
 }
 
 export class ForkedMessage {
   constructor(public type: ForkedMessageType, public body: unknown) { }
 }
+
+/**
+ * Forwards an error via IPC.
+ *
+ * @param  {} error
+ * @returns void
+ */
+const catchError = function (error): void {
+  if (process.send) {
+    process.send(new ForkedMessage(ForkedMessageType.errored, error))
+  }
+
+  process.exit(error.errno);
+};
 
 class ForkedProcess {
   #child?: ChildProcess;
@@ -44,7 +54,7 @@ class ForkedProcess {
       gid: PidmanSysUtils.getGid(this.options.group || ''),
       shell: false,
       detached: true,
-      stdio: 'inherit',
+      stdio: [null, process.stdout, process.stderr],
       windowsHide: true
     });
 
@@ -65,14 +75,23 @@ class ForkedProcess {
     return this.#child.pid;
   }
 
+  /**
+   * @returns number
+   */
   getPid(): number {
     return this.#child!.pid;
   }
 
+  /**
+   * @returns ChildProcess
+   */
   getChild(): ChildProcess {
     return this.#child!;
   }
 
+  /**
+   * @returns ProcessOptions
+   */
   getOptions(): ProcessOptions {
     return this.options;
   }
@@ -115,7 +134,7 @@ process.on('message', async (msg: ForkedMessage) => {
       } catch (err) {
         // console.error(err);
         process.send(
-          new ForkedMessage(ForkedMessageType.fail, err)
+          new ForkedMessage(ForkedMessageType.killfail, err)
         );
       }
     }

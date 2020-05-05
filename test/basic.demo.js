@@ -15,14 +15,14 @@ in the group options and monitor all of them from a single place.
 const monitor = {
   // Whenever a process outputs some data, it's injected here.
   onData: function (data) {
-    // console.log(data && data.toString());
+    console.log(data);
   },
   /*
   When the process closes/exits by whatever reason, being error or success.
   The argument provided to this function has all the required information
   as well as the corresponding PidmanProcess.
   */
-  onComplete: function (data) {
+  onClose: function (data) {
     console.log(data);
   },
 };
@@ -51,8 +51,8 @@ const group = new PidmanGroup({
 // Add one more process using PidmanGroup's addProcess method.
 group.addProcess({
   // A forced typo. This will produce an error.
-  command: "echos",
-  arguments: ['"foo"'],
+  command: "ls",
+  arguments: ['foo'],
   monitor,
 });
 

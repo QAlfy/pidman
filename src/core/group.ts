@@ -3,6 +3,7 @@ import {
 	Serializable,
 	serialize
 } from 'typescript-json-serializer';
+import { PidmanLogger } from '../utils/logger';
 import { PidmanMonitor } from './pidman';
 import { PidmanProcess, ProcessOptions } from './';
 import { PidmanStringUtils } from '../utils';
@@ -74,6 +75,13 @@ export class PidmanGroup {
 	 * @returns boolean
 	 */
 	kill(signal?: NodeJS.Signals): Promise<boolean[]> {
+		PidmanLogger.instance().warn([
+			'Daemonized/background processes',
+			'might not be killed.',
+			'They will remain orphan.',
+			'See https://github.com/QAlfy/pidman#daemons-and-background-processes'
+		].join(' '));
+
 		return new promise((resolve, reject) => {
 			promise.all(this.processes.map(
 				process => process.kill(signal)

@@ -8,12 +8,13 @@ import {
 	Subject,
 	Subscription
 } from 'rxjs';
-import { get, reduce } from 'lodash';
+import { get } from 'lodash';
 import {
 	JsonProperty,
 	Serializable,
 	serialize
 } from 'typescript-json-serializer';
+import { PidmanEventUtils } from '../utils/event';
 import { PidmanGroup, PidmanMonitor } from './';
 import { PidmanLogger } from '../utils/logger';
 import { PidmanStringUtils, PidmanSysUtils } from '../utils';
@@ -25,6 +26,7 @@ import {
 	multicast,
 	refCount,
 	scan,
+	tap,
 } from 'rxjs/operators';
 
 export type KillSignals = NodeJS.Signals;
@@ -150,6 +152,8 @@ export class PidmanProcess {
 			if (msg.type === ForkedMessageType.started) {
 				this.running = true;
 				this.#forkedPID = msg.body as number;
+			} else if (msg.type === ForkedMessageType.errored) {
+				this.#child?.emit('error', msg.body);
 			}
 		});
 
@@ -179,8 +183,17 @@ export class PidmanProcess {
 		);
 
 		// emit when new data goes to stdout
-		const processDataEvent$ = this.#dataEvent
+		const processDataEvent$ = merge(
+			this.#dataEvent,
+			this.#errorEvent,
+			this.#stderrEvent
+		)
 			.pipe(
+				map((ev: any) => {
+					const output = ev instanceof Buffer && ev.toString() || ev;
+
+					return { output, ...metadata, time: Date.now() };
+				}),
 				multicast(new Subject()), refCount()
 			);
 
@@ -193,8 +206,6 @@ export class PidmanProcess {
 
 		// emit concatenated version of error/close info and exit codes
 		const processChildEvent$ = merge(
-			this.#errorEvent,
-			this.#stderrEvent,
 			this.#closeEvent.pipe(
 				map((data: Array<unknown>) => ({
 					exitCode: data[0],
@@ -205,38 +216,18 @@ export class PidmanProcess {
 		)
 			.pipe(
 				scan((acc: any, data: any) => ([...acc, data]), []),
-				map(data => {
-					/*
-					handle various types of process termination
-					(e.g. a program goes into daemon mode).
-					*/
-					let output = { output: '' };
-
-					output = reduce(data, (acc, val) => {
-						if (val instanceof Buffer) {
-							acc.output += val.toString();
-						} else if (val instanceof Object) {
-							acc = { ...acc, ...val };
-						}
-
-						return acc;
-					}, output);
-
-					return ({
-						...output,
-						...metadata,
-						time: Date.now()
-					})
-				}),
+				map(PidmanEventUtils.parseMessage),
+				map((msg: any) => ({ ...msg, ...metadata })),
+				tap((ev) => (this.running = false)),
+				catchError(error => of(error)),
 				multicast(new Subject()), refCount(),
-				catchError(error => of(error))
 			);
 
 		this.#subscriptionsMap.closeToSelf = processChildEvent$.subscribe(
-			this.options.monitor?.onComplete
+			this.options.monitor?.onClose
 		);
 		this.#subscriptionsMap.closeToGroup = processChildEvent$.subscribe(
-			this.group?.options.monitor?.onComplete
+			this.group?.options.monitor?.onClose
 		);
 	}
 
@@ -280,12 +271,14 @@ export class PidmanProcess {
 										// eslint-disable-next-line max-len
 										`and its childrens with signal ${signal}.`,
 									].join(' '));
-									PidmanLogger.instance().warn([
-										'Daemonized/background processes',
-										'might not be killed.',
-										'They will remain orphan.',
-										'See https://github.com/QAlfy/pidman#daemons-and-background-processes'
-									].join(' '));
+									if (!this.group) {
+										PidmanLogger.instance().warn([
+											'Daemonized/background processes',
+											'might not be killed.',
+											'They will remain orphan.',
+											'See https://github.com/QAlfy/pidman#daemons-and-background-processes'
+										].join(' '));
+									}
 
 									this.running = false;
 									this.unsubscribeAll();
@@ -302,7 +295,7 @@ export class PidmanProcess {
 									reject('Unable to kill forked process');
 								}
 							} else if (
-								msg.type === ForkedMessageType.fail
+								msg.type === ForkedMessageType.killfail
 							) {
 								reject(msg.body);
 							}

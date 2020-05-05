@@ -15,7 +15,7 @@ in the group options and monitor all of them from a single place.
 const monitor = {
   // Whenever a process outputs some data, it's injected here.
   onData: function (data) {
-    console.log(data);
+    console.log(data.output);
   },
   /*
   When the process closes/exits by whatever reason, being error or success.
@@ -42,7 +42,7 @@ const group = new PidmanGroup({
   processes: [
     {
       command: "websockify",
-      arguments: "127.0.0.1:8080 0.0.0.0:80".split(" "),
+      arguments: "-D 127.0.0.1:8080 0.0.0.0:80".split(" "),
       monitor,
     },
   ],
@@ -71,4 +71,4 @@ setTimeout(async () => {
   } catch (err) {
     console.error(err);
   }
-}, 10000);
+}, 5000);

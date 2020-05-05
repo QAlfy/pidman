@@ -6,6 +6,7 @@ const pidmanLogFormat = printf(({ level, message, label, timestamp }) => {
 	return `${timestamp} [${label}] ${level}: ${message}`;
 });
 
+/** The different log levels. */
 export enum LoggerLevel {
 	error = 'error',
 	warning = 'warning',
@@ -13,9 +14,11 @@ export enum LoggerLevel {
 	info = 'info'
 }
 
+/** The [[PidmanLogger]]'s options. */
 export interface LoggerOptions {
-	// See https://github.com/winstonjs/winston/blob/master/docs/transports.md
+	/** See https://github.com/winstonjs/winston/blob/master/docs/transports.md */
 	transport?: ConsoleTransportInstance;
+	/** (optional) The default minimum log level. */
 	level?: LoggerLevel;
 }
 

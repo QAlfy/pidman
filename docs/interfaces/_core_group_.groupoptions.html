@@ -69,6 +69,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>The options that define how a <a href="../classes/_core_group_.pidmangroup.html">PidmanGroup</a> behaves.</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -104,9 +111,14 @@
 					<div class="tsd-signature tsd-kind-icon">env<wbr>Vars<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{}</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/d48acf2/src/core/group.ts#L16">core/group.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/f4c1a4a/src/core/group.ts#L32">core/group.ts:32</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>(optional) Environment variables.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="group" class="tsd-anchor"></a>
@@ -114,9 +126,15 @@
 					<div class="tsd-signature tsd-kind-icon">group<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/d48acf2/src/core/group.ts#L15">core/group.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/f4c1a4a/src/core/group.ts#L30">core/group.ts:30</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>(optional) The group identity for the processes that
+							run in the <a href="../classes/_core_group_.pidmangroup.html">PidmanGroup</a>.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="id" class="tsd-anchor"></a>
@@ -124,9 +142,15 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/d48acf2/src/core/group.ts#L13">core/group.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/f4c1a4a/src/core/group.ts#L20">core/group.ts:20</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>(optional) The ID for this <a href="../classes/_core_group_.pidmangroup.html">PidmanGroup</a>.
+							It&#39;s auto generated if none is given.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="monitor" class="tsd-anchor"></a>
@@ -134,19 +158,30 @@
 					<div class="tsd-signature tsd-kind-icon">monitor<span class="tsd-signature-symbol">:</span> <a href="_core_pidman_.pidmanmonitor.html" class="tsd-signature-type">PidmanMonitor</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/d48acf2/src/core/group.ts#L18">core/group.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/f4c1a4a/src/core/group.ts#L39">core/group.ts:39</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>(optional) The callbacks that monitor the processes.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="processes" class="tsd-anchor"></a>
-					<h3>processes</h3>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> processes</h3>
 					<div class="tsd-signature tsd-kind-icon">processes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_process_.processoptions.html" class="tsd-signature-type">ProcessOptions</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/d48acf2/src/core/group.ts#L17">core/group.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/f4c1a4a/src/core/group.ts#L37">core/group.ts:37</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>(optional) Initialize some <a href="../classes/_core_process_.pidmanprocess.html">PidmanProcess</a> entities.
+							You can later use <a href="../classes/_core_group_.pidmangroup.html">PidmanGroup</a>&#39;s addProcess method.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="timeout" class="tsd-anchor"></a>
@@ -154,9 +189,14 @@
 					<div class="tsd-signature tsd-kind-icon">timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/d48acf2/src/core/group.ts#L19">core/group.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/f4c1a4a/src/core/group.ts#L41">core/group.ts:41</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Not yet implemented</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="user" class="tsd-anchor"></a>
@@ -164,9 +204,15 @@
 					<div class="tsd-signature tsd-kind-icon">user<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/d48acf2/src/core/group.ts#L14">core/group.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/QAlfy/pidman/blob/f4c1a4a/src/core/group.ts#L25">core/group.ts:25</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>(optional) The user identity for the processes that
+							run in the <a href="../classes/_core_group_.pidmangroup.html">PidmanGroup</a>.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>

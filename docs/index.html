@@ -66,7 +66,7 @@
 			<div class="tsd-panel tsd-typography">
 				<h1 align="center">Welcome to Pidman 👋</h1>
 				<p>
-					<img alt="Version" src="https://img.shields.io/badge/version-1.1.3-blue.svg?cacheSeconds=2592000" />
+					<img alt="Version" src="https://img.shields.io/badge/version-1.1.7-blue.svg?cacheSeconds=2592000" />
 					<img src="https://img.shields.io/badge/npm-%3E%3D5.8.0-blue.svg" />
 					<img src="https://img.shields.io/badge/node-%3E%3D9.3.0-blue.svg" />
 					<a href="https://github.com/QAlfy/pidman/wiki" target="_blank">
@@ -95,26 +95,30 @@
 				<a href="#persistence" id="persistence" style="color: inherit; text-decoration: none;">
 					<h3>Persistence</h3>
 				</a>
-				<p>Pidman stores your groups and processes&#39; metadata using <em>Connectors*. Currently, there is a single connector called *MemoryConnector</em> which can be persisted locally. You&#39;ll be always in sync with the processes that run over Pidman.</p>
+				<p>Pidman stores your groups and processes&#39; metadata using <em>Connectors</em>. Currently, there is a single connector called <em>MemoryConnector</em> which can be persisted locally. You&#39;ll be always in sync with the processes that run over Pidman.</p>
 				<p>There are plans to add more connectors (NoSQL, MySQL, etc). Contributors are welcome.</p>
 				<a href="#logging" id="logging" style="color: inherit; text-decoration: none;">
 					<h3>Logging</h3>
 				</a>
 				<p>Pidman offers a vast set of logging targets to keep you informed. Thanks to the use of <a href="https://github.com/winstonjs/winston/blob/master/docs/transports.md#winston-core">Winston transports</a>, the output of this library can be redirected to either console, Slack, MongoDB, Sentry, New Relic, a file, a stream and dozens of other popular destinations.</p>
 				<p>Just include the preferred one when initializing the <code>Pidman</code> instance:</p>
-				<pre><code><span class="hljs-keyword">const</span> SlackHook = <span class="hljs-built_in">require</span>(<span class="hljs-string">'winston-slack-webhook-transport'</span>);
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> SlackHook = <span class="hljs-built_in">require</span>(<span class="hljs-string">"winston-slack-webhook-transport"</span>);
 
 <span class="hljs-keyword">const</span> pm = <span class="hljs-keyword">new</span> Pidman({
   <span class="hljs-attr">logger</span>: {
     <span class="hljs-attr">transport</span>: <span class="hljs-keyword">new</span> SlackHook({
-            <span class="hljs-attr">webhookUrl</span>: <span class="hljs-string">'https://hooks.slack.com/services/xxx/xxx/xxx'</span>
-        })
-  }
-})</code></pre>
+      <span class="hljs-attr">webhookUrl</span>: <span class="hljs-string">"https://hooks.slack.com/services/xxx/xxx/xxx"</span>,
+    }),
+  },
+});</code></pre>
 				<a href="#thread-behavior" id="thread-behavior" style="color: inherit; text-decoration: none;">
 					<h3>Thread Behavior</h3>
 				</a>
 				<p>Pidman run processes in forked mode. This means, your program&#39;s event loop won&#39;t be locked. This is a pseudo-thread mechanism that allows running commands and programs on the background while you keep listening for any event that might arise during execution of these commands.</p>
+				<a href="#daemons-and-background-processes" id="daemons-and-background-processes" style="color: inherit; text-decoration: none;">
+					<h3>Daemons and Background Processes</h3>
+				</a>
+				<p>If you run a command that spawns itself as a background process or daemon, Pidman will not be able to kill it properly. This is because the program will detach itself from its parent hence the new daemonized/background process will run unattached from the main Node&#39;s process running your code.</p>
 				<a href="#prerequisites" id="prerequisites" style="color: inherit; text-decoration: none;">
 					<h2>Prerequisites</h2>
 				</a>
@@ -126,10 +130,101 @@
 					<h2>Install</h2>
 				</a>
 				<pre><code class="language-sh">npm i pidman</code></pre>
+				<p>or</p>
+				<pre><code class="language-sh">yarn add pidman</code></pre>
+				<a href="#typescript-setup" id="typescript-setup" style="color: inherit; text-decoration: none;">
+					<h3>Typescript Setup</h3>
+				</a>
+				<p>If you use Typescript, don&#39;t forget to target ES2015 or higher in your <code>tsconfig.json</code>:</p>
+				<pre><code class="language-json">  &quot;compilerOptions&quot;: {
+    ...
+    &quot;target&quot;: [&quot;ES2015&quot;],
+    ...
+  }</code></pre>
+				<a href="#api--documentation" id="api--documentation" style="color: inherit; text-decoration: none;">
+					<h2>API / Documentation</h2>
+				</a>
+				<p>There is a detailed <a href="https://pidman.qalfy.com/">API Documentation</a>.</p>
 				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
 					<h2>Usage</h2>
 				</a>
 				<p>For a quick hands-on usage explanation, check out the <a href="https://github.com/QAlfy/pidman/blob/master/test/basic.demo.js">basic demo</a> and read the comments in there.</p>
+				<p>First, instantiate the main Pidman&#39;s class:</p>
+				<pre><code class="language-js"><span class="hljs-keyword">import</span> { Pidman } <span class="hljs-keyword">from</span> <span class="hljs-string">"pidman"</span>;
+
+<span class="hljs-keyword">const</span> pm = <span class="hljs-keyword">new</span> Pidman();</code></pre>
+				<p>You can optionally provide a <a href="https://pidman.qalfy.com/interfaces/_core_pidman_.pidmanoptions.html">PidmanOptions</a> to the <a href="https://pidman.qalfy.com/classes/_core_pidman_.pidman.html">Pidman</a> constructor. An example would be specifying a <a href="#Logging">logging transport</a>.</p>
+				<a href="#group" id="group" style="color: inherit; text-decoration: none;">
+					<h3>Group</h3>
+				</a>
+				<p>Let&#39;s start adding a <a href="https://pidman.qalfy.com/classes/_core_group_.pidmangroup.html">PidmanGroup</a> which will contain one or more <a href="https://pidman.qalfy.com/classes/_core_process_.pidmanprocess.html">PidmanProcess</a>.</p>
+				<p>A group simplifies the management of multiple commands and programs which relate to each other within a specific domain or context in your application. For example, if you need to run some maintenance commands when a user removes a document or triggers some action, then you can have a group do this job.</p>
+				<p>A <code>PidmanGroup</code> accepts a <a href="https://pidman.qalfy.com/interfaces/_core_group_.groupoptions.html">GroupOptions</a> as unique argument on construction. The meaning of these options are explained <a href="https://pidman.qalfy.com/interfaces/_core_group_.groupoptions.html">here</a>. You can choose to initialize the processes using the <code>processes</code> array in the options or by later using the <a href="https://pidman.qalfy.com/classes/_core_group_.pidmangroup.html#addprocess">addProcess</a> method:</p>
+				<pre><code class="language-js"><span class="hljs-keyword">import</span> { Pidman, PidmanGroup } <span class="hljs-keyword">from</span> <span class="hljs-string">"pidman"</span>;
+
+<span class="hljs-keyword">const</span> pm = <span class="hljs-keyword">new</span> Pidman();
+<span class="hljs-keyword">const</span> group = <span class="hljs-keyword">new</span> PidmanGroup();
+
+group.addProcess({
+  <span class="hljs-attr">path</span>: <span class="hljs-string">"/home/someuser"</span>,
+  <span class="hljs-attr">command</span>: <span class="hljs-string">"rm -rf ./docs"</span>,
+});</code></pre>
+				<p>The only required property is <code>command</code>, otherwise nothing runs. You can see a description of the different options <a href="https://pidman.qalfy.com/interfaces/_core_process_.processoptions.html">here</a>. You can optionally identify this group using a unique <code>id</code> string or let Pidman choose a random one.</p>
+				<a href="#process" id="process" style="color: inherit; text-decoration: none;">
+					<h3>Process</h3>
+				</a>
+				<p>A <a href="https://pidman.qalfy.com/classes/_core_process_.pidmanprocess.html">PidmanProcess</a> can be run inside a group or isolated. Although, you can join a process to any group whenever you need to. It&#39;s a flexible mechanism.</p>
+				<pre><code class="language-js"><span class="hljs-keyword">import</span> { someEvent } <span class="hljs-keyword">from</span> <span class="hljs-string">'./events'</span>;
+<span class="hljs-keyword">import</span> { Pidman, PidmanGroup, PidmanProcess } <span class="hljs-keyword">from</span> <span class="hljs-string">"pidman"</span>;
+
+<span class="hljs-keyword">const</span> pm = <span class="hljs-keyword">new</span> Pidman();
+<span class="hljs-keyword">const</span> group = <span class="hljs-keyword">new</span> PidmanGroup();
+
+group.addProcess({
+  <span class="hljs-attr">path</span>: <span class="hljs-string">"/home/someuser"</span>,
+  <span class="hljs-attr">command</span>: <span class="hljs-string">"rm -rf ./docs"</span>,
+});
+
+<span class="hljs-keyword">const</span> lockProcess = <span class="hljs-keyword">new</span> PidmanProcess({
+  <span class="hljs-attr">user</span>: <span class="hljs-string">"www"</span>,
+  <span class="hljs-attr">group</span>: <span class="hljs-string">"www"</span>,
+  <span class="hljs-attr">path</span>: <span class="hljs-string">"/var/www"</span>,
+  <span class="hljs-attr">command</span>: <span class="hljs-string">"touch"</span>,
+  <span class="hljs-attr">arguments</span>: [<span class="hljs-string">"lock"</span>],
+});
+
+group.addProcess(lockProcess);
+
+someEvent.on(<span class="hljs-string">'doit'</span>, () =&gt; {
+  group.run();
+});</code></pre>
+				<a href="#monitor-groups-and-process" id="monitor-groups-and-process" style="color: inherit; text-decoration: none;">
+					<h3>Monitor Groups and Process</h3>
+				</a>
+				<p>You can choose to monitor special events coming from a group&#39;s children processes or individually on each process. The callback signatures are detailed <a href="https://pidman.qalfy.com/interfaces/_core_pidman_.pidmanmonitor.html">here</a>:</p>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> group = <span class="hljs-keyword">new</span> PidmanGroup({
+  <span class="hljs-attr">monitor</span>: {
+    <span class="hljs-attr">onData</span>: <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> {
+      <span class="hljs-comment">// data.output is the process's stdout and stderr</span>
+      <span class="hljs-built_in">console</span>.log(data.output)
+    },
+    <span class="hljs-attr">onClose</span>: <span class="hljs-function">(<span class="hljs-params">event</span>) =&gt;</span> {
+      <span class="hljs-keyword">if</span> (event.exitCode &amp;&amp; event.exitCode !== <span class="hljs-number">0</span>) {
+        <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'ouch! something is wrong: '</span>);
+        <span class="hljs-built_in">console</span>.error(event.process.output);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-built_in">console</span>.info(<span class="hljs-string">`process <span class="hljs-subst">${event.process.options.id}</span> closed at <span class="hljs-subst">${event.time}</span>`</span>);
+      }
+    }
+  }
+});</code></pre>
+				<a href="#kill-39em-all" id="kill-39em-all" style="color: inherit; text-decoration: none;">
+					<h3>Kill &#39;Em All</h3>
+				</a>
+				<p>By providing (<strong>or not</strong>) a valid <a href="https://nodejs.org/api/process.html#process_signal_events">program termination signal</a>, you can choose to kill all processes in a group at once or individually:</p>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> killed = <span class="hljs-keyword">await</span> group.kill();</code></pre>
+				<p>or</p>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> killed = <span class="hljs-keyword">await</span> lockProcess.kill(<span class="hljs-string">'SIGKILL'</span>);</code></pre>
 				<a href="#author" id="author" style="color: inherit; text-decoration: none;">
 					<h2>Author</h2>
 				</a>

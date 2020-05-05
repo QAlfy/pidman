@@ -20,7 +20,7 @@ const utils_1 = require("../utils");
 const bluebird_1 = require("bluebird");
 let PidmanGroup = PidmanGroup_1 = class PidmanGroup {
     /**
-     * @param  {GroupOptions} privateoptions
+     * @param  {GroupOptions} publicoptions
      * @param  {PidmanMonitor} publicmonitor
      */
     constructor(options) {
@@ -34,6 +34,8 @@ let PidmanGroup = PidmanGroup_1 = class PidmanGroup {
         }
     }
     /**
+     * Join a [[PidmanProcess]] to this group.
+     *
      * @param  {ProcessOptions} process
      */
     addProcess(process) {
@@ -54,15 +56,24 @@ let PidmanGroup = PidmanGroup_1 = class PidmanGroup {
         return this.options;
     }
     /**
+     * List all processes in this group.
+     *
      * @returns Array<PidmanProcess>
      */
     getProcesses() {
         return this.processes;
     }
+    /**
+     * Starts all processes in this group.
+     *
+     * @returns void
+     */
     run() {
         this.processes.forEach(process => process.run());
     }
     /**
+     * Kills all processes in this group.
+     *
      * @returns boolean
      */
     kill(signal) {

@@ -1,12 +1,16 @@
 import { ConsoleTransportInstance } from 'winston/lib/winston/transports';
+/** The different log levels. */
 export declare enum LoggerLevel {
     error = "error",
     warning = "warning",
     notice = "notice",
     info = "info"
 }
+/** The [[PidmanLogger]]'s options. */
 export interface LoggerOptions {
+    /** See https://github.com/winstonjs/winston/blob/master/docs/transports.md */
     transport?: ConsoleTransportInstance;
+    /** (optional) The default minimum log level. */
     level?: LoggerLevel;
 }
 export declare class PidmanLogger {

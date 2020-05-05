@@ -19,6 +19,7 @@ const { combine, timestamp, label, printf } = winston_1.format;
 const pidmanLogFormat = printf(({ level, message, label, timestamp }) => {
     return `${timestamp} [${label}] ${level}: ${message}`;
 });
+/** The different log levels. */
 var LoggerLevel;
 (function (LoggerLevel) {
     LoggerLevel["error"] = "error";

@@ -64,8 +64,11 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
         __classPrivateFieldSet(this, _stderrEvent, new rxjs_1.Observable());
         __classPrivateFieldSet(this, _forkedCloseEvent, new rxjs_1.Observable());
         __classPrivateFieldSet(this, _subscriptionsMap, {});
+        this.output = null;
     }
     /**
+     * Sets the [[PidmanGroup]] to which this process belongs.
+     *
      * @param  {PidmanGroup} group
      * @returns void
      */
@@ -82,6 +85,8 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
         }
     }
     /**
+     * Returns the [[PidmanGroup]] to which this process belongs.
+     *
      * @returns PidmanGroup
      */
     getGroup() {
@@ -94,12 +99,17 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
         return this.options;
     }
     /**
+     * Returns the Node's [[ChildProcess]].
+     * You may not need to use this one.
+     *
      * @returns ChildProcess
      */
     getChildProcess() {
         return __classPrivateFieldGet(this, _child);
     }
     /**
+     * Starts this process.
+     *
      * @returns void
      */
     run() {
@@ -136,6 +146,8 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
         this.startMonitoring();
     }
     /**
+     * For internal use only. Do not call directly.
+     *
      * @returns void
      */
     startMonitoring() {
@@ -155,7 +167,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
             .pipe(operators_1.map((ev) => {
             const output = ev instanceof Buffer && ev.toString() || ev;
             return Object.assign(Object.assign({ output }, metadata), { time: Date.now() });
-        }), operators_1.multicast(new rxjs_1.Subject()), operators_1.refCount());
+        }), operators_1.tap((ev) => (this.output = ev.output)), operators_1.multicast(new rxjs_1.Subject()), operators_1.refCount());
         __classPrivateFieldGet(this, _subscriptionsMap).dataToSelf = processDataEvent$.subscribe((_e = (_d = this.group) === null || _d === void 0 ? void 0 : _d.options.monitor) === null || _e === void 0 ? void 0 : _e.onData);
         __classPrivateFieldGet(this, _subscriptionsMap).dataToGroup = processDataEvent$.subscribe((_f = this.options.monitor) === null || _f === void 0 ? void 0 : _f.onData);
         // emit concatenated version of error/close info and exit codes
@@ -168,6 +180,8 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
         __classPrivateFieldGet(this, _subscriptionsMap).closeToGroup = processChildEvent$.subscribe((_j = (_h = this.group) === null || _h === void 0 ? void 0 : _h.options.monitor) === null || _j === void 0 ? void 0 : _j.onClose);
     }
     /**
+     * Kills this process.
+     *
      * @param  {NodeJS.Signals} signal?
      * @returns Promise
      */

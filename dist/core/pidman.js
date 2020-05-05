@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const memory_1 = __importDefault(require("../connector/memory"));
 const _1 = require("./");
 const utils_1 = require("../utils");
+/** The Pidman's entry class. */
 class Pidman {
     /**
      * @param  {PidmanOptions} privateoptions
@@ -22,12 +23,14 @@ class Pidman {
         }
     }
     /**
-     * @returns PidmanOptions
+     * @returns [[PidmanOptions]]
      */
     getOptions() {
         return this.options;
     }
     /**
+     * Add a new group of processes.
+     *
      * @param  {GroupOptions | PidmanGroup} options
      * @returns void
      */
@@ -42,12 +45,16 @@ class Pidman {
         this.groups.push(newGroup);
     }
     /**
+     * List the groups of processes.
+     *
      * @returns PidmanGroup
      */
     getProcessGroups() {
         return this.groups;
     }
     /**
+     * Start all groups' processes.
+     *
      * @returns void
      */
     run() {

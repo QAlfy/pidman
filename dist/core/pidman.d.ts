@@ -3,7 +3,7 @@ import { LoggerOptions } from '../utils/logger';
 import { PidmanConnector } from '../connector';
 export interface PidmanMonitor {
     onData?(data: unknown): void;
-    onComplete?(data: unknown): void;
+    onClose?(data: unknown): void;
 }
 export interface PidmanOptions {
     id?: string;

@@ -27,18 +27,15 @@ const child_process_1 = require("child_process");
 const utils_1 = require("../utils");
 const lodash_1 = require("lodash");
 let forkedProcess;
-const catchError = function (error) {
-    console.error(error);
-    process.exit();
-};
 var ForkedMessageType;
 (function (ForkedMessageType) {
     ForkedMessageType[ForkedMessageType["started"] = 0] = "started";
     ForkedMessageType[ForkedMessageType["closed"] = 1] = "closed";
     ForkedMessageType[ForkedMessageType["options"] = 2] = "options";
-    ForkedMessageType[ForkedMessageType["kill"] = 3] = "kill";
-    ForkedMessageType[ForkedMessageType["killed"] = 4] = "killed";
-    ForkedMessageType[ForkedMessageType["fail"] = 5] = "fail";
+    ForkedMessageType[ForkedMessageType["errored"] = 3] = "errored";
+    ForkedMessageType[ForkedMessageType["kill"] = 4] = "kill";
+    ForkedMessageType[ForkedMessageType["killed"] = 5] = "killed";
+    ForkedMessageType[ForkedMessageType["killfail"] = 6] = "killfail";
 })(ForkedMessageType = exports.ForkedMessageType || (exports.ForkedMessageType = {}));
 class ForkedMessage {
     constructor(type, body) {
@@ -47,6 +44,18 @@ class ForkedMessage {
     }
 }
 exports.ForkedMessage = ForkedMessage;
+/**
+ * Forwards an error via IPC.
+ *
+ * @param  {} error
+ * @returns void
+ */
+const catchError = function (error) {
+    if (process.send) {
+        process.send(new ForkedMessage(ForkedMessageType.errored, error));
+    }
+    process.exit(error.errno);
+};
 class ForkedProcess {
     /**
      * @param  {ProcessOptions} privateoptions
@@ -68,7 +77,7 @@ class ForkedProcess {
             gid: utils_1.PidmanSysUtils.getGid(this.options.group || ''),
             shell: false,
             detached: true,
-            stdio: 'inherit',
+            stdio: [null, process.stdout, process.stderr],
             windowsHide: true
         }));
         (_a = __classPrivateFieldGet(this, _child)) === null || _a === void 0 ? void 0 : _a.on('close', (code, signal) => {
@@ -83,12 +92,21 @@ class ForkedProcess {
         __classPrivateFieldGet(this, _child).unref();
         return __classPrivateFieldGet(this, _child).pid;
     }
+    /**
+     * @returns number
+     */
     getPid() {
         return __classPrivateFieldGet(this, _child).pid;
     }
+    /**
+     * @returns ChildProcess
+     */
     getChild() {
         return __classPrivateFieldGet(this, _child);
     }
+    /**
+     * @returns ProcessOptions
+     */
     getOptions() {
         return this.options;
     }
@@ -121,7 +139,7 @@ process.on('message', (msg) => __awaiter(void 0, void 0, void 0, function* () {
             }
             catch (err) {
                 // console.error(err);
-                process.send(new ForkedMessage(ForkedMessageType.fail, err));
+                process.send(new ForkedMessage(ForkedMessageType.killfail, err));
             }
         }
     }

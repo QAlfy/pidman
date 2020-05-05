@@ -2,9 +2,10 @@ export declare enum ForkedMessageType {
     started = 0,
     closed = 1,
     options = 2,
-    kill = 3,
-    killed = 4,
-    fail = 5
+    errored = 3,
+    kill = 4,
+    killed = 5,
+    killfail = 6
 }
 export declare class ForkedMessage {
     type: ForkedMessageType;

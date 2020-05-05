@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var PidmanGroup_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 const typescript_json_serializer_1 = require("typescript-json-serializer");
+const logger_1 = require("../utils/logger");
 const _1 = require("./");
 const utils_1 = require("../utils");
 const bluebird_1 = require("bluebird");
@@ -65,6 +66,12 @@ let PidmanGroup = PidmanGroup_1 = class PidmanGroup {
      * @returns boolean
      */
     kill(signal) {
+        logger_1.PidmanLogger.instance().warn([
+            'Daemonized/background processes',
+            'might not be killed.',
+            'They will remain orphan.',
+            'See https://github.com/QAlfy/pidman#daemons-and-background-processes'
+        ].join(' '));
         return new bluebird_1.Promise((resolve, reject) => {
             bluebird_1.Promise.all(this.processes.map(process => process.kill(signal)))
                 .then(resolve)

@@ -19,6 +19,7 @@
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
     "eslint": "^6.8.0",
+    "eslint-plugin-jest": "^23.9.0",
     "jest": "^26.0.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^25.5.0",
@@ -47,7 +48,8 @@
     "lint.eslint": "eslint src/**/* --ext ts",
     "lint.types": "tsc --noEmit",
     "test": "jest",
-    "test-dev": "jest --watch"
+    "test:dev": "jest --watch",
+    "test:coverage": "npm test -- --coverage"
   },
   "dependencies": {
     "@types/node": "^9.3.0",
@@ -61,5 +63,12 @@
     "typescript-json-serializer": "^2.1.0",
     "winston": "^3.2.1",
     "winston-transport": "^4.3.0"
+  },
+  "jest": {
+    "coverageReporters": [
+      "json-summary",
+      "text",
+      "lcov"
+    ]
   }
 }

@@ -2,14 +2,18 @@
 	"extends": [
 		"eslint:recommended",
 		"plugin:@typescript-eslint/recommended"
-	],
+  ],
+  "plugins": [
+    "jest"
+  ],
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"project": "./tsconfig.json",
 		"sourceType": "module"
 	},
 	"env": {
-		"node": true
+    "node": true,
+    "jest/globals": true
 	},
 	"rules": {
 		"max-len": [2, { "code": 80, "ignoreUrls": true }],

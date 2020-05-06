@@ -16,7 +16,10 @@
 		"noImplicitReturns": true,
 		"outDir": "./dist/",
 		"lib": ["es6", "dom"],
-		"types": ["node"],
+		"types": [
+      "node",
+      "jest"
+    ],
 		"strict": true
 	},
 	"include": ["./src/**/*"],

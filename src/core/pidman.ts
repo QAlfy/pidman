@@ -31,7 +31,7 @@ export interface PidmanMonitor {
 }
 
 /** The options that [[Pidman]]'s constructor receives. */
-export interface PidmanOptions {
+export type PidmanOptions = {
 	id?: string;
 	connector?: PidmanConnector;
 	logger?: LoggerOptions;

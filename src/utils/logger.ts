@@ -15,7 +15,7 @@ export enum LoggerLevel {
 }
 
 /** The [[PidmanLogger]]'s options. */
-export interface LoggerOptions {
+export type LoggerOptions = {
 	/** See https://github.com/winstonjs/winston/blob/master/docs/transports.md */
 	transport?: ConsoleTransportInstance;
 	/** (optional) The default minimum log level. */

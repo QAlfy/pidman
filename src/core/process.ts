@@ -36,7 +36,7 @@ export type ProcessEventSubscriptions = Record<string, Subscription>;
  * Similar to [[GroupOptions]], it defines how a specific
  * [[PidmanProcess]] behaves.
  */
-export interface ProcessOptions {
+export type ProcessOptions = {
 	/**
 	 * (optional) The ID for this [[PidmanProcess]].
 	 * It's auto generated if none is given.

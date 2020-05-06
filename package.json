@@ -46,7 +46,8 @@
     "lint": "npm run lint.eslint && npm run lint.types",
     "lint.eslint": "eslint src/**/* --ext ts",
     "lint.types": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test-dev": "jest --watch"
   },
   "dependencies": {
     "@types/node": "^9.3.0",

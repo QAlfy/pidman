@@ -12,7 +12,7 @@ import { Promise as promise } from 'bluebird';
 /**
  * The options that define how a [[PidmanGroup]] behaves.
  */
-export interface GroupOptions {
+export type GroupOptions = {
 	/**
 	 * (optional) The ID for this [[PidmanGroup]].
 	 * It's auto generated if none is given.

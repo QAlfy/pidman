@@ -12,13 +12,16 @@
   "types": "dist/index.d.ts",
   "devDependencies": {
     "@types/bluebird": "^3.5.30",
+    "@types/jest": "^25.2.1",
     "@types/lodash": "^4.14.150",
     "@types/lokijs": "^1.5.3",
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
     "eslint": "^6.8.0",
+    "jest": "^26.0.1",
     "rimraf": "^3.0.2",
+    "ts-jest": "^25.5.0",
     "tslint": "^6.1.2",
     "tslint-eslint-rules": "^5.4.0",
     "typedoc": "^0.17.6",
@@ -42,7 +45,8 @@
     "clean": "rimraf dist/",
     "lint": "npm run lint.eslint && npm run lint.types",
     "lint.eslint": "eslint src/**/* --ext ts",
-    "lint.types": "tsc --noEmit"
+    "lint.types": "tsc --noEmit",
+    "test": "jest"
   },
   "dependencies": {
     "@types/node": "^9.3.0",

@@ -94,7 +94,7 @@ There is a detailed [API Documentation](https://pidman.qalfy.com/).
 
 ## Usage
 
-For a quick hands-on usage explanation, check out the [basic demo](https://github.com/QAlfy/pidman/blob/master/test/basic.demo.js) and read the comments in there.
+For a quick hands-on usage explanation, check out the [basic demo](https://github.com/QAlfy/pidman/blob/master/basic.demo.js) and read the comments in there.
 
 First, instantiate the main Pidman's class:
 

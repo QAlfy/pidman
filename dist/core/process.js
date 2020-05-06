@@ -175,7 +175,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
             exitCode: data[0],
             signalCode: data[1]
         }))), __classPrivateFieldGet(this, _forkedCloseEvent))
-            .pipe(operators_1.scan((acc, data) => ([...acc, data]), []), operators_1.map(event_1.PidmanEventUtils.parseMessage), operators_1.map((msg) => (Object.assign(Object.assign({}, msg), metadata))), operators_1.tap((ev) => (this.running = false)), operators_1.catchError(error => rxjs_1.of(error)), operators_1.multicast(new rxjs_1.Subject()), operators_1.refCount());
+            .pipe(operators_1.scan((acc, data) => ([...acc, data]), []), operators_1.map(event_1.PidmanEventUtils.parseCloseEvent), operators_1.map((msg) => (Object.assign(Object.assign({}, msg), metadata))), operators_1.tap((ev) => (this.running = false)), operators_1.catchError(error => rxjs_1.of(error)), operators_1.multicast(new rxjs_1.Subject()), operators_1.refCount());
         __classPrivateFieldGet(this, _subscriptionsMap).closeToSelf = processChildEvent$.subscribe((_g = this.options.monitor) === null || _g === void 0 ? void 0 : _g.onClose);
         __classPrivateFieldGet(this, _subscriptionsMap).closeToGroup = processChildEvent$.subscribe((_j = (_h = this.group) === null || _h === void 0 ? void 0 : _h.options.monitor) === null || _j === void 0 ? void 0 : _j.onClose);
     }

@@ -253,7 +253,7 @@ export class PidmanProcess {
 		)
 			.pipe(
 				scan((acc: any, data: any) => ([...acc, data]), []),
-				map(PidmanEventUtils.parseMessage),
+				map(PidmanEventUtils.parseCloseEvent),
 				map((msg: any) => ({ ...msg, ...metadata })),
 				tap((ev) => (this.running = false)),
 				catchError(error => of(error)),

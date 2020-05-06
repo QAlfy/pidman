@@ -6,7 +6,7 @@ class PidmanEventUtils {
      * @param  {any} data
      * @returns any
      */
-    static parseMessage(data) {
+    static parseCloseEvent(data) {
         let output = { output: '' };
         output = lodash_1.reduce(data, (acc, val) => {
             if (val instanceof Buffer) {

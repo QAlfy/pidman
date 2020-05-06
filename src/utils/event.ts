@@ -5,7 +5,7 @@ export class PidmanEventUtils {
    * @param  {any} data
    * @returns any
    */
-  static parseMessage(data: any): any {
+  static parseCloseEvent(data: any): any {
     let output = { output: '' };
 
     output = reduce(data, (acc, val) => {

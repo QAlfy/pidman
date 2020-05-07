@@ -1,8 +1,8 @@
 // Require the main Pidman class
-const Pidman = require("../dist").Pidman;
+const Pidman = require("./dist").Pidman;
 
 // Optionally create groups manually
-const PidmanGroup = require("../dist").PidmanGroup;
+const PidmanGroup = require("./dist").PidmanGroup;
 
 // Instantiate the Pidman's root class. Everything starts here.
 const pm = new Pidman();

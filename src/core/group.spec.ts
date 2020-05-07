@@ -1,12 +1,9 @@
 import { mocked } from 'ts-jest/utils';
 import { PidmanGroup } from './group';
 import { PidmanProcess } from './process';
-import { fork, ChildProcess } from 'child_process';
 
-jest.mock('child_process');
 jest.mock('./process');
 
-const mockedFork = mocked(fork);
 const mockedProcess = mocked(PidmanProcess, true);
 
 describe('initializing group', () => {
@@ -43,7 +40,6 @@ describe('run and kill processes in group', () => {
 
   beforeAll(() => {
     mockedProcess.mockClear();
-    mockedFork.mockReturnValue({} as ChildProcess);
 
     group = new PidmanGroup({
       processes: [{

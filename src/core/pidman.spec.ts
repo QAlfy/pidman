@@ -1,7 +1,7 @@
+import { mocked } from 'ts-jest/utils';
 import { Pidman } from './';
 import { PidmanGroup } from './group';
 import { PidmanStringUtils } from '../utils';
-import { mocked } from 'ts-jest/utils';
 
 jest.mock('./group');
 jest.mock('../utils');

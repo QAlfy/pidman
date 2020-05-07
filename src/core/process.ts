@@ -86,6 +86,10 @@ export class PidmanProcess {
 	 * @param  {ProcessOptions} privateoptions
 	 */
 	constructor(@JsonProperty() private options: ProcessOptions) {
+		if (!this.options.command || this.options.command.trim().length === 0) {
+			throw new Error('A process cannot run without a command.');
+		}
+
 		if (!this.options.id) {
 			this.options.id = PidmanStringUtils.getId();
 		}

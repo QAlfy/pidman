@@ -3,15 +3,15 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for utils/sys.ts</title>
+    <title>Code coverage report for src/connector/memory.ts</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="../prettify.css" />
-    <link rel="stylesheet" href="../base.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type='text/css'>
         .coverage-summary .sorter {
-            background-image: url(../sort-arrow-sprite.png);
+            background-image: url(../../sort-arrow-sprite.png);
         }
     </style>
 </head>
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">utils</a> sys.ts</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/connector</a> memory.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">20% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>2/10</span>
+                <span class='fraction'>1/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>0/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">20% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>2/10</span>
+                <span class='fraction'>1/5</span>
             </div>
         
             
@@ -80,50 +80,62 @@
 <a name='L21'></a><a href='#L21'>21</a>
 <a name='L22'></a><a href='#L22'>22</a>
 <a name='L23'></a><a href='#L23'>23</a>
-<a name='L24'></a><a href='#L24'>24</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { execSync } from 'child_process';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as loki from 'lokijs';
+import { PidmanGroup, PidmanProcess } from '../core';
 &nbsp;
-export class PidmanSysUtils {
-	public <span class="fstat-no" title="function not covered" >static </span>getUid(user: string): number {
-<span class="cstat-no" title="statement not covered" >		if (process.platform === 'win32') {</span>
-<span class="cstat-no" title="statement not covered" >			return 0;</span>
-		}
+export interface PidmanConnector {
+	init(): void;
+	add(item: PidmanGroup | PidmanProcess): void;
+	remove(id: string): void;
+	get(id: string): PidmanGroup | PidmanProcess;
+}
 &nbsp;
-		const uid = <span class="cstat-no" title="statement not covered" >execSync(`id -u ${user}`).toString();</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >		return Number(uid);</span>
+export default class MemoryConnector implements PidmanConnector {
+<span class="fstat-no" title="function not covered" >	init(</span>): void {
+<span class="cstat-no" title="statement not covered" >		throw new Error('Method not implemented.');</span>
 	}
 &nbsp;
-	public <span class="fstat-no" title="function not covered" >static </span>getGid(group: string): number {
-<span class="cstat-no" title="statement not covered" >		if (process.platform === 'win32') {</span>
-<span class="cstat-no" title="statement not covered" >			return 0;</span>
-		}
+<span class="fstat-no" title="function not covered" >	add(</span>item: PidmanGroup | PidmanProcess): void {
+<span class="cstat-no" title="statement not covered" >		throw new Error('Method not implemented.');</span>
+	}
 &nbsp;
-		const uid = <span class="cstat-no" title="statement not covered" >execSync(`id -g ${group}`).toString();</span>
+<span class="fstat-no" title="function not covered" >	remove(</span>id: string): void {
+<span class="cstat-no" title="statement not covered" >		throw new Error('Method not implemented.');</span>
+	}
 &nbsp;
-<span class="cstat-no" title="statement not covered" >		return Number(uid);</span>
+<span class="fstat-no" title="function not covered" >	get(</span>id: string): PidmanGroup | PidmanProcess {
+<span class="cstat-no" title="statement not covered" >		throw new Error('Method not implemented.');</span>
 	}
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -133,17 +145,17 @@ export class PidmanSysUtils {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Thu May 07 2020 16:24:10 GMT-0300 (Argentina Standard Time)
+                at Thu May 07 2020 16:26:30 GMT-0300 (Argentina Standard Time)
             </div>
         </div>
-        <script src="../prettify.js"></script>
+        <script src="../../prettify.js"></script>
         <script>
             window.onload = function () {
                 prettyPrint();
             };
         </script>
-        <script src="../sorter.js"></script>
-        <script src="../block-navigation.js"></script>
+        <script src="../../sorter.js"></script>
+        <script src="../../block-navigation.js"></script>
     </body>
 </html>
     

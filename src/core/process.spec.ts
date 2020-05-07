@@ -3,7 +3,8 @@ import {
   fromEvent,
   merge,
   noop,
-  Observable
+  Observable,
+  Subscription
 } from 'rxjs';
 import { mocked } from 'ts-jest/utils';
 import { PidmanProcess } from './process';
@@ -18,6 +19,7 @@ const mockedObservable = mocked(Observable, true);
 const mockedFromEvent = mocked(fromEvent, true);
 const mockedMerge = mocked(merge, true);
 const mockedStringUtils = mocked(PidmanStringUtils, true);
+const mockedSubscription = mocked(Subscription, true);
 
 mockedFork.mockReturnValue({
   send: (msg, errCbk): void => errCbk(null),
@@ -29,6 +31,10 @@ mockedFromEvent.mockReturnValue(new Observable<unknown>());
 mockedMerge.mockReturnValue({
   pipe: (): Observable<unknown> => (new Observable<unknown>())
 } as Observable<unknown>);
+mockedObservable.mockReturnValue({
+  subscribe: (cbk: void): Subscription => new Subscription(),
+  unsubscribe: (): void => { noop(); }
+} as unknown as Observable<unknown>);
 
 describe('initializing a process', () => {
   beforeAll(() => mockedStringUtils.getId.mockReturnValue('test'));
@@ -78,8 +84,33 @@ describe('running a process', () => {
 
   test('subscriptions to child events have been made', () => {
     expect(merge).toHaveBeenCalledTimes(2);
+    expect(Subscription).toHaveBeenCalledTimes(4);
+  });
 
-    expect(mockedObservable.mockImplementation()
-      .prototype.subscribe).toHaveBeenCalledTimes(4);
+  test('process can be killed and unsubscribed', () => {
+    proc.kill();
+
+    expect(mockedSubscription.mockImplementation().prototype.unsubscribe)
+      .toHaveBeenCalledTimes(4);
+  });
+});
+
+describe('project serialization', () => {
+  let proc: PidmanProcess;
+
+  beforeAll(() => {
+    proc = new PidmanProcess({
+      command: 'ls'
+    });
+  });
+
+  test('process can serialize itself', () => {
+    expect(proc.serialize()).toHaveProperty('options.id');
+  });
+
+  test('process can deserialize itself', () => {
+    const serialized = proc.serialize();
+
+    expect(proc.deserialize(serialized)).toBeInstanceOf(PidmanProcess);
   });
 });

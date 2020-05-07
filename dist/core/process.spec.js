@@ -13,6 +13,7 @@ const mockedObservable = utils_1.mocked(rxjs_1.Observable, true);
 const mockedFromEvent = utils_1.mocked(rxjs_1.fromEvent, true);
 const mockedMerge = utils_1.mocked(rxjs_1.merge, true);
 const mockedStringUtils = utils_1.mocked(utils_2.PidmanStringUtils, true);
+const mockedSubscription = utils_1.mocked(rxjs_1.Subscription, true);
 mockedFork.mockReturnValue({
     send: (msg, errCbk) => errCbk(null),
     on: (msg, cbk) => cbk(msg),
@@ -21,6 +22,10 @@ mockedFork.mockReturnValue({
 mockedFromEvent.mockReturnValue(new rxjs_1.Observable());
 mockedMerge.mockReturnValue({
     pipe: () => (new rxjs_1.Observable())
+});
+mockedObservable.mockReturnValue({
+    subscribe: (cbk) => new rxjs_1.Subscription(),
+    unsubscribe: () => { rxjs_1.noop(); }
 });
 describe('initializing a process', () => {
     beforeAll(() => mockedStringUtils.getId.mockReturnValue('test'));
@@ -59,8 +64,27 @@ describe('running a process', () => {
     });
     test('subscriptions to child events have been made', () => {
         expect(rxjs_1.merge).toHaveBeenCalledTimes(2);
-        expect(mockedObservable.mockImplementation()
-            .prototype.subscribe).toHaveBeenCalledTimes(4);
+        expect(rxjs_1.Subscription).toHaveBeenCalledTimes(4);
+    });
+    test('process can be killed and unsubscribed', () => {
+        proc.kill();
+        expect(mockedSubscription.mockImplementation().prototype.unsubscribe)
+            .toHaveBeenCalledTimes(4);
+    });
+});
+describe('project serialization', () => {
+    let proc;
+    beforeAll(() => {
+        proc = new process_1.PidmanProcess({
+            command: 'ls'
+        });
+    });
+    test('process can serialize itself', () => {
+        expect(proc.serialize()).toHaveProperty('options.id');
+    });
+    test('process can deserialize itself', () => {
+        const serialized = proc.serialize();
+        expect(proc.deserialize(serialized)).toBeInstanceOf(process_1.PidmanProcess);
     });
 });
 //# sourceMappingURL=process.spec.js.map

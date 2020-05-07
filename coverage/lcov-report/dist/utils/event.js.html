@@ -3,15 +3,15 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for utils/sys.ts</title>
+    <title>Code coverage report for dist/utils/event.js</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="../prettify.css" />
-    <link rel="stylesheet" href="../base.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type='text/css'>
         .coverage-summary .sorter {
-            background-image: url(../sort-arrow-sprite.png);
+            background-image: url(../../sort-arrow-sprite.png);
         }
     </style>
 </head>
@@ -19,20 +19,20 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">utils</a> sys.ts</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">dist/utils</a> event.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">20% </span>
+                <span class="strong">23.08% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>2/10</span>
+                <span class='fraction'>3/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>0/6</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">20% </span>
+                <span class="strong">23.08% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>2/10</span>
+                <span class='fraction'>3/13</span>
             </div>
         
             
@@ -80,70 +80,79 @@
 <a name='L21'></a><a href='#L21'>21</a>
 <a name='L22'></a><a href='#L22'>22</a>
 <a name='L23'></a><a href='#L23'>23</a>
-<a name='L24'></a><a href='#L24'>24</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { execSync } from 'child_process';
-&nbsp;
-export class PidmanSysUtils {
-	public <span class="fstat-no" title="function not covered" >static </span>getUid(user: string): number {
-<span class="cstat-no" title="statement not covered" >		if (process.platform === 'win32') {</span>
-<span class="cstat-no" title="statement not covered" >			return 0;</span>
-		}
-&nbsp;
-		const uid = <span class="cstat-no" title="statement not covered" >execSync(`id -u ${user}`).toString();</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >		return Number(uid);</span>
-	}
-&nbsp;
-	public <span class="fstat-no" title="function not covered" >static </span>getGid(group: string): number {
-<span class="cstat-no" title="statement not covered" >		if (process.platform === 'win32') {</span>
-<span class="cstat-no" title="statement not covered" >			return 0;</span>
-		}
-&nbsp;
-		const uid = <span class="cstat-no" title="statement not covered" >execSync(`id -g ${group}`).toString();</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >		return Number(uid);</span>
-	}
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = require("lodash");
+class PidmanEventUtils {
+    /**
+     * @param  {any} data
+     * @returns any
+     */
+<span class="fstat-no" title="function not covered" >    static </span>parseCloseEvent(data) {
+        let output = <span class="cstat-no" title="statement not covered" >{ output: '' };</span>
+<span class="cstat-no" title="statement not covered" >        output = lodash_1.reduce(data, <span class="fstat-no" title="function not covered" >(a</span>cc, val) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            if (val instanceof Buffer) {</span>
+<span class="cstat-no" title="statement not covered" >                acc.output += val.toString();</span>
+            }
+            else <span class="cstat-no" title="statement not covered" >if (val instanceof Object) {</span>
+<span class="cstat-no" title="statement not covered" >                acc = Object.assign(Object.assign({}, acc), val);</span>
+            }
+<span class="cstat-no" title="statement not covered" >            return acc;</span>
+        }, output);
+<span class="cstat-no" title="statement not covered" >        if (output.output === '') {</span>
+<span class="cstat-no" title="statement not covered" >            delete output.output;</span>
+        }
+<span class="cstat-no" title="statement not covered" >        return (Object.assign(Object.assign({}, output), { time: Date.now() }));</span>
+    }
 }
-&nbsp;</pre></td></tr></table></pre>
+exports.PidmanEventUtils = PidmanEventUtils;
+//# sourceMappingURL=event.js.map</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Thu May 07 2020 16:24:10 GMT-0300 (Argentina Standard Time)
+                at Thu May 07 2020 16:26:30 GMT-0300 (Argentina Standard Time)
             </div>
         </div>
-        <script src="../prettify.js"></script>
+        <script src="../../prettify.js"></script>
         <script>
             window.onload = function () {
                 prettyPrint();
             };
         </script>
-        <script src="../sorter.js"></script>
-        <script src="../block-navigation.js"></script>
+        <script src="../../sorter.js"></script>
+        <script src="../../block-navigation.js"></script>
     </body>
 </html>
     

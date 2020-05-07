@@ -6,4 +6,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./strings"));
 __export(require("./sys"));
 __export(require("./process"));
+__export(require("./logger"));
 //# sourceMappingURL=index.js.map

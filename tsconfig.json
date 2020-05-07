@@ -1,6 +1,7 @@
 {
 	"exclude": ["node_modules"],
 	"compilerOptions": {
+    "allowJs": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true,

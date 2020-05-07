@@ -7,12 +7,12 @@ export declare enum LoggerLevel {
     info = "info"
 }
 /** The [[PidmanLogger]]'s options. */
-export interface LoggerOptions {
+export declare type LoggerOptions = {
     /** See https://github.com/winstonjs/winston/blob/master/docs/transports.md */
     transport?: ConsoleTransportInstance;
     /** (optional) The default minimum log level. */
     level?: LoggerLevel;
-}
+};
 export declare class PidmanLogger {
     #private;
     private options?;

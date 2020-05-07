@@ -4,7 +4,7 @@ import { PidmanProcess, ProcessOptions } from './';
 /**
  * The options that define how a [[PidmanGroup]] behaves.
  */
-export interface GroupOptions {
+export declare type GroupOptions = {
     /**
      * (optional) The ID for this [[PidmanGroup]].
      * It's auto generated if none is given.
@@ -31,7 +31,7 @@ export interface GroupOptions {
     monitor?: PidmanMonitor;
     /** Not yet implemented */
     timeout?: number;
-}
+};
 export declare class PidmanGroup {
     options: GroupOptions;
     protected processes: Array<PidmanProcess>;

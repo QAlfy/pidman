@@ -52,6 +52,9 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
         _child.set(this, void 0);
         _forkedPID.set(this, 0);
         this.running = false;
+        if (!this.options.command || this.options.command.trim().length === 0) {
+            throw new Error('A process cannot run without a command.');
+        }
         if (!this.options.id) {
             this.options.id = utils_1.PidmanStringUtils.getId();
         }

@@ -25,11 +25,11 @@ export interface PidmanMonitor {
     onClose?(data: unknown): void;
 }
 /** The options that [[Pidman]]'s constructor receives. */
-export interface PidmanOptions {
+export declare type PidmanOptions = {
     id?: string;
     connector?: PidmanConnector;
     logger?: LoggerOptions;
-}
+};
 /** The Pidman's entry class. */
 export declare class Pidman {
     options: PidmanOptions;

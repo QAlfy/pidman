@@ -8,7 +8,7 @@ export declare type ProcessEventSubscriptions = Record<string, Subscription>;
  * Similar to [[GroupOptions]], it defines how a specific
  * [[PidmanProcess]] behaves.
  */
-export interface ProcessOptions {
+export declare type ProcessOptions = {
     /**
      * (optional) The ID for this [[PidmanProcess]].
      * It's auto generated if none is given.
@@ -38,7 +38,7 @@ export interface ProcessOptions {
     monitor?: PidmanMonitor;
     /** Not yet implemented */
     timeout?: number;
-}
+};
 export declare class PidmanProcess {
     #private;
     private options;

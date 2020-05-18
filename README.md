@@ -11,7 +11,7 @@
   </a>
 </p>
 
-> A rock solid process orchestration library for Node (**WIP: Work In Progress)**
+> A rock solid process orchestration library for Node
 
 ### 🏠 [Homepage](https://pidman.qalfy.com)
 

@@ -175,7 +175,7 @@ You can choose to monitor special events coming from a group's children processe
 const group = new PidmanGroup({
   monitor: {
     onData: (data) => {
-      // data.output is the process's stdout and stderr
+      // data.output is the process' stdout and stderr
       console.log(data.output)
     },
     onClose: (event) => {

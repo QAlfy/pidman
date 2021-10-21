@@ -139,13 +139,14 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
             }
         });
         __classPrivateFieldGet(this, _child).on('message', (msg) => {
-            var _a;
+            var _a, _b;
             if (msg.type === forked_1.ForkedMessageType.started) {
                 this.running = true;
                 __classPrivateFieldSet(this, _forkedPID, msg.body);
+                (_a = __classPrivateFieldGet(this, _child)) === null || _a === void 0 ? void 0 : _a.emit('start', msg.body);
             }
             else if (msg.type === forked_1.ForkedMessageType.errored) {
-                (_a = __classPrivateFieldGet(this, _child)) === null || _a === void 0 ? void 0 : _a.emit('error', msg.body);
+                (_b = __classPrivateFieldGet(this, _child)) === null || _b === void 0 ? void 0 : _b.emit('error', msg.body);
             }
         });
         __classPrivateFieldGet(this, _child).unref();
@@ -163,13 +164,14 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
             pid: __classPrivateFieldGet(this, _forkedPID) !== 0 && __classPrivateFieldGet(this, _forkedPID) || ((_a = __classPrivateFieldGet(this, _child)) === null || _a === void 0 ? void 0 : _a.pid),
         };
         // let's handle all important events; don't miss anything
+        __classPrivateFieldSet(this, _startEvent, rxjs_1.fromEvent(__classPrivateFieldGet(this, _child), 'start'));
         __classPrivateFieldSet(this, _errorEvent, rxjs_1.fromEvent(__classPrivateFieldGet(this, _child), 'error'));
         __classPrivateFieldSet(this, _closeEvent, rxjs_1.fromEvent(__classPrivateFieldGet(this, _child), 'close'));
         __classPrivateFieldSet(this, _dataEvent, rxjs_1.fromEvent((_b = __classPrivateFieldGet(this, _child)) === null || _b === void 0 ? void 0 : _b.stdout, 'data'));
         __classPrivateFieldSet(this, _stderrEvent, rxjs_1.fromEvent((_c = __classPrivateFieldGet(this, _child)) === null || _c === void 0 ? void 0 : _c.stderr, 'data'));
         __classPrivateFieldSet(this, _forkedCloseEvent, rxjs_1.fromEvent(__classPrivateFieldGet(this, _child), 'message').pipe(operators_1.map((msg) => msg[0]), operators_1.filter((msg) => msg.type === forked_1.ForkedMessageType.closed), operators_1.map(msg => (Object.assign({}, msg.body)))));
         // emit when new data goes to stdout
-        const processDataEvent$ = rxjs_1.merge(__classPrivateFieldGet(this, _dataEvent), __classPrivateFieldGet(this, _errorEvent), __classPrivateFieldGet(this, _stderrEvent))
+        const processDataEvent$ = rxjs_1.merge(__classPrivateFieldGet(this, _startEvent), __classPrivateFieldGet(this, _dataEvent), __classPrivateFieldGet(this, _errorEvent), __classPrivateFieldGet(this, _stderrEvent))
             .pipe(operators_1.map((ev) => {
             const output = ev instanceof Buffer && ev.toString() || ev;
             return Object.assign(Object.assign({ output }, metadata), { time: Date.now() });

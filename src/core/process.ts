@@ -193,6 +193,7 @@ export class PidmanProcess {
 			if (msg.type === ForkedMessageType.started) {
 				this.running = true;
 				this.#forkedPID = msg.body as number;
+				this.#child?.emit('start', msg.body);
 			} else if (msg.type === ForkedMessageType.errored) {
 				this.#child?.emit('error', msg.body);
 			}
@@ -215,6 +216,7 @@ export class PidmanProcess {
 		};
 
 		// let's handle all important events; don't miss anything
+		this.#startEvent = fromEvent(this.#child!, 'start');
 		this.#errorEvent = fromEvent(this.#child!, 'error');
 		this.#closeEvent = fromEvent(this.#child!, 'close');
 		this.#dataEvent = fromEvent(this.#child?.stdout!, 'data');
@@ -227,6 +229,7 @@ export class PidmanProcess {
 
 		// emit when new data goes to stdout
 		const processDataEvent$ = merge(
+			this.#startEvent,
 			this.#dataEvent,
 			this.#errorEvent,
 			this.#stderrEvent

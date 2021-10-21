@@ -71,6 +71,7 @@ export type ProcessOptions = {
 @Serializable()
 export class PidmanProcess {
 	#subscriptionsMap: ProcessEventSubscriptions;
+	#startEvent: Observable<unknown>;
 	#closeEvent: Observable<[]>;
 	#errorEvent: Observable<unknown>;
 	#stderrEvent: Observable<unknown>;
@@ -98,6 +99,7 @@ export class PidmanProcess {
 			this.options.killSignal = 'SIGTERM';
 		}
 
+		this.#startEvent = new Observable();
 		this.#dataEvent = new Observable();
 		this.#closeEvent = new Observable();
 		this.#errorEvent = new Observable();
@@ -173,6 +175,7 @@ export class PidmanProcess {
 			cwd: this.options.path,
 			env: this.options.envVars || {},
 			gid: PidmanSysUtils.getGid(this.options.group || ''),
+			execArgv: process.execArgv.filter(opt => !(/--inspect/g.test(opt))),
 			detached: true,
 			silent: true
 		});

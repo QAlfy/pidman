@@ -24,7 +24,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     }
     return privateMap.get(receiver);
 };
-var _subscriptionsMap, _closeEvent, _errorEvent, _stderrEvent, _dataEvent, _forkedCloseEvent, _child, _forkedPID;
+var _subscriptionsMap, _startEvent, _closeEvent, _errorEvent, _stderrEvent, _dataEvent, _forkedCloseEvent, _child, _forkedPID;
 var PidmanProcess_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 const child_process_1 = require("child_process");
@@ -44,6 +44,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
     constructor(options) {
         this.options = options;
         _subscriptionsMap.set(this, void 0);
+        _startEvent.set(this, void 0);
         _closeEvent.set(this, void 0);
         _errorEvent.set(this, void 0);
         _stderrEvent.set(this, void 0);
@@ -61,6 +62,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
         if (!this.options.killSignal) {
             this.options.killSignal = 'SIGTERM';
         }
+        __classPrivateFieldSet(this, _startEvent, new rxjs_1.Observable());
         __classPrivateFieldSet(this, _dataEvent, new rxjs_1.Observable());
         __classPrivateFieldSet(this, _closeEvent, new rxjs_1.Observable());
         __classPrivateFieldSet(this, _errorEvent, new rxjs_1.Observable());
@@ -126,6 +128,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
             cwd: this.options.path,
             env: this.options.envVars || {},
             gid: utils_1.PidmanSysUtils.getGid(this.options.group || ''),
+            execArgv: process.execArgv.filter(opt => !(/--inspect/g.test(opt))),
             detached: true,
             silent: true
         }));
@@ -275,7 +278,7 @@ let PidmanProcess = PidmanProcess_1 = class PidmanProcess {
         return new PidmanProcess_1(json.options);
     }
 };
-_subscriptionsMap = new WeakMap(), _closeEvent = new WeakMap(), _errorEvent = new WeakMap(), _stderrEvent = new WeakMap(), _dataEvent = new WeakMap(), _forkedCloseEvent = new WeakMap(), _child = new WeakMap(), _forkedPID = new WeakMap();
+_subscriptionsMap = new WeakMap(), _startEvent = new WeakMap(), _closeEvent = new WeakMap(), _errorEvent = new WeakMap(), _stderrEvent = new WeakMap(), _dataEvent = new WeakMap(), _forkedCloseEvent = new WeakMap(), _child = new WeakMap(), _forkedPID = new WeakMap();
 PidmanProcess = PidmanProcess_1 = __decorate([
     typescript_json_serializer_1.Serializable(),
     __param(0, typescript_json_serializer_1.JsonProperty()),
